@@ -1,0 +1,31 @@
+.layout-admin {
+    display: flex;
+    .sidebar{
+        width: 30%;
+        background-color: #ebebeb;
+
+        .menu-sidebar{
+            background-color: #ebebeb;
+        }
+    }
+    .admin-header {
+        height: 50px;
+        border-bottom: 1px solid #ebebeb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+    }
+}
+
+.img-department {
+    width: 278px;
+    height: 150px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    object-fit: contain !important;
+    padding: 10px;
+    height: 150px;   
+    border: 1px solid #edeeed;
+}

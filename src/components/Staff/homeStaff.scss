@@ -1,0 +1,50 @@
+.layout-staff {
+    // display: flex;
+    height: 100vh;
+    .sidebar{
+        background-color: #f5f5f5;
+        border-right: 1px solid #b2afaf;
+        .ant-list-item:hover {
+            background-color: #daeaffbf;
+        }
+        .title-status{
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .text-overflow{
+            // display: -webkit-box;
+            // -webkit-line-clamp: 2; /* Số dòng tối đa */
+            // -webkit-box-orient: vertical;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            font-weight: 400;
+            color: #6d6969e0;
+            font-size: 14px;
+            line-height: 1.5714285714285714;
+        }
+        .message-pending {
+            font-weight: 600;
+            color: #4e4949;
+        }
+    
+    }
+    .content{
+        background-color: #fff;
+        .staff-header {
+            height: 50px;
+            border-bottom: 1px solid #ebebeb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+        }
+
+        .staff-body{
+            padding: 0 20px;
+        }
+    }
+}
