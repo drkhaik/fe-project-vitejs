@@ -2,31 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, message, notification, Select, Row, Col, Button } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { updateDepartmentInfo } from '../../../services/api';
+import { updateUserAPI } from '../../../services/api';
 import useImageHandling from '../../../hooks/useImageHandling';
 
 const { TextArea } = Input;
 const UpdateInfoDepartment = (props) => {
     const { openUpdateModal,
         setOpenUpdateModal,
+        setIsSubmitUpdateForm,
         form,
         listRole,
-        departmentInfo,
-        fetchDataDepartment,
+        userInfo,
+        fetchDataUser,
     } = props;
 
     const { loading,
         previewOpen,
         previewImage,
         previewTitle,
-        imgBase64,
-        setImgBase64,
+        public_id,
+        urlImage,
         handlePreview,
         beforeUpload,
         handleChange,
-        handleUploadFileThumbnail,
-        handleRemoveFile,
-        setPreviewOpen
+        handleUploadFile,
+        setPreviewOpen,
+        setPublic_id,
+        setUrlImage
     } = useImageHandling();
 
     const [initForm, setInitForm] = useState(null);
@@ -34,62 +36,55 @@ const UpdateInfoDepartment = (props) => {
     console.log("check render Update");
 
     useEffect(() => {
-        if (departmentInfo && departmentInfo.id) {
+        if (userInfo && userInfo.id) {
             const arrImage = [
                 {
                     uid: uuidv4(),
-                    name: departmentInfo.name,
+                    name: userInfo.name,
                     status: 'done',
-                    url: `${departmentInfo.image}`,
+                    url: `${userInfo.image}`,
                 }
             ]
             const init = {
-                id: departmentInfo.id,
-                name: departmentInfo.name,
-                email: departmentInfo.email,
-                description: departmentInfo.description,
-                roleID: departmentInfo.roleID,
+                id: userInfo.id,
+                name: userInfo.name,
+                email: userInfo.email,
+                description: userInfo.description,
+                roleID: userInfo.roleID,
                 image: { fileList: arrImage },
             }
             setInitForm(init);
-            setImgBase64(departmentInfo.image);
+            setPublic_id(userInfo.public_id);
+            setUrlImage(userInfo.image);
+            // setImgBase64(userInfo.image);
             form.setFieldsValue(init);
         }
         return () => {
             form.resetFields();
             // console.log("check return useEffect")
         }
-    }, [departmentInfo, openUpdateModal]);
-
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent the default form submission
-            form.submit();
-        }
-    };
+    }, [userInfo, openUpdateModal]);
 
     const onFinish = async (values) => {
         const { id, name, description, roleID } = values;
-        if (imgBase64 === "") {
-            message.error("Please input image!");
-            return;
-        }
         setIsSubmitUpdateForm(true)
         let data = {
             "id": id,
             "name": name,
             "description": description,
-            "image": imgBase64,
+            "image": urlImage,
+            "public_id": public_id,
             "roleID": roleID,
         };
-        let res = await updateDepartmentInfo(data);
+        let res = await updateUserAPI(data);
         // return;
         if (res && res.errCode === 0) {
             message.success("Successful!");
             form.resetFields();
             setOpenUpdateModal(false);
-            setImgBase64("");
-            await fetchDataDepartment();
+            setPublic_id(null);
+            setUrlImage(null);
+            await fetchDataUser();
         } else {
             notification.error({
                 message: "Something went wrong...",
@@ -107,8 +102,6 @@ const UpdateInfoDepartment = (props) => {
                 style={{ maxWidth: "100%", margin: '0 auto' }}
                 onFinish={onFinish}
                 form={form}
-                // onFinishFailed={onFinishFailed}
-                onKeyDown={(event) => handleKeyDown(event)}
                 autoComplete="off"
             //https://stackoverflow.com/questions/61244343/defaultvalue-of-input-not-working-correctly-on-ant-design
             >
@@ -146,7 +139,6 @@ const UpdateInfoDepartment = (props) => {
                             labelCol={{ span: 24 }}
                             label="Description"
                             name="description"
-                            rules={[{ required: true }]}
                         >
                             <TextArea
                                 showCount
@@ -194,21 +186,21 @@ const UpdateInfoDepartment = (props) => {
                             <Upload
                                 name="thumbnail"
                                 listType="picture-card"
-                                className="avatar-uploader"
+                                className="image-uploader"
                                 maxCount={1}
                                 multiple={false}
+                                accept="image/png, image/jpeg, image/jpg"
                                 // fileList={dataThumbnail}
                                 // showUploadList={false}
-                                customRequest={handleUploadFileThumbnail}
+                                customRequest={handleUploadFile}
                                 beforeUpload={beforeUpload}
                                 onChange={handleChange}
                                 onPreview={handlePreview}
-                                onRemove={(file) => handleRemoveFile(file)}
                                 defaultFileList={initForm?.image?.fileList ?? []}
                             >
                                 <div>
                                     {loading ? <LoadingOutlined /> : <PlusOutlined />}
-                                    <div style={{ marginTop: 8, }} >Click to Upload </div>
+                                    <div style={{ marginTop: 8, }} >Upload </div>
                                 </div>
                             </Upload>
                         </Form.Item>

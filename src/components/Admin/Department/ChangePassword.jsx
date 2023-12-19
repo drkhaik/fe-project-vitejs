@@ -1,10 +1,10 @@
 import { Button, Row, Col, Form, Input, message, notification } from 'antd';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
-import { changeDepartmentPassword } from '../../../services/api';
+import { changeUserPassword } from '../../../services/api';
 
 const ChangePassword = (props) => {
-    const { setOpenUpdateModal, form, departmentInfo } = props;
+    const { setOpenUpdateModal, form, userInfo } = props;
     const [isSubmit, setIsSubmit] = useState(false);
 
     console.log("check render Change Password");
@@ -14,10 +14,10 @@ const ChangePassword = (props) => {
         const { password } = values;
         setIsSubmit(true);
         let data = {
-            "id": departmentInfo.id,
+            "id": userInfo.id,
             "password": password,
         };
-        let res = await changeDepartmentPassword(data);
+        let res = await changeUserPassword(data);
         // console.log("check res", res);
         if (res && res.errCode === 0) {
             message.success("Cập nhật mật khẩu thành công!");
@@ -102,7 +102,7 @@ const ChangePassword = (props) => {
 }
 
 const areEqual = (prevProps, nextProps) => {
-    return prevProps.departmentInfo === nextProps.departmentInfo
+    return prevProps.userInfo === nextProps.userInfo
 }
 
 export default React.memo(ChangePassword, areEqual);

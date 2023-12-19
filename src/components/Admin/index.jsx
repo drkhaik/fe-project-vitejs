@@ -111,7 +111,7 @@ const LayoutAdmin = () => {
                         <a onClick={(e) => e.preventDefault()}>
                             <Space>
                                 {/* <Avatar src={srcAvt} /> {user?.fullName} <Space /> */}
-                                <Avatar /> {user?.fullName} <Space />
+                                <Avatar /> {user?.name} <Space />
                                 <DownOutlined />
                             </Space>
                         </a>

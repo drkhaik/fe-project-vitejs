@@ -2,20 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table, Popconfirm, Tabs, Modal, Form, message } from 'antd';
 import { ReloadOutlined, UserAddOutlined, EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import moment from 'moment';
-import AddNewDepartment from './AddNew';
-import { fetchAllDepartment, fetchAllRole, deleteDepartment } from '../../../services/api';
+import { fetchAllUserAPI, fetchAllRole, deleteUser } from '../../../services/api';
+import AddNew from './AddNew';
 import ShowDetail from './ShowDetail';
 import UpdateInfoDepartment from './UpdateInfo';
 import ChangePassword from './ChangePassword';
 
 const Department = () => {
-    const [dataDepartment, setAllDataDepartment] = useState([]);
+    const [dataUsers, setAllDataUser] = useState([]);
     const [listRole, setListRole] = useState([]);
 
     const [openAddNewModal, setOpenAddModal] = useState(false);
     const [openDetailDrawer, setOpenDetailDrawer] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
-    const [departmentInfo, setDepartmentInfo] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
 
     const [formUpdateInfo] = Form.useForm();
     const [formChangePassword] = Form.useForm();
@@ -24,25 +24,25 @@ const Department = () => {
 
     console.log("check render parents component");
 
-    const fetchDataDepartment = async () => {
-        let res = await fetchAllDepartment();
+    const fetchDataUser = async () => {
+        let res = await fetchAllUserAPI();
         if (res && res.errCode === 0 && res.data) {
             let data = res.data;
-            let dataDepartment = []
+            let dataUsers = []
             for (let index = 0; index < data.length; index++) {
                 const item = data[index];
                 const newItem = {
                     ...item,
                     key: index + 1,
                 };
-                dataDepartment.push(newItem);
+                dataUsers.push(newItem);
             }
-            setAllDataDepartment(dataDepartment);
+            setAllDataUser(dataUsers);
         }
     }
 
     useEffect(() => {
-        fetchDataDepartment();
+        fetchDataUser();
     }, []);
 
     useEffect(() => {
@@ -61,10 +61,10 @@ const Department = () => {
     }, []);
 
     const onClickDeleteDepartment = async (id) => {
-        const res = await deleteDepartment(id);
+        const res = await deleteUser(id);
         if (res && res.errCode === 0) {
             message.success("Success!");
-            fetchDataDepartment();
+            fetchDataUser();
         } else {
             message.error("Oops...something went wrong...");
             // notification.error({
@@ -83,7 +83,7 @@ const Department = () => {
                     <>
                         <a href='#' onClick={() => {
                             setOpenDetailDrawer(true);
-                            setDepartmentInfo(record);
+                            setUserInfo(record);
                         }}>
                             {record.name}
                         </a>
@@ -98,11 +98,11 @@ const Department = () => {
         },
         {
             title: 'Role',
-            dataIndex: 'roleNameForDepartment',
+            dataIndex: 'roleData',
             render: (text, record, index) => {
                 return (
                     <>
-                        {record.roleNameForDepartment.name}
+                        {record.roleData.name}
                     </>
                 )
             }
@@ -118,7 +118,7 @@ const Department = () => {
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
                                 setOpenUpdateModal(true)
-                                setDepartmentInfo(record)
+                                setUserInfo(record)
                             }}
                         />
                         <Popconfirm
@@ -173,8 +173,8 @@ const Department = () => {
                     form={formUpdateInfo}
                     setIsSubmitUpdateForm={setIsSubmitUpdateForm}
                     listRole={listRole}
-                    departmentInfo={departmentInfo}
-                    fetchDataDepartment={fetchDataDepartment}
+                    userInfo={userInfo}
+                    fetchDataUser={fetchDataUser}
                 />,
         },
         {
@@ -184,7 +184,7 @@ const Department = () => {
                 <ChangePassword
                     setOpenUpdateModal={setOpenUpdateModal}
                     form={formChangePassword}
-                    departmentInfo={departmentInfo}
+                    userInfo={userInfo}
                 />,
         },
     ];
@@ -196,7 +196,7 @@ const Department = () => {
                     title={renderHeader}
                     // loading={isLoading}
                     columns={columns}
-                    dataSource={dataDepartment}
+                    dataSource={dataUsers}
                 // onChange={onChange}
                 // pagination={
                 //     {
@@ -206,15 +206,15 @@ const Department = () => {
                 // }
                 />
             </div>
-            <AddNewDepartment
+            <AddNew
                 openAddNewModal={openAddNewModal}
                 setOpenAddModal={setOpenAddModal}
                 listRole={listRole}
-                fetchDataDepartment={fetchDataDepartment}
+                fetchDataUser={fetchDataUser}
             />
 
             <ShowDetail
-                departmentInfo={departmentInfo}
+                userInfo={userInfo}
                 openDetailDrawer={openDetailDrawer}
                 setOpenDetailDrawer={setOpenDetailDrawer}
             />

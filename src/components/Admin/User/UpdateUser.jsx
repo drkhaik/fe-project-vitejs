@@ -10,7 +10,7 @@ const UpdateUser = (props) => {
 
     useEffect(() => {
         console.log("chekc userInfo", userInfo)
-        let role = listRole.filter(item => item.value === userInfo.roleId);
+        let role = listRole.filter(item => item.value === userInfo.roleID);
         console.log("check role", role)
 
         if (userInfo && userInfo.id) {
@@ -37,7 +37,7 @@ const UpdateUser = (props) => {
         let data = {
             "id": id,
             "fullName": fullName,
-            "roleId": role[0].value,
+            "roleID": role[0].value,
         };
         let res = await updateUserAPI(data);
         // console.log("check res", res);

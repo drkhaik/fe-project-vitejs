@@ -9,8 +9,8 @@ const initialState = {
   user: {
     id: "",
     email: "",
-    fullName: "",
-    roleId: "",
+    name: "",
+    roleID: "",
     role: ""
   },
 };
@@ -86,8 +86,8 @@ export const accountSlice = createSlice({
         state.user = {
           id: "",
           email: "",
-          fullName: "",
-          roleId: "",
+          name: "",
+          roleID: "",
           role: ""
         }
       })
@@ -103,9 +103,9 @@ export const accountSlice = createSlice({
         state.user = {
           id: "",
           email: "",
-          fullName: "",
+          name: "",
           role: "",
-          roleId: "",
+          roleID: "",
         }
       });
 

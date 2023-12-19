@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, Divider, message, notification, Select, InputNumber, Row, Col } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { createDepartment } from '../../../services/api';
+import { createUser } from '../../../services/api';
 import useImageHandling from '../../../hooks/useImageHandling';
 
 const { TextArea } = Input;
 
-const AddNewDepartment = (props) => {
-    const { openAddNewModal, setOpenAddModal, listRole, fetchDataDepartment } = props;
+const AddNew = (props) => {
+    const { openAddNewModal, setOpenAddModal, listRole, fetchDataUser } = props;
     const { loading,
         previewOpen,
         previewImage,
         previewTitle,
-        imgBase64,
-        setImgBase64,
+        public_id,
+        urlImage,
         handlePreview,
         beforeUpload,
         handleChange,
-        handleUploadFileThumbnail,
-        handleRemoveFile,
-        setPreviewOpen
+        handleUploadFile,
+        setPreviewOpen,
+        setPublic_id,
+        setUrlImage,
     } = useImageHandling();
 
     const [form] = Form.useForm();
@@ -27,35 +28,29 @@ const AddNewDepartment = (props) => {
 
     console.log("check render Add new");
 
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent the default form submission
-            form.submit();
-        }
-    };
 
     const onFinish = async (values) => {
         // console.log("check values", values);
-        // console.log("check img base64", imgBase64);
         // return;
         const { name, email, password, description, roleID } = values;
-        if (imgBase64 === "") return;
         setIsSubmit(true);
         let data = {
             "name": name,
             "email": email,
             "password": password,
             "description": description,
-            "image": imgBase64,
+            "image": urlImage,
+            "public_id": public_id,
             "roleID": roleID,
         };
-        let res = await createDepartment(data);
+        let res = await createUser(data);
         if (res && res.errCode === 0) {
             message.success("Successful!");
             form.resetFields();
             setOpenAddModal(false);
-            setImgBase64("");
-            await fetchDataDepartment();
+            setPublic_id(null);
+            setUrlImage(null);
+            await fetchDataUser();
         } else {
             notification.error({
                 message: "Something went wrong...",
@@ -79,7 +74,6 @@ const AddNewDepartment = (props) => {
                 }}
                 okText='Add'
                 confirmLoading={isSubmit}
-                // maskClosable={false}
                 width="60vw"
                 centered={true}
                 forceRender={true}
@@ -89,7 +83,6 @@ const AddNewDepartment = (props) => {
                     style={{ maxWidth: "100%", margin: '0 auto' }}
                     onFinish={onFinish}
                     form={form}
-                    onKeyDown={(event) => handleKeyDown(event)}
                     // onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 //https://stackoverflow.com/questions/61244343/defaultvalue-of-input-not-working-correctly-on-ant-design
@@ -171,7 +164,7 @@ const AddNewDepartment = (props) => {
                                 labelCol={{ span: 24 }}
                                 label="Description"
                                 name="description"
-                                rules={[{ required: true }]}
+                                // rules={[{ required: true }]}
                                 initialValue={"abc123"}
                             >
                                 <TextArea
@@ -213,23 +206,22 @@ const AddNewDepartment = (props) => {
                                 labelCol={{ span: 24 }}
                                 label="Avatar"
                                 name="image"
-                                //https://www.cnblogs.com/Freya0607/p/15935728.html
-                                // valuePropName="fileList"
-                                rules={[{ required: true, message: 'Please upload your image!' }]}
+                            //https://www.cnblogs.com/Freya0607/p/15935728.html
+                            // valuePropName="fileList"
+                            // rules={[{ required: true, message: 'Please upload your image!' }]}
                             >
                                 <Upload
-                                    name="thumbnail"
+                                    name="image"
                                     listType="picture-card"
-                                    className="avatar-uploader"
+                                    className="image-uploader"
                                     maxCount={1}
                                     multiple={false}
+                                    accept="image/png, image/jpeg, image/jpg"
                                     // fileList={dataThumbnail}
-                                    // showUploadList={false}
-                                    customRequest={handleUploadFileThumbnail}
+                                    customRequest={handleUploadFile}
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}
                                     onPreview={handlePreview}
-                                    onRemove={(file) => handleRemoveFile(file)}
                                 >
                                     <div>
                                         {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -279,4 +271,4 @@ const areEqual = (prevProps, nextProps) => {
     // return true;
 }
 
-export default React.memo(AddNewDepartment, areEqual);
+export default React.memo(AddNew, areEqual);

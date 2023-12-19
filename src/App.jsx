@@ -18,6 +18,7 @@ import LayoutAdmin from './components/Admin';
 import Dashboard from './components/Admin/Dashboard';
 import Department from './components/Admin/Department';
 import HomeStaff from './components/Staff';
+import Post from './components/Staff/Post';
 import TableUser from './components/Admin/User';
 import History from './components/Student/History';
 import Header from './components/Student/Header';
@@ -78,6 +79,10 @@ export default function App() {
       errorElement: <NotFound />,
       children: [,
         { index: true, element: <HomeStaff /> },
+        {
+          path: "post/",
+          element: <Post />,
+        },
       ],
     },
     {

@@ -5,13 +5,12 @@ import {
 import { fetchAllRole } from '../../services/api';
 
 const Sidebar = (props) => {
-    const { setUserID } = props;
+    const { setUserID, setOpenDrawer } = props;
     const [itemSidebar, setItemSidebar] = useState([]);
 
     useEffect(() => {
         const getAllRole = async () => {
             let res = await fetchAllRole();
-            console.log(res.data)
             setItemSidebar(res.data);
         }
         getAllRole();
@@ -19,7 +18,7 @@ const Sidebar = (props) => {
 
     return (
         <>
-            <div style={{ height: 32, margin: 14, textAlign: 'center', fontSize: 17 }}>Department</div>
+            {/* <div style={{ height: 32, margin: 14, textAlign: 'center', fontSize: 17 }}>Department</div> */}
             <List
                 itemLayout="horizontal"
                 dataSource={itemSidebar}
@@ -28,7 +27,10 @@ const Sidebar = (props) => {
                     <List.Item>
                         <List.Item.Meta
                             title={
-                                <a onClick={() => setUserID(item.id)}>
+                                <a onClick={() => {
+                                    setOpenDrawer(true)
+                                    setUserID(item.id)
+                                }}>
                                     <span className='title-status'>
                                         <span style={{ color: '#468aeb' }}>{item.name}</span>
                                         <span>{item.id % 2 === 0 ? <Tag color="blue"> Responded </Tag> : <Tag color="red"> Pending</Tag>}</span>
@@ -38,7 +40,6 @@ const Sidebar = (props) => {
                                         {item.id}
                                     </p>
                                 </a>
-
                             }
                         />
                     </List.Item>

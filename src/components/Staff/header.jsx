@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
     Dropdown, Space, Avatar, Button, Row, Col, message
 } from 'antd';
@@ -5,12 +6,13 @@ import { DownOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
+import UpdateInfo from './Department/UpdateInfo';
 
-const Header = (props) => {
+const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { setOpenModalUpdate } = props;
     const user = useSelector(state => state.account.user);
+    const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     const handleLogoutAction = () => {
         dispatch(handleLogoutReduxThunk());
@@ -19,12 +21,16 @@ const Header = (props) => {
     }
     const itemsDropdown = [
         {
+            label: <p onClick={() => setOpenModalUpdate(true)} style={{ margin: 0 }}>Chỉnh sửa thông tin</p>,
+            key: 'edit_info',
+        },
+        {
             label: <p onClick={() => handleLogoutAction()} style={{ margin: 0 }}>Đăng xuất</p>,
             key: 'logout',
         },
     ];
 
-    if (user.roleId === 1) {
+    if (user.roleID === 1) {
         itemsDropdown.unshift(
             {
                 label: <p onClick={() => navigate('/admin')} style={{ margin: 0 }}>Trang Admin</p>,
@@ -38,18 +44,26 @@ const Header = (props) => {
     }
 
     return (
-        <div className='staff-header'>
-            <Button onClick={() => setOpenModalUpdate(true)}> Xem thông tin phòng ban</Button>
-            <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
-                <a onClick={(e) => e.preventDefault()}>
-                    <Space>
-                        {/* <Avatar src={srcAvt} /> {user?.fullName} <Space /> */}
-                        <Avatar /> {user?.fullName} <Space />
-                        <DownOutlined />
-                    </Space>
-                </a>
-            </Dropdown>
-        </div>
+        <>
+            <div className='header'>
+                <Button onClick={() => navigate('/staff/post')}> Quản lý bài viết</Button>
+                <div style={{ textAlign: 'center', fontSize: 17 }}>Department</div>
+                <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
+                    <a onClick={(e) => e.preventDefault()}>
+                        <Space>
+                            {/* <Avatar src={srcAvt} /> {user?.fullName} <Space /> */}
+                            <Avatar /> {user?.fullName}
+                            <DownOutlined />
+                        </Space>
+                    </a>
+                </Dropdown>
+            </div>
+            <UpdateInfo
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+            />
+        </>
+
     )
 }
 

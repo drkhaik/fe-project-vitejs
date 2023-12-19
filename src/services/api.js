@@ -10,10 +10,6 @@ const fetchAllUserAPI = () => {
     return axios.get("/api/v1/user");
 }
 
-const createUser = (fullName, email, password) => {
-    return axios.post("/api/v1/user", { fullName, email, password });
-}
-
 const fetchUserAccountAPI = () => {
     return axios.get("/api/v1/fetch-account");
 }
@@ -26,30 +22,36 @@ const fetchAllRole = () => {
     return axios.get("/api/v1/role");
 }
 
+const createUser = (data) => {
+    return axios.post("/api/v1/user", data);
+}
+
 const updateUserAPI = (data) => {
     return axios.put("/api/v1/user", data);
 }
 
-// ======= DEPARTMENT ======
-
-const createDepartment = (data) => {
-    return axios.post("/api/v1/department", data);
+const changeUserPassword = (data) => {
+    return axios.put(`/api/v1/user/change-password`, data);
 }
 
-const fetchAllDepartment = () => {
-    return axios.get("/api/v1/department");
+const deleteUser = (id) => {
+    return axios.delete(`/api/v1/user/${id}`);
 }
 
-const updateDepartmentInfo = (data) => {
-    return axios.put(`/api/v1/department/`, data);
-}
-
-const changeDepartmentPassword = (data) => {
-    return axios.put(`/api/v1/department/change-password`, data);
-}
-
-const deleteDepartment = (id) => {
-    return axios.delete(`/api/v1/department/${id}`);
+const callUploadFileAPI = (file, public_id) => {
+    const bodyFormData = new FormData();
+    const publicID = public_id ? public_id : null;
+    bodyFormData.append('file', file);
+    bodyFormData.append('public_id', publicID);
+    return axios({
+        method: 'post',
+        url: '/api/v1/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            // "upload-type": "book"
+        },
+    });
 }
 
 export {
@@ -60,9 +62,7 @@ export {
     handleLogout,
     fetchAllRole,
     updateUserAPI,
-    createDepartment,
-    fetchAllDepartment,
-    updateDepartmentInfo,
-    changeDepartmentPassword,
-    deleteDepartment,
+    changeUserPassword,
+    deleteUser,
+    callUploadFileAPI,
 }

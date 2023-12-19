@@ -173,7 +173,7 @@ const UpdateInfo = (props) => {
                                     multiple={false}
                                     // fileList={dataThumbnail}
                                     // showUploadList={false}
-                                    customRequest={handleUploadFileThumbnail}
+                                    customRequest={handleUploadFile}
                                     beforeUpload={beforeUpload}
                                     onPreview={handlePreview}
                                     onChange={handleChange}

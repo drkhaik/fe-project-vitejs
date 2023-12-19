@@ -37,14 +37,14 @@ const Header = (props) => {
     ];
 
 
-    if (user.roleId === 2) {
+    if (user.roleID === 2) {
         items.unshift({
             label: <p onClick={() => navigate('/history')} style={{ margin: 0, cursor: 'pointer' }}>Xem lịch sử</p>,
             key: 'history'
         })
     }
 
-    if (user.roleId === 1) {
+    if (user.roleID === 1) {
         items.unshift(
             {
                 label: <p onClick={() => navigate('/admin')} style={{ margin: 0, cursor: 'pointer' }}>Trang Admin</p>,
@@ -127,7 +127,7 @@ const Header = (props) => {
                                         <a onClick={(e) => e.preventDefault()}>
                                             <Space>
                                                 <Avatar className='avt' />
-                                                {user?.fullName}
+                                                {user?.name}
                                                 <DownOutlined />
                                             </Space>
                                         </a>

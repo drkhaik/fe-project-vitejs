@@ -4,39 +4,37 @@ import {
 } from 'antd';
 import './homeStaff.scss';
 import UpdateInfo from './Department/UpdateInfo';
-import ContentStaffSide from './content';
-import Sidebar from './sidebar';
 import Header from './header';
+import Sidebar from './sidebar';
+import Message from './Message';
+import Post from './Post';
 
 const HomeStaff = () => {
-    const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [userID, setUserID] = useState(1);
-
-    const onReset = () => {
-        form.resetFields();
-    };
-
-    const clickViewInfo = async () => {
-        navigate('/department');
-    };
+    const [isOpenDrawer, setOpenDrawer] = useState(false);
 
     return (
-        <div className='wrapper'>
-            <Row className="layout-staff">
-                <Col className='sidebar' span={5} >
-                    <Sidebar setUserID={setUserID} />
+        <div className='wrapper-layout-staff'>
+            <Row className='layout-staff'>
+                <Col span={24}>
+                    <Header />
                 </Col>
-
-                <Col className='content' span={19} >
-                    <Header setOpenModalUpdate={setOpenModalUpdate} />
-                    <ContentStaffSide userID={userID} />
+                <Col span={24}>
+                    <Row className='container'>
+                        <Col className='sidebar' span={6} >
+                            <Sidebar setUserID={setUserID} setOpenDrawer={setOpenDrawer} />
+                        </Col>
+                        <Col className='content' span={18} >
+                            <Post />
+                        </Col>
+                    </Row>
                 </Col>
+                <Message
+                    userID={userID}
+                    isOpenDrawer={isOpenDrawer}
+                    setOpenDrawer={setOpenDrawer}
+                />
             </Row>
-
-            <UpdateInfo
-                openModalUpdate={openModalUpdate}
-                setOpenModalUpdate={setOpenModalUpdate}
-            />
         </div >
     )
 }

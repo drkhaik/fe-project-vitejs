@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { callUploadFileAPI } from '../services/api';
 
 const useImageHandling = () => {
     const [loading, setLoading] = useState(false);
     const [imgBase64, setImgBase64] = useState("");
+    const [public_id, setPublic_id] = useState(null);
+    const [urlImage, setUrlImage] = useState(null);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
@@ -28,7 +31,7 @@ const useImageHandling = () => {
     };
 
     const beforeUpload = (file) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
         if (!isJpgOrPng) {
             message.error('You can only upload JPG/PNG file!');
         }
@@ -40,7 +43,7 @@ const useImageHandling = () => {
     };
 
     const handleChange = (info) => {
-        // console.log("check file", info);
+        console.log("check file handleChange", info);
         if (info.file.status === 'uploading') {
             setLoading(true);
             return;
@@ -49,24 +52,23 @@ const useImageHandling = () => {
             // Get this url from response in real world.
             getBase64(info.file.originFileObj, (url) => {
                 setLoading(false);
-                setImgBase64(url); // url is base64
             });
         }
     };
 
-    const handleUploadFileThumbnail = async ({ file, onSuccess, onError }) => {
-        if (file) {
+    const handleUploadFile = async ({ file, onSuccess, onError }) => {
+        const res = await callUploadFileAPI(file, public_id);
+        if (res && res.data && res.errCode === 0) {
+            let public_id = res.data.public_id;
+            let url = res.data.url;
+            setPublic_id(public_id);
+            setUrlImage(url);
             onSuccess('ok');
         } else {
             onError('Upload file failed!');
         }
 
     };
-
-    const handleRemoveFile = () => {
-        setImgBase64("");
-        // initForm.image = null;
-    }
 
     // Define getBase64 and other necessary functions related to image handling here
 
@@ -76,13 +78,16 @@ const useImageHandling = () => {
         previewImage,
         previewTitle,
         imgBase64,
+        public_id,
+        urlImage,
         setImgBase64,
         handlePreview,
         beforeUpload,
         handleChange,
-        handleUploadFileThumbnail,
-        handleRemoveFile,
+        handleUploadFile,
         setPreviewOpen,
+        setPublic_id,
+        setUrlImage,
         // Include other functions and state variables related to image handling here
     };
 };

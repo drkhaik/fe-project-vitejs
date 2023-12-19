@@ -16,6 +16,8 @@
         justify-content: space-between;
         padding: 0 15px;
     }
+
+   
 }
 
 .img-department {
@@ -28,4 +30,12 @@
     padding: 10px;
     height: 150px;   
     border: 1px solid #edeeed;
+}
+
+.image-uploader {
+    .ant-upload-list-item-actions {
+        .ant-btn {
+            display: none;
+        }
+    }
 }
