@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, message, notification, Select, Row, Col, Button } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { updateUserAPI } from '../../../services/api';
+import { updateUserAPI, callUploadFileAPI } from '../../../services/api';
 import useImageHandling from '../../../hooks/useImageHandling';
 
 const { TextArea } = Input;
 const UpdateInfoDepartment = (props) => {
     const { openUpdateModal,
         setOpenUpdateModal,
-        setIsSubmitUpdateForm,
         form,
         listRole,
         userInfo,
@@ -20,20 +19,18 @@ const UpdateInfoDepartment = (props) => {
         previewOpen,
         previewImage,
         previewTitle,
-        public_id,
-        urlImage,
+        file,
+        setFile,
         handlePreview,
         beforeUpload,
         handleChange,
         handleUploadFile,
         setPreviewOpen,
-        setPublic_id,
-        setUrlImage
     } = useImageHandling();
 
     const [initForm, setInitForm] = useState(null);
-
-    console.log("check render Update");
+    const [public_id, setPublic_id] = useState(null);
+    const [isSubmit, setSubmit] = useState(false);
 
     useEffect(() => {
         if (userInfo && userInfo.id) {
@@ -55,8 +52,6 @@ const UpdateInfoDepartment = (props) => {
             }
             setInitForm(init);
             setPublic_id(userInfo.public_id);
-            setUrlImage(userInfo.image);
-            // setImgBase64(userInfo.image);
             form.setFieldsValue(init);
         }
         return () => {
@@ -66,33 +61,43 @@ const UpdateInfoDepartment = (props) => {
     }, [userInfo, openUpdateModal]);
 
     const onFinish = async (values) => {
-        const { id, name, description, roleID } = values;
-        setIsSubmitUpdateForm(true)
-        let data = {
-            "id": id,
-            "name": name,
-            "description": description,
-            "image": urlImage,
-            "public_id": public_id,
-            "roleID": roleID,
-        };
-        let res = await updateUserAPI(data);
-        // return;
-        if (res && res.errCode === 0) {
-            message.success("Successful!");
-            form.resetFields();
-            setOpenUpdateModal(false);
+        try {
+            setSubmit(true);
+            const { id, name, description, roleID } = values;
+            let data = {
+                "id": id,
+                "name": name,
+                "description": description,
+                "roleID": roleID,
+            };
+            // console.log("check file", file);
+            if (file && file.size > 0) {
+                const uploadRes = await callUploadFileAPI(file, public_id);
+                if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
+                    throw new Error("Upload file failed");
+                }
+                data.image = uploadRes.data.url;
+                data.public_id = uploadRes.data.public_id;
+            }
+            let res = await updateUserAPI(data);
+            if (res && res.errCode === 0) {
+                message.success("Successful!");
+                form.resetFields();
+                setOpenUpdateModal(false);
+                setPublic_id(null);
+                setFile({});
+                await fetchDataUser();
+            } else {
+                message.error("Oops...something went wrong!");
+            }
+            setSubmit(false);
+
+        } catch (error) {
+            console.error("An error occurred: ", error);
+        } finally {
             setPublic_id(null);
-            setUrlImage(null);
-            await fetchDataUser();
-        } else {
-            notification.error({
-                message: "Something went wrong...",
-                description: res.message,
-                duration: 5
-            })
+            setFile({});
         }
-        setIsSubmitUpdateForm(false)
     };
 
     return (
@@ -206,7 +211,7 @@ const UpdateInfoDepartment = (props) => {
                         </Form.Item>
                     </Col>
                     <div style={{ display: 'flex', paddingTop: '10px', justifyContent: 'end', gap: 20 }}>
-                        <Button type="primary" htmlType="submit" >
+                        <Button type="primary" htmlType="submit" loading={isSubmit}>
                             Submit
                         </Button>
                     </div>

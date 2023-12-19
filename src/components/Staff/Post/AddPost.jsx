@@ -56,31 +56,31 @@ const AddPost = (props) => {
         // console.log("check values", values);
         // console.log("check img base64", imgBase64);
         // return;
-        const { name, email, password, description, roleID } = values;
-        if (imgBase64 === "") return;
-        setIsSubmit(true);
-        let data = {
-            "name": name,
-            "email": email,
-            "password": password,
-            "description": description,
-            "image": imgBase64,
-            "roleID": roleID,
-        };
-        // let res = await createDepartment(data);
-        if (res && res.errCode === 0) {
-            message.success("Successful!");
-            form.resetFields();
-            setOpenAddModal(false);
-            await fetchDataUser();
-        } else {
-            notification.error({
-                message: "Something went wrong...",
-                description: res.message,
-                duration: 5
-            })
-        }
-        setIsSubmit(false)
+        // const { name, email, password, description, roleID } = values;
+        // if (imgBase64 === "") return;
+        // setIsSubmit(true);
+        // let data = {
+        //     "name": name,
+        //     "email": email,
+        //     "password": password,
+        //     "description": description,
+        //     "image": imgBase64,
+        //     "roleID": roleID,
+        // };
+        // // let res = await createDepartment(data);
+        // if (res && res.errCode === 0) {
+        //     message.success("Successful!");
+        //     form.resetFields();
+        //     setOpenAddModal(false);
+        //     await fetchDataUser();
+        // } else {
+        //     notification.error({
+        //         message: "Something went wrong...",
+        //         description: res.message,
+        //         duration: 5
+        //     })
+        // }
+        // setIsSubmit(false)
     };
 
 

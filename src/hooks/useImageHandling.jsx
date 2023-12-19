@@ -3,9 +3,7 @@ import { callUploadFileAPI } from '../services/api';
 
 const useImageHandling = () => {
     const [loading, setLoading] = useState(false);
-    const [imgBase64, setImgBase64] = useState("");
-    const [public_id, setPublic_id] = useState(null);
-    const [urlImage, setUrlImage] = useState(null);
+    const [file, setFile] = useState({});
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
@@ -43,13 +41,12 @@ const useImageHandling = () => {
     };
 
     const handleChange = (info) => {
-        console.log("check file handleChange", info);
+        // console.log("check file handleChange", info);
         if (info.file.status === 'uploading') {
             setLoading(true);
             return;
         }
         if (info.file.status === 'done') {
-            // Get this url from response in real world.
             getBase64(info.file.originFileObj, (url) => {
                 setLoading(false);
             });
@@ -57,37 +54,27 @@ const useImageHandling = () => {
     };
 
     const handleUploadFile = async ({ file, onSuccess, onError }) => {
-        const res = await callUploadFileAPI(file, public_id);
-        if (res && res.data && res.errCode === 0) {
-            let public_id = res.data.public_id;
-            let url = res.data.url;
-            setPublic_id(public_id);
-            setUrlImage(url);
+        // console.log("check file", file);
+        setFile(file);
+        if (file) {
             onSuccess('ok');
         } else {
             onError('Upload file failed!');
         }
-
     };
-
-    // Define getBase64 and other necessary functions related to image handling here
 
     return {
         loading,
         previewOpen,
         previewImage,
         previewTitle,
-        imgBase64,
-        public_id,
-        urlImage,
-        setImgBase64,
+        file,
+        setFile,
         handlePreview,
         beforeUpload,
         handleChange,
         handleUploadFile,
         setPreviewOpen,
-        setPublic_id,
-        setUrlImage,
         // Include other functions and state variables related to image handling here
     };
 };

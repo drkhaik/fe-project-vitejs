@@ -5,7 +5,6 @@ import UEFimg from '../../../assets/team_UEF.png';
 
 const ShowDetail = (props) => {
     const { userInfo, openDetailDrawer, setOpenDetailDrawer } = props;
-    console.log("check render detail");
     return (
         <Drawer
             title="User Detail"

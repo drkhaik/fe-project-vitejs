@@ -6,9 +6,6 @@ import { changeUserPassword } from '../../../services/api';
 const ChangePassword = (props) => {
     const { setOpenUpdateModal, form, userInfo } = props;
     const [isSubmit, setIsSubmit] = useState(false);
-
-    console.log("check render Change Password");
-
     const onFinish = async (values) => {
         // console.log('Success:', values);
         const { password } = values;

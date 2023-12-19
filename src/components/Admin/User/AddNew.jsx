@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, Divider, message, notification, Select, InputNumber, Row, Col } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { createUser } from '../../../services/api';
+import { createUser, callUploadFileAPI } from '../../../services/api';
 import useImageHandling from '../../../hooks/useImageHandling';
 
 const { TextArea } = Input;
@@ -12,55 +12,56 @@ const AddNew = (props) => {
         previewOpen,
         previewImage,
         previewTitle,
-        public_id,
-        urlImage,
+        file,
+        setFile,
         handlePreview,
         beforeUpload,
         handleChange,
         handleUploadFile,
         setPreviewOpen,
-        setPublic_id,
-        setUrlImage,
     } = useImageHandling();
 
     const [form] = Form.useForm();
     const [isSubmit, setIsSubmit] = useState(false);
 
-    console.log("check render Add new");
-
-
     const onFinish = async (values) => {
-        // console.log("check values", values);
-        // return;
-        const { name, email, password, description, roleID } = values;
-        setIsSubmit(true);
-        let data = {
-            "name": name,
-            "email": email,
-            "password": password,
-            "description": description,
-            "image": urlImage,
-            "public_id": public_id,
-            "roleID": roleID,
-        };
-        let res = await createUser(data);
-        if (res && res.errCode === 0) {
-            message.success("Successful!");
-            form.resetFields();
-            setOpenAddModal(false);
-            setPublic_id(null);
-            setUrlImage(null);
-            await fetchDataUser();
-        } else {
-            notification.error({
-                message: "Something went wrong...",
-                description: res.message,
-                duration: 5
-            })
-        }
-        setIsSubmit(false)
-    };
+        try {
+            setIsSubmit(true);
+            const uploadRes = await callUploadFileAPI(file);
+            if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
+                throw new Error("Upload file failed");
+            }
+            let url = uploadRes.data.url;
+            let public_id = uploadRes.data.public_id;
 
+            const { name, email, password, description, roleID } = values;
+            let data = {
+                "name": name,
+                "email": email,
+                "password": password,
+                "description": description,
+                "image": url,
+                "public_id": public_id,
+                "roleID": roleID,
+            };
+
+            let res = await createUser(data);
+            if (res && res.errCode === 0) {
+                message.success("Successful!");
+                form.resetFields();
+                setOpenAddModal(false);
+                setFile({});
+                await fetchDataUser();
+            } else {
+                message.error("Oops...something went wrong!");
+            }
+            setIsSubmit(false);
+        } catch (error) {
+            console.error("An error occurred: ", error);
+        } finally {
+            setFile({});
+        }
+    };
 
     return (
         <>
@@ -208,7 +209,6 @@ const AddNew = (props) => {
                                 name="image"
                             //https://www.cnblogs.com/Freya0607/p/15935728.html
                             // valuePropName="fileList"
-                            // rules={[{ required: true, message: 'Please upload your image!' }]}
                             >
                                 <Upload
                                     name="image"

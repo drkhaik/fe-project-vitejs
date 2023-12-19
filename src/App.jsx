@@ -16,7 +16,6 @@ import { fetchUserAccountReduxThunk } from './redux/account/accountSlice';
 import DepartmentPage from './pages/department';
 import LayoutAdmin from './components/Admin';
 import Dashboard from './components/Admin/Dashboard';
-import Department from './components/Admin/Department';
 import HomeStaff from './components/Staff';
 import Post from './components/Staff/Post';
 import TableUser from './components/Admin/User';
@@ -92,9 +91,6 @@ export default function App() {
       children: [
         {
           index: true, element: <Dashboard />
-        },
-        {
-          path: "department/", element: <Department />
         },
         {
           path: "user/", element: <TableUser />

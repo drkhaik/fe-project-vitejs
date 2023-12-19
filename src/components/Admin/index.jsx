@@ -22,11 +22,6 @@ const itemsSidebar = [
         icon: <AppstoreOutlined />
     },
     {
-        label: <Link to='/admin/department'> Department </Link>,
-        key: 'department',
-        icon: <ExceptionOutlined />
-    },
-    {
         label: <Link to='/admin/user'>User</Link>,
         key: 'user',
         icon: <UserOutlined />

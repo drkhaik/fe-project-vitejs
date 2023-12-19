@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
-    Row, Col, Form, Divider, Button, Tag, Input, Drawer
+    Row, Col, Form, Divider, Button, Tag, Input, Drawer, Upload, message
 } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
+const { Dragger } = Upload;
 const { TextArea } = Input;
 
 const Message = (props) => {
@@ -51,6 +52,50 @@ const Message = (props) => {
         //         duration: 3
         //     })
         // }
+    };
+
+    const beforeUpload = async (file) => {
+        if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg') {
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            if (!isLt2M) {
+                message.error('Ảnh phải nhỏ hơn 2MB!');
+            }
+            return isLt2M;
+        } else if (file.type === 'application/pdf' || file.type === 'application/vnd.ms-excel' || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            const isLt5M = file.size / 1024 / 1024 < 5;
+            if (!isLt5M) {
+                message.error('Tập tin PDF hoặc Excel phải nhỏ hơn 5MB!');
+            }
+            return isLt5M;
+        } else {
+            message.error('Bạn chỉ có thể tải lên file JPG/PNG, PDF hoặc Excel!');
+            return false;
+        }
+    }
+    const handleChange = (info) => {
+        if (info.file.status !== 'uploading') {
+            console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+        }
+    }
+
+    const handleUploadFile = async ({ file, onSuccess, onError }) => {
+        // const res = await callUploadFileAPI(file, public_id);
+        // if (res && res.data && res.errCode === 0) {
+        //     let public_id = res.data.public_id;
+        //     let url = res.data.url;
+        //     setPublic_id(public_id);
+        //     setUrlImage(url);
+        //     onSuccess('ok');
+        // } else {
+        //     onError('Upload file failed!');
+        // }
+        onSuccess('ok');
+
     };
 
     return (
@@ -188,10 +233,18 @@ const Message = (props) => {
                                     autoComplete="off"
                                 //https://stackoverflow.com/questions/61244343/defaultvalue-of-input-not-working-correctly-on-ant-design
                                 >
+                                    <Upload
+                                        customRequest={handleUploadFile}
+                                        beforeUpload={beforeUpload}
+                                        onChange={handleChange}
+                                        accept=".pdf,.xls,.xlsx,image/*"
+                                        maxCount={5}
+                                        multiple={true}
+                                    >
+                                        <Button icon={<UploadOutlined />}>Tải lên PDF hoặc Excel</Button>
+                                    </Upload>
                                     <Form.Item
                                         name="question"
-                                    // label="Name"
-                                    // style={{ width: '30%' }}
                                     >
                                         <TextArea
                                             showCount
