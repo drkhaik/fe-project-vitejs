@@ -24,7 +24,7 @@ const ProtectedRoute = (props) => {
             return <PermitAccess allowedRoles={['Admin']}>{props.children}</PermitAccess>;
         }
         if (isStaffRoute) {
-            return <PermitAccess allowedRoles={['Staff', 'Admin']}>{props.children}</PermitAccess>;
+            return <PermitAccess allowedRoles={['Department', 'Admin']}>{props.children}</PermitAccess>;
         }
         return <PermitAccess allowedRoles={['Admin', 'Student']}>{props.children}</PermitAccess>;
     };

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { callUploadFileAPI } from '../services/api';
 
 const useImageHandling = () => {
     const [loading, setLoading] = useState(false);

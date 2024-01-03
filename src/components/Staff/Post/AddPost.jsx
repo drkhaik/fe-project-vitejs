@@ -37,13 +37,11 @@ const AddPost = (props) => {
         toolbar: toolbarOptions,
     }
 
-    console.log("check text", text);
+    // console.log("check text", text);
 
     const handleChange = (value) => {
         setText(value);
     };
-
-    console.log("check render Add new");
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {

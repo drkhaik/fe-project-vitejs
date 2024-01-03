@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, message, notification, Select, Row, Col, Button } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
-import { updateUserAPI, callUploadFileAPI } from '../../../services/api';
+import { updateUserAPI, callUploadUserImgAPI } from '../../../services/api';
 import useImageHandling from '../../../hooks/useImageHandling';
 
 const { TextArea } = Input;
@@ -33,7 +33,7 @@ const UpdateInfoDepartment = (props) => {
     const [isSubmit, setSubmit] = useState(false);
 
     useEffect(() => {
-        if (userInfo && userInfo.id) {
+        if (userInfo && userInfo._id) {
             const arrImage = [
                 {
                     uid: uuidv4(),
@@ -43,11 +43,11 @@ const UpdateInfoDepartment = (props) => {
                 }
             ]
             const init = {
-                id: userInfo.id,
+                _id: userInfo._id,
                 name: userInfo.name,
                 email: userInfo.email,
                 description: userInfo.description,
-                roleID: userInfo.roleID,
+                roleID: userInfo.roleID._id,
                 image: { fileList: arrImage },
             }
             setInitForm(init);
@@ -63,16 +63,16 @@ const UpdateInfoDepartment = (props) => {
     const onFinish = async (values) => {
         try {
             setSubmit(true);
-            const { id, name, description, roleID } = values;
+            const { _id, name, description, roleID } = values;
             let data = {
-                "id": id,
+                "_id": _id,
                 "name": name,
                 "description": description,
                 "roleID": roleID,
             };
             // console.log("check file", file);
             if (file && file.size > 0) {
-                const uploadRes = await callUploadFileAPI(file, public_id);
+                const uploadRes = await callUploadUserImgAPI(file, public_id);
                 if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
                     throw new Error("Upload file failed");
                 }
@@ -114,7 +114,7 @@ const UpdateInfoDepartment = (props) => {
                     <Form.Item
                         hidden
                         labelCol={{ span: 24 }}
-                        name="id"
+                        name="_id"
                     >
                         <Input />
                     </Form.Item>

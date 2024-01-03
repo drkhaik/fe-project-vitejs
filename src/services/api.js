@@ -34,24 +34,63 @@ const changeUserPassword = (data) => {
     return axios.put(`/api/v1/user/change-password`, data);
 }
 
-const deleteUser = (id) => {
-    return axios.delete(`/api/v1/user/${id}`);
+const deleteUser = (_id) => {
+    return axios.delete(`/api/v1/user/${_id}`);
 }
 
-const callUploadFileAPI = (file, public_id) => {
+// ================ CONVERSATION ============
+
+
+const createConversation = (data) => {
+    return axios.post(`/api/v1/conversation`, data);
+}
+
+const fetchConversationById = (_id) => {
+    return axios.get(`/api/v1/conversation/${_id}`);
+}
+
+// ================ MESSAGE ============
+
+
+const fetchMessageHistoryById = (conversationId) => {
+    return axios.get(`/api/v1/message/history/${conversationId}`);
+}
+
+
+///// ============ UPLOAD =============
+
+const callUploadUserImgAPI = (file, public_id) => {
     const bodyFormData = new FormData();
     const publicID = public_id ? public_id : null;
     bodyFormData.append('file', file);
     bodyFormData.append('public_id', publicID);
     return axios({
         method: 'post',
-        url: '/api/v1/upload',
+        url: '/api/v1/upload/image',
         data: bodyFormData,
         headers: {
             "Content-Type": "multipart/form-data",
             // "upload-type": "book"
         },
     });
+}
+
+const callUploadMessageFileAPI = (file) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    return axios({
+        method: 'post',
+        url: '/api/v1/upload/file',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            // "upload-type": "book"
+        },
+    });
+}
+
+const getAllRole = () => {
+    return axios.get(`/api/v1/role`);
 }
 
 export {
@@ -64,5 +103,10 @@ export {
     updateUserAPI,
     changeUserPassword,
     deleteUser,
-    callUploadFileAPI,
+    callUploadUserImgAPI,
+    callUploadMessageFileAPI,
+    fetchConversationById,
+    createConversation,
+    fetchMessageHistoryById,
+    getAllRole,
 }

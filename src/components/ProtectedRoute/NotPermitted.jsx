@@ -9,7 +9,7 @@ const NotPermitted = () => {
     const userRole = user.role;
 
     const redirectHome = () => {
-        if (userRole === 'Staff') {
+        if (userRole === 'Department') {
             navigate('/staff');
         } else {
             navigate('/');

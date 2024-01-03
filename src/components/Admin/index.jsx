@@ -58,7 +58,7 @@ const LayoutAdmin = () => {
             key: 'home'
         },
         {
-            label: <p onClick={() => navigate('/staff')} style={{ margin: 0, cursor: 'pointer' }}>Trang Staff</p>,
+            label: <p onClick={() => navigate('/staff')} style={{ margin: 0, cursor: 'pointer' }}>Trang Department</p>,
             key: 'staff',
         },
         {
@@ -105,8 +105,7 @@ const LayoutAdmin = () => {
                     <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                         <a onClick={(e) => e.preventDefault()}>
                             <Space>
-                                {/* <Avatar src={srcAvt} /> {user?.fullName} <Space /> */}
-                                <Avatar /> {user?.name} <Space />
+                                <Avatar src={user.image} /> {user?.name} <Space />
                                 <DownOutlined />
                             </Space>
                         </a>

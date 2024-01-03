@@ -22,6 +22,7 @@ const User = () => {
 
     const fetchDataUser = async () => {
         let res = await fetchAllUserAPI();
+
         if (res && res.errCode === 0 && res.data) {
             let data = res.data;
             let dataUsers = []
@@ -44,10 +45,9 @@ const User = () => {
     useEffect(() => {
         const getAllRole = async () => {
             let res = await fetchAllRole();
-
             if (res && res.data) {
                 let d = res.data.map(item => {
-                    return { label: item.name, value: item.id }
+                    return { label: item.name, value: item._id }
                 })
                 setListRole(d);
             }
@@ -56,8 +56,8 @@ const User = () => {
 
     }, []);
 
-    const onClickDeleteDepartment = async (id) => {
-        const res = await deleteUser(id);
+    const onClickDeleteDepartment = async (_id) => {
+        const res = await deleteUser(_id);
         if (res && res.errCode === 0) {
             message.success("Success!");
             fetchDataUser();
@@ -90,11 +90,11 @@ const User = () => {
         },
         {
             title: 'Role',
-            dataIndex: 'roleData',
+            dataIndex: 'roleID',
             render: (text, record, index) => {
                 return (
                     <>
-                        {record.roleData.name}
+                        {record.roleID.name}
                     </>
                 )
             }
@@ -117,7 +117,7 @@ const User = () => {
                             placement="topLeft"
                             title="Are you sure?"
                             description="Are you sure to delete this department?"
-                            onConfirm={() => onClickDeleteDepartment(record.id)}
+                            onConfirm={() => onClickDeleteDepartment(record._id)}
                             okText="Yes"
                             cancelText="No"
                         >

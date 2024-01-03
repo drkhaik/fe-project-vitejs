@@ -12,6 +12,7 @@ const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
+    // console.log("check user header", user);
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     const handleLogoutAction = () => {
@@ -30,7 +31,7 @@ const Header = () => {
         },
     ];
 
-    if (user.roleID === 1) {
+    if (user.role === 'Admin') {
         itemsDropdown.unshift(
             {
                 label: <p onClick={() => navigate('/admin')} style={{ margin: 0 }}>Trang Admin</p>,
@@ -51,8 +52,7 @@ const Header = () => {
                 <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                     <a onClick={(e) => e.preventDefault()}>
                         <Space>
-                            {/* <Avatar src={srcAvt} /> {user?.fullName} <Space /> */}
-                            <Avatar /> {user?.fullName}
+                            <Avatar src={user.image} /> {user?.name} <Space />
                             <DownOutlined />
                         </Space>
                     </a>

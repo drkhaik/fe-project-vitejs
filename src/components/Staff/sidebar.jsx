@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
-    List, Tag, Badge
+    List, Tag, Badge, Avatar, Row, Col
 } from 'antd';
-import { fetchAllRole } from '../../services/api';
+import { fetchConversationById } from '../../services/api';
 
 const Sidebar = (props) => {
-    const { setUserID, setOpenDrawer } = props;
+    const user = useSelector(state => state.account.user);
+    const { setRecipient, setOpenDrawer } = props;
     const [itemSidebar, setItemSidebar] = useState([]);
-
-    useEffect(() => {
-        const getAllRole = async () => {
-            let res = await fetchAllRole();
-            setItemSidebar(res.data);
+    const fetchConversation = async () => {
+        if (user && user._id) {
+            let res = await fetchConversationById(user._id);
+            if (res && res.data) {
+                setItemSidebar(res.data);
+            }
         }
-        getAllRole();
-    }, []);
+    }
+    useEffect(() => {
+        fetchConversation();
+    }, [user]);
 
     return (
         <>
-            {/* <div style={{ height: 32, margin: 14, textAlign: 'center', fontSize: 17 }}>Department</div> */}
             <List
                 itemLayout="horizontal"
                 dataSource={itemSidebar}
@@ -27,18 +31,28 @@ const Sidebar = (props) => {
                     <List.Item>
                         <List.Item.Meta
                             title={
-                                <a onClick={() => {
-                                    setOpenDrawer(true)
-                                    setUserID(item.id)
-                                }}>
-                                    <span className='title-status'>
-                                        <span style={{ color: '#468aeb' }}>{item.name}</span>
-                                        <span>{item.id % 2 === 0 ? <Tag color="blue"> Responded </Tag> : <Tag color="red"> Pending</Tag>}</span>
-                                    </span>
-                                    <p className={item.id % 2 === 0 ? 'text-overflow' : 'text-overflow message-pending'}>
-                                        horizontalhorizontalhorizontaalhorizontaalhorizontaalhorizonta
-                                        {item.id}
-                                    </p>
+                                <a
+                                    key={index}
+                                    className='item-sidebar'
+                                    onClick={() => {
+                                        setOpenDrawer(true)
+                                        setRecipient(item)
+                                    }}>
+                                    <Row justify={'space-between'}>
+                                        <Col span={5} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <Avatar size={'large'} src={item.image} />
+                                        </Col>
+                                        <Col span={19}>
+                                            <span className='title-status'>
+                                                <span style={{ color: '#468aeb' }}>{item.name}</span>
+                                                <span>{item.id % 2 === 0 ? <Tag color="blue"> Responded </Tag> : <Tag color="red"> Pending</Tag>}</span>
+                                            </span>
+                                            <p className={item.id % 2 === 0 ? 'text-overflow' : 'text-overflow message-pending'}>
+                                                horizontalhorizontalhorizontaalhorizontaalhorizontaalhorizonta
+                                                {item.id}
+                                            </p>
+                                        </Col>
+                                    </Row>
                                 </a>
                             }
                         />

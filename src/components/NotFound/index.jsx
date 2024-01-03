@@ -9,7 +9,7 @@ const NotFound = () => {
     const userRole = user.role;
 
     const redirectHome = () => {
-        navigate(userRole === 'Staff' ? '/staff' : '/');
+        navigate(userRole === 'Department' ? '/staff' : '/');
     }
 
     return (

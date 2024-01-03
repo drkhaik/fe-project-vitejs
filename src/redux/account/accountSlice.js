@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-// import { fetchCount } from './counterAPI';
 import { fetchUserAccountAPI, handleLogout } from '../../services/api';
 
 const initialState = {
@@ -7,11 +6,12 @@ const initialState = {
   isLoading: true,
   token: "",
   user: {
-    id: "",
+    _id: "",
     email: "",
     name: "",
     roleID: "",
-    role: ""
+    image: "",
+    role: "",
   },
 };
 
@@ -35,7 +35,7 @@ export const fetchUserAccountReduxThunk = createAsyncThunk(
   async () => {
     const response = await fetchUserAccountAPI();
     // The value we return becomes the `fulfilled` action payload
-    console.log("check response fetchUserAccount", response.data);
+    // console.log("check response fetchUserAccount", response.data);
     return response.data;
   }
 );
@@ -84,9 +84,10 @@ export const accountSlice = createSlice({
         state.isLoading = false;
         state.token = "";
         state.user = {
-          id: "",
+          _id: "",
           email: "",
           name: "",
+          image: "",
           roleID: "",
           role: ""
         }
@@ -101,9 +102,10 @@ export const accountSlice = createSlice({
         state.isAuthenticated = false;
         state.token = "";
         state.user = {
-          id: "",
+          _id: "",
           email: "",
           name: "",
+          image: "",
           role: "",
           roleID: "",
         }

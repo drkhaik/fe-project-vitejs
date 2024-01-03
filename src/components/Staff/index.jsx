@@ -3,14 +3,14 @@ import {
     Row, Col, Tag
 } from 'antd';
 import './homeStaff.scss';
-import UpdateInfo from './Department/UpdateInfo';
 import Header from './header';
 import Sidebar from './sidebar';
-import Message from './Message';
+import Room from '../Conversation/Room';
 import Post from './Post';
 
+
 const HomeStaff = () => {
-    const [userID, setUserID] = useState(1);
+    const [recipient, setRecipient] = useState({});
     const [isOpenDrawer, setOpenDrawer] = useState(false);
 
     return (
@@ -22,15 +22,18 @@ const HomeStaff = () => {
                 <Col span={24}>
                     <Row className='container'>
                         <Col className='sidebar' span={6} >
-                            <Sidebar setUserID={setUserID} setOpenDrawer={setOpenDrawer} />
+                            <Sidebar
+                                setRecipient={setRecipient}
+                                setOpenDrawer={setOpenDrawer}
+                            />
                         </Col>
                         <Col className='content' span={18} >
                             <Post />
                         </Col>
                     </Row>
                 </Col>
-                <Message
-                    userID={userID}
+                <Room
+                    recipient={recipient}
                     isOpenDrawer={isOpenDrawer}
                     setOpenDrawer={setOpenDrawer}
                 />

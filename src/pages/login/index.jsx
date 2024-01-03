@@ -13,28 +13,20 @@ const LoginPage = () => {
     const dispatch = useDispatch();
 
     const onFinish = async (values) => {
-        // console.log('Received values of form: ', values);
         const { email, password } = values;
         setIsSubmit(true);
         let res = await handleLogin(email, password);
-        // console.log("check res", res);
         setIsSubmit(false);
         if (res && res.errCode === 0) {
             dispatch(doLoginAction(res.data));
-            // console.log("check res", res);
             let role = res?.data ? res.data.user.role : null;
-            // localStorage.setItem('access_token', token);
             message.success("Login successfully!");
             if (role === null) {
                 return;
             }
-            role === 'Staff' ? navigate('/staff') : navigate("/");
+            role === 'Department' ? navigate('/staff') : navigate("/");
         } else {
-            notification.error({
-                message: "Something went wrong...",
-                description: "Incorrect email or password!",
-                duration: 5
-            })
+            message.error("Incorrect email or password!");
         }
 
     };

@@ -37,21 +37,21 @@ const Header = (props) => {
     ];
 
 
-    if (user.roleID === 2) {
+    if (user.role === 'Student') {
         items.unshift({
             label: <p onClick={() => navigate('/history')} style={{ margin: 0, cursor: 'pointer' }}>Xem lịch sử</p>,
             key: 'history'
         })
     }
 
-    if (user.roleID === 1) {
+    if (user.role === 'Admin') {
         items.unshift(
             {
                 label: <p onClick={() => navigate('/admin')} style={{ margin: 0, cursor: 'pointer' }}>Trang Admin</p>,
                 key: 'admin'
             },
             {
-                label: <p onClick={() => navigate('/staff')} style={{ margin: 0, cursor: 'pointer' }}>Trang Staff</p>,
+                label: <p onClick={() => navigate('/staff')} style={{ margin: 0, cursor: 'pointer' }}>Trang Department</p>,
                 key: 'staff'
             },
         )
@@ -59,7 +59,7 @@ const Header = (props) => {
 
     const redirectHome = () => {
         const userRole = user.role;
-        navigate(userRole === 'Staff' ? '/staff' : '/');
+        navigate(userRole === 'Department' ? '/staff' : '/');
     }
 
     const onChangeInputSearch = (value) => {
@@ -126,7 +126,7 @@ const Header = (props) => {
                                     <Dropdown rootClassName='dropdown-custom-style' menu={{ items }} trigger={['click']}>
                                         <a onClick={(e) => e.preventDefault()}>
                                             <Space>
-                                                <Avatar className='avt' />
+                                                <Avatar className='avt' src={user.image} />
                                                 {user?.name}
                                                 <DownOutlined />
                                             </Space>

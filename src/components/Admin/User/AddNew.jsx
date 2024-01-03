@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, Divider, message, notification, Select, InputNumber, Row, Col } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { createUser, callUploadFileAPI } from '../../../services/api';
+import { createUser, callUploadUserImgAPI } from '../../../services/api';
 import useImageHandling from '../../../hooks/useImageHandling';
 
 const { TextArea } = Input;
@@ -27,7 +27,7 @@ const AddNew = (props) => {
     const onFinish = async (values) => {
         try {
             setIsSubmit(true);
-            const uploadRes = await callUploadFileAPI(file);
+            const uploadRes = await callUploadUserImgAPI(file);
             if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
                 throw new Error("Upload file failed");
             }
@@ -35,6 +35,7 @@ const AddNew = (props) => {
             let public_id = uploadRes.data.public_id;
 
             const { name, email, password, description, roleID } = values;
+            // console.log()
             let data = {
                 "name": name,
                 "email": email,
@@ -191,8 +192,8 @@ const AddNew = (props) => {
                                     showSearch
                                     placeholder="Select role"
                                     value={null}
-                                    allowClear
-                                    // onChange={onChange}
+                                    // allowClear
+                                    // onChange={onChangeRole}
                                     // onSearch={onSearch}
                                     // filterOption={(input, option) =>
                                     //     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())

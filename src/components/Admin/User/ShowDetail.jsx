@@ -20,7 +20,7 @@ const ShowDetail = (props) => {
                     <Descriptions.Item label="Email" span={3}>{userInfo.email}</Descriptions.Item>
                     <Descriptions.Item label="Description" span={3}>{userInfo.description} </Descriptions.Item>
                     <Descriptions.Item label="Role" span={3} >
-                        <Badge status="processing" text={userInfo.roleData.name} />
+                        <Badge status="processing" text={userInfo.roleID.name} />
                     </Descriptions.Item>
                     <Descriptions.Item label="Created At" span={2}>
                         {moment(userInfo.createdAt).format('DD-MM-YY HH:mm:ss')}

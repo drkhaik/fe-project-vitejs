@@ -24,6 +24,10 @@
                 height: 100vh;
                 overflow-y: auto; 
                 background: #fff;
+                .item-sidebar {
+                    display: flex;
+                    flex-direction: column;
+                }
                 .ant-list-item:hover {
                     background-color: #daeaffbf;
                 }
