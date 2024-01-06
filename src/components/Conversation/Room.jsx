@@ -11,12 +11,16 @@ const baseURL = import.meta.env.VITE_BACKEND_URL;
 const socket = io.connect(baseURL);
 
 const Room = (props) => {
-    const { recipient, isOpenDrawer, setOpenDrawer } = props;
+    const { isOpenDrawer, setOpenDrawer } = props;
     const user = useSelector(state => state.account.user);
+    const recipient = useSelector(state => state.conversation.recipient);
     const [room, setRoom] = useState("");
     const [showChat, setShowChat] = useState(false);
 
     const joinRoom = async () => {
+        if (!user || !recipient) {
+            return;
+        }
         let data = {
             senderId: user._id,
             recipientId: recipient._id
@@ -32,9 +36,7 @@ const Room = (props) => {
 
     useEffect(() => {
         joinRoom();
-    }, [recipient])
-
-    // console.log("check recipient", recipient);
+    }, [recipient, user])
 
     return (
         <div>
@@ -68,7 +70,6 @@ const Room = (props) => {
                     <Message
                         socket={socket}
                         room={room}
-                        recipient={recipient}
                     />
                 }
             </Drawer>
@@ -77,7 +78,6 @@ const Room = (props) => {
 }
 
 const areEqual = (prevProps, nextProps) => {
-    return prevProps.isOpenDrawer === nextProps.isOpenDrawer
-        && prevProps.recipient === nextProps.recipient;
+    return prevProps.isOpenDrawer === nextProps.isOpenDrawer;
 }
 export default React.memo(Room, areEqual);

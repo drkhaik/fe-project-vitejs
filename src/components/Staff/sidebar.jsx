@@ -4,10 +4,13 @@ import {
     List, Tag, Badge, Avatar, Row, Col
 } from 'antd';
 import { fetchConversationById } from '../../services/api';
+import { useDispatch } from 'react-redux';
+import { setRecipient } from '../../redux/conversation/conversationSlice';
 
 const Sidebar = (props) => {
+    const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
-    const { setRecipient, setOpenDrawer } = props;
+    const { setOpenDrawer } = props;
     const [itemSidebar, setItemSidebar] = useState([]);
     const fetchConversation = async () => {
         if (user && user._id) {
@@ -36,7 +39,7 @@ const Sidebar = (props) => {
                                     className='item-sidebar'
                                     onClick={() => {
                                         setOpenDrawer(true)
-                                        setRecipient(item)
+                                        dispatch(setRecipient(item))
                                     }}>
                                     <Row justify={'space-between'}>
                                         <Col span={5} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

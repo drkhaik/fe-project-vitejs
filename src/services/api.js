@@ -56,6 +56,9 @@ const fetchMessageHistoryById = (conversationId) => {
     return axios.get(`/api/v1/message/history/${conversationId}`);
 }
 
+const fetchMoreMessageHistory = (data) => {
+    return axios.post(`/api/v1/message/history`, data);
+}
 
 ///// ============ UPLOAD =============
 
@@ -108,5 +111,6 @@ export {
     fetchConversationById,
     createConversation,
     fetchMessageHistoryById,
+    fetchMoreMessageHistory,
     getAllRole,
 }

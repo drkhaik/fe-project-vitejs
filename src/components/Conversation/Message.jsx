@@ -2,47 +2,72 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
     Row, Col, Form, Divider, Button, Tag, Input, Drawer, Upload, message, Empty
 } from 'antd';
+import { ClipLoader } from "react-spinners";
 import { useSelector } from 'react-redux';
 import { UploadOutlined } from '@ant-design/icons';
-import ScrollToBottom from 'react-scroll-to-bottom';
-import { fetchMessageHistoryById, callUploadMessageFileAPI } from '../../services/api';
+import {
+    fetchMessageHistoryById,
+    callUploadMessageFileAPI,
+    fetchMoreMessageHistory
+}
+    from '../../services/api';
+import InfiniteScroll from 'react-infinite-scroll-component';
 const { Dragger } = Upload;
 const { TextArea } = Input;
 
 const Message = (props) => {
-    const { socket, room, recipient } = props;
+    const { socket, room } = props;
     const user = useSelector(state => state.account.user);
+    const recipient = useSelector(state => state.conversation.recipient);
     const [loading, setLoading] = useState(false);
     const [isSubmit, setIsSubmit] = useState(false);
     const [messageList, setMessageList] = useState([]);
 
     const [form] = Form.useForm();
 
-    const loadMoreData = () => {
+    const fetchMoreMessage = async () => {
         if (loading) {
             return;
         }
+        // if(hasMore)
         setLoading(true);
-        fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
-            .then((res) => res.json())
-            .then((body) => {
-                setData([...data, ...body.results]);
+        if (user && recipient) {
+            let conversationId = recipient.conversationId;
+            let lastMessageId = messageList[messageList.length - 1]._id;
+            let res = await fetchMoreMessageHistory({ conversationId, lastMessageId });
+            if (res && res.errCode === 0 && res.data) {
+                console.log("check message list", res.data);
+                setTimeout(() => {
+                    console.log('This message will be logged after 3 seconds');
+                    setMessageList((list) => [...list, ...res.data]);
+                    setLoading(false);
+                }, 3000);
+            } else {
+                message.error("Failed to load list message!");
                 setLoading(false);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
+            }
+        }
+        // fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
+        //     .then((res) => res.json())
+        //     .then((body) => {
+        //         setData([...data, ...body.results]);
+        //         setLoading(false);
+        //     })
+        //     .catch(() => {
+        //         setLoading(false);
+        //     });
     };
 
-    useEffect(() => {
-        loadMoreData();
-    }, []);
+    // useEffect(() => {
+    //     loadMoreData();
+    // }, []);
 
     const fetchMessageHistory = async () => {
         if (user && recipient) {
             let conversationId = recipient.conversationId;
             let res = await fetchMessageHistoryById(conversationId);
             if (res && res.errCode === 0 && res.data) {
+                // console.log("check message list", res.data);
                 setMessageList(res.data);
             } else {
                 message.error("Failed to load list message!");
@@ -58,7 +83,7 @@ const Message = (props) => {
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
             console.log("check data", newMessage);
-            setMessageList((list) => [...list, newMessage]);
+            setMessageList((list) => [newMessage, ...list]);
         })
     }, [socket]);
 
@@ -73,7 +98,7 @@ const Message = (props) => {
                 author: user._id,
             };
             await socket.emit("send_message", messageData);
-            setMessageList((list) => [...list, messageData]);
+            setMessageList((list) => [messageData, ...list]);
             form.resetFields();
         }
         setIsSubmit(false);
@@ -142,29 +167,61 @@ const Message = (props) => {
     };
 
     return (
-
         <Row>
             <Col span={24}>
                 <div className='chat-window'>
                     <div className='chat-body'>
-                        <ScrollToBottom className='message-container'>
+                        <div className='message-container'>
                             {messageList && messageList.length > 0 ?
-                                messageList.map((item, index) => {
-                                    return (
-                                        <div key={index} className='message' id={user._id === item.author ? 'you' : 'other'}>
-                                            <div>
-                                                <div className="message-content">
-                                                    <p>{item.body}</p>
+                                <div
+                                    id="scrollableDiv"
+                                    style={{
+                                        height: 'inherit',
+                                        overflow: 'auto',
+                                        display: 'flex',
+                                        flexDirection: 'column-reverse',
+                                    }}
+                                >
+                                    <InfiniteScroll
+                                        dataLength={messageList.length}
+                                        next={fetchMoreMessage}
+                                        style={{ display: 'flex', flexDirection: 'column-reverse' }}
+                                        inverse={true}
+                                        hasMore={true}
+                                        loader={<div style={{
+                                            marginTop: '10px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}>
+                                            <ClipLoader size={20} color="#36d7b7" loading={true} />
+                                        </div>}
+                                        endMessage={
+                                            <p style={{ textAlign: 'center' }}>
+                                                <b>Yay! You have seen it all</b>
+                                            </p>
+                                        }
+                                        scrollableTarget="scrollableDiv"
+                                    >
+                                        {messageList.map((item, index) => {
+                                            return (
+                                                <div key={index} className='message' id={user._id === item.author ? 'you' : 'other'}>
+                                                    <div>
+                                                        <div className="message-content">
+                                                            <p>{item.body}</p>
+                                                        </div>
+                                                        <div className="message-meta">
+                                                            <p id="time"></p>
+                                                            <p id="author">{user._id === item.author ? user.name : recipient.name}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="message-meta">
-                                                    {/* <p id="time">{messageContent.time}</p> */}
-                                                    {/* <p id="author">{item.author}</p> */}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                })
+                                            )
+                                        })}
+                                    </InfiniteScroll>
+                                </div>
                                 :
+
                                 <Empty
                                     style={{
                                         height: 'inherit',
@@ -176,7 +233,7 @@ const Message = (props) => {
                                     description='Send a message!'
                                 />
                             }
-                        </ScrollToBottom>
+                        </div>
                     </div>
                 </div>
             </Col>
@@ -230,7 +287,7 @@ const Message = (props) => {
                     </div>
                 </Form>
             </Col>
-        </Row>
+        </Row >
     )
 }
 
