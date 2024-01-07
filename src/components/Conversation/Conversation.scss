@@ -27,8 +27,12 @@
                 }
                 .message {
                     height: auto;
-                    padding: 10px;
+                    padding: 10px 5px;
+                    padding-bottom: 20px;
                     display: flex;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    align-items: center;
                     .message-content {
                         max-width: 450px;
                         padding: 10px;
@@ -40,36 +44,82 @@
                         align-items: center;
                         margin-right: 5px;
                         margin-left: 5px;
-                        // padding-right: 5px;
-                        // padding-left: 5px;
                         overflow-wrap: break-word;
                         word-break: break-word;
+
+                        &.file {
+                            border-radius: 8px;
+                            .click-download {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                text-decoration: none;
+                                color: inherit;
+                                background-color: inherit;
+                                border: none;
+                                padding: 0;
+                                margin: 0;
+
+                                .icon {
+                                    min-width: 3rem;
+                                    width: 15%;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    .anticon {
+                                        font-size: 1.5rem;
+                                    }
+                                }
+                                .info {
+                                    p {
+                                        margin: 0;
+                                        margin-bottom: 0.5rem;
+                                        font-size: 14px;
+                                    }
+                                    .file-name {
+                                        font-weight: bold;
+                                        // white-space: nowrap;
+                                        // overflow: hidden;
+                                        // text-overflow: ellipsis;
+                                        // display: inline-block;
+                                        // max-width: 100%;
+                                      }
+                                    .download-info {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        .file-size {
+                                            font-size: 12px;
+                                            color: #4a2323;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    .message-meta {
+                    .message-avt {
                         display: flex;
                         font-size: 12px;
                     }
                 }
                 #other {
-                    justify-content: flex-start;
-                    .message-content {
-                        justify-content: flex-start;
-                    }
-                    .message-meta {
-                        justify-content: flex-start;
-                        margin-left: 5px;
-                    }
+                    flex-direction: row-reverse;
+                    // .message-content {
+                    //     justify-content: flex-start;
+                    // }
+                    // .message-avt {
+                    //     justify-content: flex-start;
+                    //     margin-left: 5px;
+                    // }
                 }
                 #you {
-                    justify-content: flex-end;
                     .message-content {
-                        justify-content: flex-end;
+                        // justify-content: flex-end;
                         background-color: cornflowerblue;
                     }
-                    .message-meta {
-                        justify-content: flex-end;
-                        margin-right: 5px;
-                    }
+                    // .message-avt {
+                    //     justify-content: flex-end;
+                    //     margin-right: 5px;
+                    // }
                 }
             }
         }
@@ -106,15 +156,8 @@
         }
     }
    
-    .message-meta {
-        #author {
-            margin-left: 10px;
-            font-weight: bold;
-        }
+    .ant-upload-select {
+        display: block;
     }
-    .hide {
-        opacity: 0 !important;
-    }
-      
 
 }

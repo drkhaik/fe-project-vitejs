@@ -27,6 +27,7 @@
     "react-redux": "8.0.5",
     "react-router-dom": "6.9.0",
     "react-spinners": "0.13.8",
+    "react-units": "^1.0.1",
     "sass": "1.59.3",
     "socket.io-client": "^4.7.2",
     "uuid": "9.0.0"

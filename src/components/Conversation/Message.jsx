@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-    Row, Col, Form, Divider, Button, Tag, Input, Drawer, Upload, message, Empty
+    Row, Col, Form, Divider, Button, Tag, Input, Avatar, Upload, message, Empty
 } from 'antd';
 import { ClipLoader } from "react-spinners";
 import { useSelector } from 'react-redux';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, FileOutlined } from '@ant-design/icons';
 import {
     fetchMessageHistoryById,
     callUploadMessageFileAPI,
@@ -36,7 +36,7 @@ const Message = (props) => {
             let lastMessageId = messageList[messageList.length - 1]._id;
             let res = await fetchMoreMessageHistory({ conversationId, lastMessageId });
             if (res && res.errCode === 0 && res.data) {
-                console.log("check message list", res.data);
+                // console.log("check message list", res.data);
                 setTimeout(() => {
                     console.log('This message will be logged after 3 seconds');
                     setMessageList((list) => [...list, ...res.data]);
@@ -67,7 +67,7 @@ const Message = (props) => {
             let conversationId = recipient.conversationId;
             let res = await fetchMessageHistoryById(conversationId);
             if (res && res.errCode === 0 && res.data) {
-                // console.log("check message list", res.data);
+                console.log("check message list", res.data);
                 setMessageList(res.data);
             } else {
                 message.error("Failed to load list message!");
@@ -87,6 +87,13 @@ const Message = (props) => {
         })
     }, [socket]);
 
+    useEffect(() => {
+        socket.on("receive_file", (newMessage) => {
+            console.log("check data file", newMessage);
+            setMessageList((list) => [newMessage, ...list]);
+        })
+    }, [socket]);
+
     const onFinish = async (values) => {
         setIsSubmit(true);
         // console.log("check", values);
@@ -95,6 +102,7 @@ const Message = (props) => {
             const messageData = {
                 room: room,
                 body: text,
+                type: 'text',
                 author: user._id,
             };
             await socket.emit("send_message", messageData);
@@ -124,7 +132,11 @@ const Message = (props) => {
                 message.error('Ảnh phải nhỏ hơn 2MB!');
             }
             return isLt2M;
-        } else if (file.type === 'application/pdf' ||
+        } else if (
+            file.type === 'image/jpeg' ||
+            file.type === 'image/png' ||
+            file.type === 'image/jpg' ||
+            file.type === 'application/pdf' ||
             file.type === 'application/msword' ||
             file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
             file.type === 'application/vnd.ms-excel' ||
@@ -152,14 +164,44 @@ const Message = (props) => {
         }
     }
 
+    const getFileType = (file) => {
+        let fileType = file.type;
+        let type = "";
+        if (fileType === 'image/jpeg' || fileType === 'image/png' || fileType === 'image/jpg') {
+            type = "image";
+        } else if (fileType === 'application/pdf') {
+            type = "pdf";
+        } else if (fileType === 'application/zip') {
+            type = "zip";
+        } else if (fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            type = "word";
+        } else if (fileType === 'application/vnd.ms-excel' || fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            type = "excel";
+        }
+        return type;
+    }
+
     const handleUploadFile = async ({ file, onSuccess, onError }) => {
-        console.log("check file", file);
+        // console.log("check file", file);
         const res = await callUploadMessageFileAPI(file);
         if (res && res.data && res.errCode === 0) {
-            let public_id = res.data.public_id;
-            let url = res.data.url;
-            let fileName = res.data.fileName;
-            // console.log("check res", res);
+            const public_id = res.data.public_id;
+            const url = res.data.url;
+            const fileName = file.name;
+            const fileSize = file.size;
+            const fileType = getFileType(file);
+            const messageFile = {
+                room: room,
+                body: fileName,
+                author: user._id,
+                fileUrl: url,
+                public_id: public_id,
+                fileName: fileName,
+                fileType: fileType,
+                fileSize: fileSize,
+            };
+            await socket.emit("send_file", messageFile);
+            setMessageList((list) => [messageFile, ...list]);
             onSuccess('ok');
         } else {
             onError('Upload file failed!');
@@ -204,16 +246,31 @@ const Message = (props) => {
                                         scrollableTarget="scrollableDiv"
                                     >
                                         {messageList.map((item, index) => {
+                                            const isAuthor = user._id === item.author;
                                             return (
-                                                <div key={index} className='message' id={user._id === item.author ? 'you' : 'other'}>
-                                                    <div>
+                                                <div key={index} className='message' id={isAuthor ? 'you' : 'other'}>
+                                                    {item.type === 'text'
+                                                        ?
                                                         <div className="message-content">
                                                             <p>{item.body}</p>
                                                         </div>
-                                                        <div className="message-meta">
-                                                            <p id="time"></p>
-                                                            <p id="author">{user._id === item.author ? user.name : recipient.name}</p>
+                                                        :
+                                                        <div className='message-content file'>
+                                                            <a className='click-download' href={item.fileUrl} download>
+                                                                <div className='icon'>
+                                                                    <FileOutlined />
+                                                                </div>
+                                                                <div className='info'>
+                                                                    <p>File: <span className="file-name">{item.body}</span></p>
+                                                                    <div className='download-info'>
+                                                                        <span className='file-size'>Size: {(item.fileSize / (1024 * 1024)).toFixed(2)} MB</span>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
                                                         </div>
+                                                    }
+                                                    <div className="message-avt">
+                                                        <Avatar src={isAuthor ? user.image : recipient.image} />
                                                     </div>
                                                 </div>
                                             )
@@ -254,8 +311,9 @@ const Message = (props) => {
                             accept=".zip,.pdf,.docx,.xls,.xlsx,image/*"
                             maxCount={1}
                             multiple={true}
+                            showUploadList={false}
                         >
-                            <Button icon={<UploadOutlined />}>Đính kèm file</Button>
+                            <Button icon={<UploadOutlined />} block >Đính kèm file</Button>
                         </Upload>
                     </Form.Item>
                     <Form.Item
