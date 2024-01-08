@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Row, Col, Form, Divider, Button, Tag, Input, Avatar, Upload, message, Empty
 } from 'antd';
 import { ClipLoader } from "react-spinners";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
 import { UploadOutlined, FileOutlined } from '@ant-design/icons';
 import {
     fetchMessageHistoryById,
@@ -16,11 +17,13 @@ const { Dragger } = Upload;
 const { TextArea } = Input;
 
 const Message = (props) => {
+    const dispatch = useDispatch();
     const { socket, room } = props;
     const user = useSelector(state => state.account.user);
     const recipient = useSelector(state => state.conversation.recipient);
     const [loading, setLoading] = useState(false);
     const [isSubmit, setIsSubmit] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [messageList, setMessageList] = useState([]);
 
     const [form] = Form.useForm();
@@ -29,21 +32,22 @@ const Message = (props) => {
         if (loading) {
             return;
         }
-        // if(hasMore)
         setLoading(true);
         if (user && recipient) {
             let conversationId = recipient.conversationId;
             let lastMessageId = messageList[messageList.length - 1]._id;
             let res = await fetchMoreMessageHistory({ conversationId, lastMessageId });
             if (res && res.errCode === 0 && res.data) {
-                // console.log("check message list", res.data);
                 setTimeout(() => {
                     console.log('This message will be logged after 3 seconds');
-                    setMessageList((list) => [...list, ...res.data]);
+                    if (res.data.length !== 0) {
+                        setMessageList((list) => [...list, ...res.data]);
+                    } else {
+                        setHasMore(false);
+                    }
                     setLoading(false);
                 }, 3000);
             } else {
-                message.error("Failed to load list message!");
                 setLoading(false);
             }
         }
@@ -58,16 +62,12 @@ const Message = (props) => {
         //     });
     };
 
-    // useEffect(() => {
-    //     loadMoreData();
-    // }, []);
-
     const fetchMessageHistory = async () => {
         if (user && recipient) {
             let conversationId = recipient.conversationId;
             let res = await fetchMessageHistoryById(conversationId);
             if (res && res.errCode === 0 && res.data) {
-                console.log("check message list", res.data);
+                // console.log("check message list", res.data);
                 setMessageList(res.data);
             } else {
                 message.error("Failed to load list message!");
@@ -79,11 +79,11 @@ const Message = (props) => {
         fetchMessageHistory();
     }, [recipient]);
 
-
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            console.log("check data", newMessage);
+            // console.log("check message text", newMessage);
             setMessageList((list) => [newMessage, ...list]);
+            dispatch(setLastMessageToConversations(newMessage));
         })
     }, [socket]);
 
@@ -91,6 +91,7 @@ const Message = (props) => {
         socket.on("receive_file", (newMessage) => {
             console.log("check data file", newMessage);
             setMessageList((list) => [newMessage, ...list]);
+            dispatch(setLastMessageToConversations(newMessage));
         })
     }, [socket]);
 
@@ -107,22 +108,15 @@ const Message = (props) => {
             };
             await socket.emit("send_message", messageData);
             setMessageList((list) => [messageData, ...list]);
+            dispatch(setLastMessageToConversations({
+                conversation: room,
+                body: text,
+                type: 'text',
+                author: user._id,
+            }));
             form.resetFields();
         }
         setIsSubmit(false);
-        // let res = await createUser(fullname, email, password);
-        // setIsSubmit(false);
-        // if (res) {
-        //     // localStorage.setItem('access_token', res.data.access_token)
-        //     // dispatch(doLoginAction(res.data.user))
-        //     message.success("Successfully!");
-        // } else {
-        //     notification.error({
-        //         message: "Something went wrong...",
-        //         description: res.message ? res.message : "ok",
-        //         duration: 3
-        //     })
-        // }
     };
 
     const beforeUpload = async (file) => {
@@ -202,6 +196,16 @@ const Message = (props) => {
             };
             await socket.emit("send_file", messageFile);
             setMessageList((list) => [messageFile, ...list]);
+            dispatch(setLastMessageToConversations({
+                conversation: room,
+                body: fileName,
+                author: user._id,
+                fileUrl: url,
+                public_id: public_id,
+                fileName: fileName,
+                fileType: fileType,
+                fileSize: fileSize,
+            }));
             onSuccess('ok');
         } else {
             onError('Upload file failed!');
@@ -229,7 +233,7 @@ const Message = (props) => {
                                         next={fetchMoreMessage}
                                         style={{ display: 'flex', flexDirection: 'column-reverse' }}
                                         inverse={true}
-                                        hasMore={true}
+                                        hasMore={hasMore}
                                         loader={<div style={{
                                             marginTop: '10px',
                                             display: 'flex',
@@ -239,7 +243,7 @@ const Message = (props) => {
                                             <ClipLoader size={20} color="#36d7b7" loading={true} />
                                         </div>}
                                         endMessage={
-                                            <p style={{ textAlign: 'center' }}>
+                                            <p style={{ textAlign: 'center', padding: '10px 0' }}>
                                                 <b>Yay! You have seen it all</b>
                                             </p>
                                         }

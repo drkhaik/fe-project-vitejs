@@ -4,6 +4,10 @@ const handleLogin = (email, password) => {
     return axios.post("/api/v1/login", { email, password });
 }
 
+const handleLogout = () => {
+    return axios.post("/api/v1/logout");
+}
+
 // ======= USER ======
 
 const fetchAllUserAPI = () => {
@@ -12,10 +16,6 @@ const fetchAllUserAPI = () => {
 
 const fetchUserAccountAPI = () => {
     return axios.get("/api/v1/fetch-account");
-}
-
-const handleLogout = () => {
-    return axios.post("/api/v1/logout");
 }
 
 const fetchAllRole = () => {

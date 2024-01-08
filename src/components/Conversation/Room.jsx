@@ -2,15 +2,17 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
     Tag, Input, Drawer, Upload, Button, message, Row, Col
 } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setRecipient } from '../../redux/conversation/conversationSlice';
 import Message from './message';
 import './Conversation.scss';
 import io from "socket.io-client";
-import { createConversation, fetchMessageHistoryById } from '../../services/api';
+import { createConversation } from '../../services/api';
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 const socket = io.connect(baseURL);
 
 const Room = (props) => {
+    const dispatch = useDispatch();
     const { isOpenDrawer, setOpenDrawer } = props;
     const user = useSelector(state => state.account.user);
     const recipient = useSelector(state => state.conversation.recipient);
@@ -48,7 +50,10 @@ const Room = (props) => {
                     </>
                 }
                 placement="right"
-                onClose={() => setOpenDrawer(false)}
+                onClose={() => {
+                    setOpenDrawer(false)
+                    dispatch(setRecipient({}))
+                }}
                 open={isOpenDrawer}
                 width={'50vw'}
             >
