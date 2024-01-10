@@ -60,6 +60,26 @@ const fetchMoreMessageHistory = (data) => {
     return axios.post(`/api/v1/message/history`, data);
 }
 
+
+// ================ POST ============
+
+const createPost = (data) => {
+    return axios.post(`/api/v1/post`, data);
+}
+
+const fetchAllPost = () => {
+    return axios.get(`/api/v1/post`);
+}
+
+const updatePost = (data) => {
+    return axios.put(`/api/v1/post`, data);
+}
+
+const deletePost = (_id) => {
+    return axios.delete(`/api/v1/post/${_id}`);
+}
+
+
 ///// ============ UPLOAD =============
 
 const callUploadUserImgAPI = (file, public_id) => {
@@ -113,4 +133,8 @@ export {
     fetchMessageHistoryById,
     fetchMoreMessageHistory,
     getAllRole,
+    createPost,
+    fetchAllPost,
+    updatePost,
+    deletePost,
 }

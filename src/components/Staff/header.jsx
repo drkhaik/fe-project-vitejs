@@ -47,7 +47,7 @@ const Header = () => {
     return (
         <>
             <div className='header'>
-                <Button onClick={() => navigate('/staff/post')}> Quản lý bài viết</Button>
+                {/* <Button onClick={() => navigate('/staff/post')}> Quản lý bài viết</Button> */}
                 <div style={{ textAlign: 'center', fontSize: 17 }}>Department</div>
                 <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                     <a onClick={(e) => e.preventDefault()}>

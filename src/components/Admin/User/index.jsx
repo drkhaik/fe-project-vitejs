@@ -116,7 +116,7 @@ const User = () => {
                         <Popconfirm
                             placement="topLeft"
                             title="Are you sure?"
-                            description="Are you sure to delete this department?"
+                            description="Are you sure to delete?"
                             onConfirm={() => onClickDeleteDepartment(record._id)}
                             okText="Yes"
                             cancelText="No"

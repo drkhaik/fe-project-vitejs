@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Upload, Modal, Form, Input, Divider, message, notification, Button, Row, Col } from 'antd';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { createPost } from '../../../services/api';
+import { useSelector } from 'react-redux';
 
 const { TextArea } = Input;
 
 const AddPost = (props) => {
-    const { isOpenAddModal, setOpenAddModal } = props;
+    const { isOpenAddModal, setOpenAddModal, fetchPosts } = props;
+    const user = useSelector(state => state.account.user);
     const [form] = Form.useForm();
     const [isSubmit, setIsSubmit] = useState(false);
-
-    const [text, setText] = useState('');
 
     const toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -30,57 +30,39 @@ const AddPost = (props) => {
         [{ 'font': [] }],
         [{ 'align': [] }],
 
-        ['clean']                                         // remove formatting button
+        // ['clean']                                         // remove formatting button
     ];
 
     const module = {
         toolbar: toolbarOptions,
     }
 
-    // console.log("check text", text);
-
-    const handleChange = (value) => {
-        setText(value);
-    };
-
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent the default form submission
-            form.submit();
-        }
-    };
+    // const handleChange = (value) => {
+    //     setText(value);
+    // };
 
     const onFinish = async (values) => {
-        // console.log("check values", values);
-        // console.log("check img base64", imgBase64);
-        // return;
-        // const { name, email, password, description, roleID } = values;
-        // if (imgBase64 === "") return;
-        // setIsSubmit(true);
-        // let data = {
-        //     "name": name,
-        //     "email": email,
-        //     "password": password,
-        //     "description": description,
-        //     "image": imgBase64,
-        //     "roleID": roleID,
-        // };
-        // // let res = await createDepartment(data);
-        // if (res && res.errCode === 0) {
-        //     message.success("Successful!");
-        //     form.resetFields();
-        //     setOpenAddModal(false);
-        //     await fetchDataUser();
-        // } else {
-        //     notification.error({
-        //         message: "Something went wrong...",
-        //         description: res.message,
-        //         duration: 5
-        //     })
-        // }
-        // setIsSubmit(false)
+        const { title, description } = values;
+        if (!title || !description) {
+            return;
+        }
+        setIsSubmit(true);
+        let data = {
+            "title": title,
+            "description": description,
+            "author": user._id
+        };
+        let res = await createPost(data);
+        if (res && res.errCode === 0) {
+            message.success("Successful!");
+            form.resetFields();
+            setOpenAddModal(false);
+            await fetchPosts();
+        } else {
+            message.error("Something went wrong...");
+        }
+        setIsSubmit(false);
     };
-
 
     return (
         <>
@@ -98,14 +80,12 @@ const AddPost = (props) => {
                 width="60vw"
                 centered={true}
                 forceRender={true}
-                footer={null}
             >
                 <Form
                     name="basic"
                     style={{ maxWidth: "100%", margin: '0 auto' }}
                     onFinish={onFinish}
                     form={form}
-                    onKeyDown={(event) => handleKeyDown(event)}
                     // onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 //https://stackoverflow.com/questions/61244343/defaultvalue-of-input-not-working-correctly-on-ant-design
@@ -114,8 +94,8 @@ const AddPost = (props) => {
                         <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Name"
-                                name="name"
+                                label="Title"
+                                name="title"
                                 rules={[{ required: true, message: 'Please input your department/faculty name!' }]}
                             >
                                 <Input />
@@ -130,55 +110,25 @@ const AddPost = (props) => {
                                 rules={[{ required: true }]}
                             >
                                 <ReactQuill
-                                    style={{ height: 400, resize: 'none', }}
+                                    style={{ height: 400, resize: 'none', paddingBottom: 50 }}
                                     modules={module}
-                                    value={text}
-                                    onChange={handleChange}
+                                    // value={text}
+                                    // onChange={handleChange}
                                     theme="snow"
                                 />
-                            </Form.Item>
-                        </Col>
-                        <Col span={24}>
-                            <Form.Item
-                                style={{ display: 'flex', paddingTop: '10px', justifyContent: 'end', gap: 20 }}
-                            >
-                                <Button type="primary" htmlType="submit" >
-                                    Submit
-                                </Button>
+                                {/* <Tiptap /> */}
                             </Form.Item>
                         </Col>
                     </Row>
                 </Form>
-            </Modal>
+            </Modal >
         </>
     );
 }
 
 const areEqual = (prevProps, nextProps) => {
     return prevProps.isOpenAddModal === nextProps.isOpenAddModal;
-    //     for (let key in obj) {
-    //         if (typeof obj[key] !== 'function') {
-    //             result[key] = obj[key];
-    //         }
-    //     }
-    //     return result;
-    // }
 
-    // let prevPropsClean = removeFunctions(prevProps);
-    // let nextPropsClean = removeFunctions(nextProps);
-
-    // const prevPropsArr = Object.values(prevPropsClean);
-    // const nextPropsArr = Object.values(nextPropsClean);
-
-    // // console.log("check prevPropsArr", prevPropsArr);
-    // // console.log("check nextPropsArr", nextPropsArr);
-
-    // for (let i = 0; i < prevPropsArr.length; i++) {
-    //     if (prevPropsArr[i] !== nextPropsArr[i]) {
-    //         return false;
-    //     }
-    // }
-    // return true;
 }
 
 export default React.memo(AddPost, areEqual);

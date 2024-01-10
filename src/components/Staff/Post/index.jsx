@@ -1,29 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
-    Row, Col, Tag, Typography, Card, Avatar
+    Row, Col, Tag, Typography, Card, Avatar, message, Empty, Popconfirm
 } from 'antd';
 import { EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 const { Title, Paragraph, Text, Link } = Typography;
 const { Meta } = Card;
 import imgUEF from '../../../assets/logo-uef-home.jpg';
-import AddPost from './AddPost';
+import { fetchAllPost, deletePost } from '../../../services/api';
+const AddPost = React.lazy(() => import('./AddPost'));
+const UpdatePost = React.lazy(() => import('./UpdatePost'));
+import LoadingComponent from '../../Loading/loadingComponent';
+import { useSelector } from 'react-redux';
+import './post.scss';
 
 const Post = () => {
+    const user = useSelector(state => state.account.user);
     const [isOpenAddModal, setOpenAddModal] = useState(false);
     const [isOpenEditModal, setOpenEditModal] = useState(false);
+    const [postInfo, setPostInfo] = useState("");
+    const [listPost, setListPost] = useState([]);
 
-    // const [loading, setLoading] = useState(false);
-    const Description = () => {
-        return (
-            <Typography>
-                <Title level={4}>Introduction</Title>
-                <Paragraph copyable>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                    <img src={imgUEF} />
-                </Paragraph>
-            </Typography>
-        )
+    const fetchPosts = async () => {
+        const res = await fetchAllPost();
+        if (res && res.data) {
+            setListPost(res.data);
+        } else {
+            message.error("Failed to load list postInfo")
+        }
     }
+
+    const onClickPost = (item) => {
+        // console.log("check item", item)
+        setOpenEditModal(true);
+        setPostInfo(item);
+    }
+
+    const onClickDeletePost = async (_id) => {
+        const res = await deletePost(_id);
+        if (res && res.errCode === 0) {
+            message.success("Success!");
+            await fetchPosts();
+        } else {
+            message.error("Oops...something went wrong...");
+        }
+    }
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
 
     return (
         <>
@@ -36,78 +60,96 @@ const Post = () => {
                                 marginTop: 16,
                             }}
                             hoverable={true}
-                            onClick={() => setOpenAddModal(true)}
+                            onClick={() => onClickPost(item)}
                         >
                             <Meta
-                                avatar={<Avatar size={'large'} src={imgUEF} />}
-                                title="Phòng công tác sinh viên"
+                                avatar={<Avatar size={'large'} src={user.image ? user.image : imgUEF} />}
+                                title={user.name}
                                 description={"What u do today determines who u will be tomorrow..."}
                             />
                         </Card>
-                        <Card
-                            style={{
-                                // width: 300,
-                                marginTop: 16,
-                            }}
-                            hoverable={true}
-                            // loading={loading}
-                            actions={[
-                                <EditOutlined onClick={() => console.log("click edit")} key="edit" />,
-                                <DeleteOutlined onClick={() => console.log("click setting")} key="ellipsis" />,
-                            ]}
-                        >
-                            <Meta
-                                avatar={<Avatar size={'large'} src={imgUEF} />}
-                                title="Phòng công tác sinh viên"
-                                description={<Description />}
+                        {listPost && listPost.length > 0
+                            ?
+                            listPost.map((item, index) => {
+                                return (
+                                    <Card
+                                        key={index}
+                                        style={{
+                                            // width: 300,
+                                            marginTop: 16,
+                                        }}
+                                        hoverable={true}
+                                        actions={[
+                                            <EditOutlined onClick={() => onClickPost(item)} key="edit" />,
+                                            <Popconfirm
+                                                placement="topLeft"
+                                                title="Are you sure?"
+                                                description="Are you sure to delete this post?"
+                                                onConfirm={() => onClickDeletePost(item._id)}
+                                                okText="Yes"
+                                                cancelText="No"
+                                                key="delete"
+                                            >
+                                                <span style={{ cursor: 'pointer', margin: "0 20px" }}>
+                                                    <DeleteOutlined />
+                                                </span>
+                                            </Popconfirm>,
+                                            // <DeleteOutlined onClick={() => console.log("click setting")} key="delete" />,
+                                        ]}
+                                    >
+                                        <Meta
+                                            onClick={() => {
+                                                setOpenEditModal(true);
+                                                setPostInfo(item);
+                                            }}
+                                            avatar={<Avatar size={'large'} src={item.author.image ? item.author.image : imgUEF} />}
+                                            title={item.author.name}
+                                            description={
+                                                <Typography>
+                                                    <Title level={4}>{item.title}</Title>
+                                                    <Paragraph>
+                                                        <div dangerouslySetInnerHTML={{ __html: item.description }}></div>
+                                                    </Paragraph>
+                                                </Typography>
+                                            }
+                                        />
+                                    </Card>
+                                )
+                            })
+                            :
+                            <Empty
+                                style={{
+                                    height: 'inherit',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'column'
+                                }}
+                                description='Send a message!'
                             />
-                        </Card>
-                        <Card
-                            style={{
-                                // width: 300,
-                                marginTop: 16,
-                            }}
-                            hoverable={true}
-                            // loading={loading}
-                            actions={[
-                                <EditOutlined key="edit" />,
-                                <DeleteOutlined key="ellipsis" />,
-                            ]}
-                        >
-                            <Meta
-                                avatar={<Avatar size={'large'} src={imgUEF} />}
-                                title="Phòng công tác sinh viên"
-                                description={<Description />}
-                            />
-                        </Card>
-                        <Card
-                            style={{
-                                // width: 300,
-                                marginTop: 16,
-                            }}
-                            hoverable={true}
-                            // loading={loading}
-                            actions={[
-                                <EditOutlined key="edit" />,
-                                <DeleteOutlined key="ellipsis" />,
-                            ]}
-                        >
-                            <Meta
-                                avatar={<Avatar size={'large'} src={imgUEF} />}
-                                title="Phòng công tác sinh viên"
-                                description={<Description />}
-                            />
-                        </Card>
+                        }
                     </div>
                 </Col>
                 <Col span={8}>
                     dont know what to do with it
                 </Col>
             </Row>
-            <AddPost
-                isOpenAddModal={isOpenAddModal}
-                setOpenAddModal={setOpenAddModal}
-            />
+            <Suspense fallback={<LoadingComponent />}>
+                <AddPost
+                    isOpenAddModal={isOpenAddModal}
+                    setOpenAddModal={setOpenAddModal}
+                    fetchPosts={fetchPosts}
+                />
+            </Suspense>
+            <Suspense fallback={<LoadingComponent />}>
+                <UpdatePost
+                    isOpenEditModal={isOpenEditModal}
+                    setOpenEditModal={setOpenEditModal}
+                    postInfo={postInfo}
+                    fetchPosts={fetchPosts}
+                />
+            </Suspense>
+
         </ >
     )
 }

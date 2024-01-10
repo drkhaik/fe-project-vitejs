@@ -1,10 +1,9 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     List, Tag, Badge, Avatar, Row, Col
 } from 'antd';
 import { fetchConversationById } from '../../services/api';
-import { useDispatch } from 'react-redux';
 import { setRecipient, setConversations } from '../../redux/conversation/conversationSlice';
 import LoadingComponent from '../Loading/loadingComponent';
 const Room = React.lazy(() => import('./Room'));
@@ -12,21 +11,21 @@ const Room = React.lazy(() => import('./Room'));
 const Conversation = () => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
-    console.log("check user", user);
     const conversations = useSelector(state => state.conversation.conversations);
-    // const [itemSidebar, setItemSidebar] = useState([]);
     const [isOpenDrawer, setOpenDrawer] = useState(false);
 
     const fetchConversation = async () => {
         if (user && user._id) {
             let res = await fetchConversationById(user._id);
             if (res && res.data) {
-                console.log("check res.data", res.data);
+                // console.log("check res.data", res.data);
                 dispatch(setConversations(res.data));
                 // setItemSidebar(res.data);
             }
         }
     }
+    ///// modify the user scheme, for students (mssv, faculty,) and for department
+    //// send message to department and their faculty
 
     useEffect(() => {
         fetchConversation();

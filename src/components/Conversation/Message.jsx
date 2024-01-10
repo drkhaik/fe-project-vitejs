@@ -188,6 +188,7 @@ const Message = (props) => {
                 room: room,
                 body: fileName,
                 author: user._id,
+                type: 'file',
                 fileUrl: url,
                 public_id: public_id,
                 fileName: fileName,
@@ -200,6 +201,7 @@ const Message = (props) => {
                 conversation: room,
                 body: fileName,
                 author: user._id,
+                type: 'file',
                 fileUrl: url,
                 public_id: public_id,
                 fileName: fileName,
@@ -260,7 +262,7 @@ const Message = (props) => {
                                                         </div>
                                                         :
                                                         <div className='message-content file'>
-                                                            <a className='click-download' href={item.fileUrl} download>
+                                                            <a className='click-download' href={item.fileUrl} target="_blank" download>
                                                                 <div className='icon'>
                                                                     <FileOutlined />
                                                                 </div>

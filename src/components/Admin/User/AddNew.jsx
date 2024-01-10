@@ -27,24 +27,23 @@ const AddNew = (props) => {
     const onFinish = async (values) => {
         try {
             setIsSubmit(true);
-            const uploadRes = await callUploadUserImgAPI(file);
-            if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
-                throw new Error("Upload file failed");
-            }
-            let url = uploadRes.data.url;
-            let public_id = uploadRes.data.public_id;
-
             const { name, email, password, description, roleID } = values;
-            // console.log()
             let data = {
                 "name": name,
                 "email": email,
                 "password": password,
                 "description": description,
-                "image": url,
-                "public_id": public_id,
                 "roleID": roleID,
             };
+
+            if (file && file.size > 0) {
+                const uploadRes = await callUploadUserImgAPI(file);
+                if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
+                    throw new Error("Upload file failed");
+                }
+                data.image = uploadRes.data.url;
+                data.public_id = uploadRes.data.public_id;
+            }
 
             let res = await createUser(data);
             if (res && res.errCode === 0) {
