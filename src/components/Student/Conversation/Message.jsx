@@ -4,7 +4,7 @@ import {
 } from 'antd';
 import { ClipLoader } from "react-spinners";
 import { useSelector, useDispatch } from 'react-redux';
-import { setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
+import { setLastMessageToConversations, fetchListConversationReduxThunk } from '../../redux/conversation/conversationSlice';
 import { UploadOutlined, FileOutlined } from '@ant-design/icons';
 import {
     fetchMessageHistoryById,
@@ -25,6 +25,11 @@ const Message = (props) => {
     const [isSubmit, setIsSubmit] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [messageList, setMessageList] = useState([]);
+    const [notification, setNotification] = useState([]);
+
+    console.log("check user", user);
+    console.log("check recipient", recipient);
+    console.log("check notification", notification);
 
     const [form] = Form.useForm();
 
@@ -81,10 +86,31 @@ const Message = (props) => {
 
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            // console.log("check message text", newMessage);
+            console.log("check message text", newMessage);
             setMessageList((list) => [newMessage, ...list]);
             dispatch(setLastMessageToConversations(newMessage));
         })
+
+        socket.on("receive_notification", (newMessage) => {
+            // console.log("check receive_notification 1", newMessage);
+            // let conversationId = newMessage.conversation;
+            // let [authorId, secondString] = conversationId.split(/-(.*)/);
+            // console.log("check author Id", authorId);
+            // let recipientId = conversationId.substring(0, conversationId);
+            // console.log("check recipientId", recipientId);
+            console.log("check receive_notification", newMessage);
+            if (newMessage.conversation === recipient.conversationId) {
+                setNotification((list) => [newMessage, ...list]);
+            }
+            // server gui len 1 dong newMessage deu co conversation,
+            // viec cua m la tim ra conversation do cua ai, la nguoi nhan de gui
+            // thong bao ve cho ho
+        })
+
+        return () => {
+            socket.off("receive_message");
+        }
+
     }, [socket]);
 
     useEffect(() => {
@@ -93,11 +119,15 @@ const Message = (props) => {
             setMessageList((list) => [newMessage, ...list]);
             dispatch(setLastMessageToConversations(newMessage));
         })
+
+        return () => {
+            socket.off("receive_file");
+        }
+
     }, [socket]);
 
     const onFinish = async (values) => {
         setIsSubmit(true);
-        // console.log("check", values);
         const { file, text } = values;
         if (text) {
             const messageData = {

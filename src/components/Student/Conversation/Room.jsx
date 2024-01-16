@@ -5,19 +5,31 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { setRecipient } from '../../redux/conversation/conversationSlice';
 import Message from './message';
-import './Conversation.scss';
 import io from "socket.io-client";
 import { createConversation } from '../../services/api';
+import { fetchListConversationReduxThunk } from '../../redux/conversation/conversationSlice';
 const baseURL = import.meta.env.VITE_BACKEND_URL;
-const socket = io.connect(baseURL);
 
 const Room = (props) => {
     const dispatch = useDispatch();
     const { isOpenDrawer, setOpenDrawer } = props;
     const user = useSelector(state => state.account.user);
     const recipient = useSelector(state => state.conversation.recipient);
+    const [socket, setSocket] = useState(null);
     const [room, setRoom] = useState("");
     const [showChat, setShowChat] = useState(false);
+    const conversations = useSelector(state => state.conversation.conversations);
+
+    console.log("check conversations room", conversations);
+
+    useEffect(() => {
+        const newSocket = io.connect(baseURL);
+        setSocket(newSocket);
+
+        return () => {
+            newSocket.disconnect();
+        }
+    }, [user])
 
     const joinRoom = async () => {
         if (!user || !recipient) {
@@ -32,13 +44,31 @@ const Room = (props) => {
             const roomId = res.data;
             socket.emit("join_room", roomId);
             setRoom(roomId);
-            setShowChat(isOpenDrawer);
+            let newRecipient = { ...recipient, conversationId: roomId }
+            dispatch(setRecipient(newRecipient));
+            setShowChat(true);
         }
     };
 
     useEffect(() => {
-        joinRoom();
-    }, [recipient, user])
+        if (conversations.length <= 0) {
+            for (let i = 0; i < conversations.length; i++) {
+                socket.emit("join_room", conversations[i].conversationId);
+                setShowChat(true);
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        if (recipient.conversationId) {
+            socket.emit("join_room", recipient.conversationId);
+            setRoom(recipient.conversationId);
+            setShowChat(true);
+        }
+    }, [recipient, user, socket]);
+
+    // ko su dung socket duoc vi khi nguoi dung (user2) chua tham gia chat thi cung ko the 
+    // load dc danh sach ben conversation
 
     return (
         <div>
@@ -52,6 +82,7 @@ const Room = (props) => {
                 placement="right"
                 onClose={() => {
                     setOpenDrawer(false)
+                    setShowChat(false);
                     dispatch(setRecipient({}))
                 }}
                 open={isOpenDrawer}
@@ -82,7 +113,9 @@ const Room = (props) => {
     )
 }
 
-const areEqual = (prevProps, nextProps) => {
-    return prevProps.isOpenDrawer === nextProps.isOpenDrawer;
-}
-export default React.memo(Room, areEqual);
+// const areEqual = (prevProps, nextProps) => {
+//     return prevProps.isOpenDrawer === nextProps.isOpenDrawer;
+// }
+// export default React.memo(Room, areEqual);
+
+export default Room;

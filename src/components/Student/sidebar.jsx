@@ -1,66 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
-    List, Tag, Badge
+    List
 } from 'antd';
-import { fetchAllRole } from '../../services/api';
-import OldConversation from './History/OldConversation';
+import { fetchDepartmentUser } from '../../services/api';
+const Room = React.lazy(() => import('../Staff/Conversation/Room'));
+import LoadingComponent from '../Loading/loadingComponent';
+import { setRecipient } from '../../redux/conversation/conversationSlice';
 
 const Sidebar = () => {
-    // const { setConversationID, setOpenModalOldMessage } = props;
+    const dispatch = useDispatch();
     const [itemSidebar, setItemSidebar] = useState([]);
-    const [openModalOldMessage, setOpenModalOldMessage] = useState(false);
-    const [departmentName, setDepartmentName] = useState("");
-    const [conversationID, setConversationID] = useState();
+    const [isOpenDrawer, setOpenDrawer] = useState(false);
 
     useEffect(() => {
-        const getAllRole = async () => {
-            let res = await fetchAllRole();
-            // console.log(res.data)
+        const getAllDepartmentUser = async () => {
+            let res = await fetchDepartmentUser();
             setItemSidebar(res.data);
         }
-        getAllRole();
+        getAllDepartmentUser();
     }, []);
 
     return (
         <div>
             <div className='title'>
-                Conversation
+                Department/Faculty
             </div>
             <List
                 itemLayout="horizontal"
                 dataSource={itemSidebar}
+                className='list-department'
+                style={{ maxHeight: 'auto', overflow: 'auto' }}
                 size='small'
                 renderItem={(item, index) => (
                     <List.Item>
                         <List.Item.Meta
                             title={
-                                <a onClick={() => {
-                                    setConversationID(item.id)
-                                    setOpenModalOldMessage(true)
-                                    setDepartmentName(item.name)
-                                }}>
+                                <a
+                                    key={index}
+                                    onClick={() => {
+                                        setOpenDrawer(true)
+                                        dispatch(setRecipient(item))
+                                    }}>
                                     <span className='title-status'>
                                         <span style={{ color: '#1677ff' }}>{item.name}</span>
-                                        <span>{item.id % 2 === 0 ? <></> : <Tag color="red"> New</Tag>}</span>
                                     </span>
-                                    <p className={item.id % 2 === 0 ? 'text-overflow' : 'text-overflow message-pending'}>
+                                    {/* <p>
+                                        {item._id}
                                         horizontalhorizontalhorizontaalhorizontaalhorizontaalhorizonta
-                                        {item.id}
-                                    </p>
+                                        {item.email}
+                                        {item.image}
+                                    </p> */}
                                 </a>
                             }
                         />
                     </List.Item>
                 )}
             />
-            <OldConversation
-                openModalOldMessage={openModalOldMessage}
-                setOpenModalOldMessage={setOpenModalOldMessage}
-                departmentName={departmentName}
-                conversationID={conversationID}
-            />
-        </div>
 
+            <Suspense fallback={<LoadingComponent />}>
+                <Room
+                    isOpenDrawer={isOpenDrawer}
+                    setOpenDrawer={setOpenDrawer}
+                />
+            </Suspense>
+        </div>
     )
 }
 

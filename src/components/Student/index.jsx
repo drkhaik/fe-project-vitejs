@@ -1,26 +1,32 @@
-import { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import {
     Row, Col, message, notification
 } from 'antd';
 import './home.scss';
-import Sidebar from './sidebar';
+// import Sidebar from './sidebar';
 import Content from './content';
-
+import Header from './header';
+const Sidebar = React.lazy(() => import('./sidebar'));
+import LoadingComponent from '../Loading/loadingComponent';
 
 const Home = () => {
     return (
-        <div>
-            <Row justify={'space-between'} className="homepage-container" gutter={12}>
-                <Col span={6}>
-                    <div className='sidebar'>
-                        <Sidebar />
-                    </div>
+        <div className='wrapper-layout-student'>
+            <Row>
+                <Col span={24}>
+                    <Header />
                 </Col>
-
-                <Col span={18}>
-                    <div className='content'>
-                        <Content />
-                    </div>
+                <Col span={24}>
+                    <Row justify={'space-between'} className="homepage-container">
+                        <Col span={5} className='sidebar'>
+                            <Suspense fallback={<LoadingComponent />}>
+                                <Sidebar />
+                            </Suspense>
+                        </Col>
+                        <Col span={19} className='content'>
+                            <Content />
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </div >

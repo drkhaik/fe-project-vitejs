@@ -19,21 +19,10 @@ import Dashboard from './components/Admin/Dashboard';
 import HomeStaff from './components/Staff';
 import Post from './components/Staff/Post';
 import TableUser from './components/Admin/User';
-import History from './components/Student/History';
-import Header from './components/Student/Header';
-import Footer from './components/Student/Footer';
 
 const Layout = () => {
   return (
-    <div className='wrapper'>
-      <div className='container'>
-        <Header />
-        <div className='body-content'>
-          <Outlet />
-        </div>
-        <Footer />
-      </div>
-    </div>
+    <Outlet />
   )
 }
 

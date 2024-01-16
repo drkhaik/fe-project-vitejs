@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Col, Divider, Row, Dropdown, Space, Drawer, Badge, message, Avatar, Popover, Image } from 'antd';
-import { DownOutlined, BellOutlined } from '@ant-design/icons';
+import { DownOutlined, MessageOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { handleLogoutReduxThunk } from '../../../redux/account/accountSlice';
-import './header.scss';
+import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
 import { VscSearchFuzzy } from 'react-icons/vsc';
-import logo from '../../../assets/logo-uef-home.jpg'
+import logo from '../../assets/logo-uef-home.jpg'
+import LoadingComponent from '../Loading/loadingComponent';
+const Conversation = React.lazy(() => import('./Conversation/Conversation'));
 
 const Header = (props) => {
     const navigate = useNavigate();
@@ -67,6 +68,14 @@ const Header = (props) => {
         setSearchQuery(value);
     }
 
+    const renderChatbox = () => {
+        return (
+            <Suspense fallback={<LoadingComponent />}>
+                <Conversation />
+            </Suspense>
+        )
+    }
+
     return (
         <>
             <div className='header-container'>
@@ -101,11 +110,11 @@ const Header = (props) => {
                             <li className="navigation__item">
                                 <Popover
                                     // title="Thông báo"
-                                    // content={renderCartHeader}
+                                    content={renderChatbox}
                                     className='popover-cart'
                                     rootClassName='popover-cart'
-                                    placement={'bottomRight'}
-                                // arrow={true}
+                                    placement={'bottom'}
+                                    trigger="click"
                                 >
                                     <Badge
                                         // count={cart?.length ?? 0}
@@ -113,8 +122,7 @@ const Header = (props) => {
                                         size={"default"}
                                         count={5}
                                     >
-                                        <BellOutlined style={{ fontSize: '18px' }} />
-                                        {/* <FiShoppingCart className='icon-cart' /> */}
+                                        <MessageOutlined style={{ fontSize: '18px' }} />
                                     </Badge>
                                 </Popover>
                             </li>

@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { fetchConversationById } from '../../services/api';
 
 const initialState = {
+    isLoading: true,
     recipient: {
         _id: "",
         email: "",
@@ -11,6 +13,16 @@ const initialState = {
     conversations: []
 };
 
+export const fetchListConversationReduxThunk = createAsyncThunk(
+    'conversation/fetchListConversation',
+    async (userId) => {
+        const response = await fetchConversationById(userId);
+        // The value we return becomes the `fulfilled` action payload
+        // console.log("check response fetchUserAccount", response.data);
+        return response.data;
+    }
+);
+
 export const conversationSlice = createSlice({
     name: 'conversation',
     initialState,
@@ -18,26 +30,45 @@ export const conversationSlice = createSlice({
         setRecipient: (state, action) => {
             state.recipient = action.payload;
         },
-        setConversations: (state, action) => {
-            state.conversations = action.payload;
-        },
         setLastMessageToConversations: (state, action) => {
-            // console.log("check conversations", action)
             let newMessage = action.payload;
+            console.log("check new Message redux", newMessage);
             let conversations = state.conversations;
             for (let i = 0; i < conversations.length; i++) {
                 if (conversations[i].conversationId === newMessage.conversation) {
                     conversations[i].lastMessage = newMessage;
                 }
             }
+        },
+        setIsRead: (state, action) => {
+            const conversationId = action.payload;
+            let conversations = state.conversations;
+            for (let i = 0; i < conversations.length; i++) {
+                if (conversations[i].conversationId === conversationId) {
+                    if (conversations[i].lastMessage) {
+                        conversations[i].lastMessage.isRead = true;
+                    }
+                }
+            }
         }
-
     },
     extraReducers: (builder) => {
+        builder
+            .addCase(fetchListConversationReduxThunk.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchListConversationReduxThunk.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.conversations = action.payload;
+            })
+            .addCase(fetchListConversationReduxThunk.rejected, (state, action) => {
+                state.isLoading = false;
+                state.conversations = [];
+            })
 
     },
 });
 
-export const { setRecipient, setConversations, setLastMessageToConversations } = conversationSlice.actions;
+export const { setRecipient, fetchListConversation, setLastMessageToConversations, setIsRead } = conversationSlice.actions;
 
 export default conversationSlice.reducer;

@@ -11,7 +11,7 @@ const handleLogout = () => {
 // ======= USER ======
 
 const fetchAllUserAPI = () => {
-    return axios.get("/api/v1/user");
+    return axios.get("/api/v1/users");
 }
 
 const fetchUserAccountAPI = () => {
@@ -36,6 +36,10 @@ const changeUserPassword = (data) => {
 
 const deleteUser = (_id) => {
     return axios.delete(`/api/v1/user/${_id}`);
+}
+
+const fetchDepartmentUser = () => {
+    return axios.get(`/api/v1/users/department`);
 }
 
 // ================ CONVERSATION ============
@@ -79,6 +83,9 @@ const deletePost = (_id) => {
     return axios.delete(`/api/v1/post/${_id}`);
 }
 
+const fetchMorePostAPI = (data) => {
+    return axios.post(`/api/v1/post/history`, data);
+}
 
 ///// ============ UPLOAD =============
 
@@ -112,10 +119,6 @@ const callUploadMessageFileAPI = (file) => {
     });
 }
 
-const getAllRole = () => {
-    return axios.get(`/api/v1/role`);
-}
-
 export {
     handleLogin,
     fetchAllUserAPI,
@@ -132,9 +135,10 @@ export {
     createConversation,
     fetchMessageHistoryById,
     fetchMoreMessageHistory,
-    getAllRole,
     createPost,
     fetchAllPost,
     updatePost,
     deletePost,
+    fetchMorePostAPI,
+    fetchDepartmentUser,
 }

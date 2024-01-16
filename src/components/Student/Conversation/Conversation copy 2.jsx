@@ -1,35 +1,33 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     List, Tag, Badge, Avatar, Row, Col
 } from 'antd';
-import { fetchConversationById } from '../../services/api';
-import { setRecipient, setConversations } from '../../redux/conversation/conversationSlice';
+import './Conversation.scss';
+import { setRecipient, fetchListConversationReduxThunk } from '../../redux/conversation/conversationSlice';
 import LoadingComponent from '../Loading/loadingComponent';
 const Room = React.lazy(() => import('./Room'));
+import isEqual from 'lodash/isEqual';
 
 const Conversation = () => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
+    const recipient = useSelector(state => state.conversation.recipient);
+    const isLoading = useSelector(state => state.conversation.isLoading);
     const conversations = useSelector(state => state.conversation.conversations);
     const [isOpenDrawer, setOpenDrawer] = useState(false);
 
-    const fetchConversation = async () => {
-        if (user && user._id) {
-            let res = await fetchConversationById(user._id);
-            if (res && res.data) {
-                // console.log("check res.data", res.data);
-                dispatch(setConversations(res.data));
-                // setItemSidebar(res.data);
-            }
-        }
-    }
-    ///// modify the user scheme, for students (mssv, faculty,) and for department
-    //// send message to department and their faculty
+    console.log("check conversations conversation", conversations);
 
+    const prevConversation = useRef(conversations);
     useEffect(() => {
-        fetchConversation();
-    }, []);
+        if (!isEqual(prevConversation.current, conversations)) {
+            if (user && user._id) {
+                dispatch(fetchListConversationReduxThunk(user._id));
+            }
+            prevConversation.current = conversations;
+        }
+    }, [user, conversations]);
 
     return (
         <>

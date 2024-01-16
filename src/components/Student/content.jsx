@@ -1,148 +1,95 @@
-import { fetchAllUserAPI, createUser } from '../../services/api';
+import React, { useState, useEffect, Suspense } from 'react';
+import { fetchAllPost } from '../../services/api';
 import {
-    Row, Col, Divider
+    Row, Col, Carousel, Empty, Card, Typography, Avatar
 } from 'antd';
+const { Meta } = Card;
+const { Title, Paragraph, Text, Link } = Typography;
 import imgUEF from '../../assets/team_UEF.png';
-import { useNavigate } from 'react-router-dom';
+import LoadingComponent from '../Loading/loadingComponent';
+const ModalDetailPost = React.lazy(() => import('./ModalDetailPost'));
 
 const Content = (props) => {
-    const navigate = useNavigate();
+    const [postList, setPostList] = useState([]);
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [postInfo, setPostInfo] = useState({});
 
-    const handleRedirectAskQuestion = () => {
-        navigate('/department');
+    const fetchPosts = async () => {
+        const res = await fetchAllPost();
+        if (res && res.data) {
+            setPostList(res.data);
+        } else {
+            message.error("Failed to load list post")
+        }
+    }
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    const onClickPost = (item) => {
+        setModalOpen(true);
+        setPostInfo(item);
     }
 
     return (
         <Row>
-            <Col xs={24} sm={24} md={0}>
-                {/* <div className="" onClick={() => { setOpenDrawer(true) }}>
-                            <FilterTwoTone style={{ fontSize: '18px' }} /> Lọc
-                        </div> */}
-                <Divider style={{ margin: "10px 0" }} />
+            <Col span={24}>
+                {postList && postList.length > 0
+                    ?
+                    <Carousel
+                        autoplay
+                        className='carousel-post'
+                        style={{ maxHeight: 'auto', overflow: 'hidden' }}
+                    >
+                        {postList.map((item, index) => {
+                            return (
+                                <Card
+                                    key={index}
+                                    style={{
+                                        marginTop: 16,
+                                        height: 300,
+                                        // maxHeight: '100vh', overflow: 'auto'
+                                    }}
+                                    // hoverable={true}
+                                    onDoubleClick={() => onClickPost(item)}
+                                >
+                                    <Meta
+                                        avatar={<Avatar size={'large'} src={item.author ? item.author.image : imgUEF} />}
+                                        title={item.author.name}
+                                        description={
+                                            <Typography>
+                                                <Title level={4}>{item.title}</Title>
+                                                <Paragraph>
+                                                    <div dangerouslySetInnerHTML={{ __html: item.description }}></div>
+                                                </Paragraph>
+                                            </Typography>
+                                        }
+                                    />
+                                </Card>
+                            )
+                        })}
+                    </Carousel>
+                    :
+                    <Empty
+                        style={{
+                            height: 'inherit',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'column'
+                        }}
+                        description='No data!'
+                    />
+                }
             </Col>
-            <Row className='customize-row'>
-                <>
-                    <div className="column" onClick={() => navigate('/department')}>
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className='thumbnail' style={{ marginTop: '15px' }}>
-                            <img src={imgUEF} alt="Thumbnail UEF Department" />
-
-                        </div>
-                        <div className='info'>
-                            <div>
-                                <div className='department-name' > Department 1 </div>
-                                <div className='description'>
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                </div>
-                            </div>
-                            <div className='abc'>
-                                asads
-                            </div>
-                        </div>
-                    </div>
-                </>
-            </Row>
+            <Suspense fallback={<LoadingComponent />}>
+                <ModalDetailPost
+                    isModalOpen={isModalOpen}
+                    setModalOpen={setModalOpen}
+                    postInfo={postInfo}
+                />
+            </Suspense>
         </Row>
     )
 }

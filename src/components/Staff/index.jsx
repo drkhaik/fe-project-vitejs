@@ -4,7 +4,7 @@ import {
 } from 'antd';
 import './homeStaff.scss';
 import Header from './header';
-import Conversation from '../Conversation/Conversation';
+import Conversation from './Conversation/Conversation';
 import Post from './Post';
 
 const HomeStaff = () => {
