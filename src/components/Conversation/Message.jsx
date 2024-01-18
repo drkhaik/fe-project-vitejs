@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Row, Col, Form, Divider, Button, Tag, Input, Avatar, Upload, message, Empty
+    Row, Col, Form, Button, Tag, Input, Avatar, Upload, message, Empty
 } from 'antd';
 import { ClipLoader } from "react-spinners";
 import { useSelector, useDispatch } from 'react-redux';
-import { setLastMessageToConversations, fetchListConversationReduxThunk } from '../../redux/conversation/conversationSlice';
+import { setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
 import { UploadOutlined, FileOutlined } from '@ant-design/icons';
 import {
     fetchMessageHistoryById,
@@ -25,11 +25,6 @@ const Message = (props) => {
     const [isSubmit, setIsSubmit] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [messageList, setMessageList] = useState([]);
-    const [notification, setNotification] = useState([]);
-
-    console.log("check user", user);
-    console.log("check recipient", recipient);
-    console.log("check notification", notification);
 
     const [form] = Form.useForm();
 
@@ -86,25 +81,10 @@ const Message = (props) => {
 
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            console.log("check message text", newMessage);
-            setMessageList((list) => [newMessage, ...list]);
-            dispatch(setLastMessageToConversations(newMessage));
-        })
-
-        socket.on("receive_notification", (newMessage) => {
-            // console.log("check receive_notification 1", newMessage);
-            // let conversationId = newMessage.conversation;
-            // let [authorId, secondString] = conversationId.split(/-(.*)/);
-            // console.log("check author Id", authorId);
-            // let recipientId = conversationId.substring(0, conversationId);
-            // console.log("check recipientId", recipientId);
-            console.log("check receive_notification", newMessage);
-            if (newMessage.conversation === recipient.conversationId) {
-                setNotification((list) => [newMessage, ...list]);
+            // console.log("check message text", newMessage);
+            if (recipient.conversationId === newMessage.conversation) {
+                setMessageList((list) => [newMessage, ...list]);
             }
-            // server gui len 1 dong newMessage deu co conversation,
-            // viec cua m la tim ra conversation do cua ai, la nguoi nhan de gui
-            // thong bao ve cho ho
         })
 
         return () => {
@@ -115,9 +95,10 @@ const Message = (props) => {
 
     useEffect(() => {
         socket.on("receive_file", (newMessage) => {
-            console.log("check data file", newMessage);
-            setMessageList((list) => [newMessage, ...list]);
-            dispatch(setLastMessageToConversations(newMessage));
+            // console.log("check data file", newMessage);
+            if (recipient.conversationId === newMessage.conversation) {
+                setMessageList((list) => [newMessage, ...list]);
+            }
         })
 
         return () => {
@@ -143,6 +124,7 @@ const Message = (props) => {
                 body: text,
                 type: 'text',
                 author: user._id,
+                isRead: true
             }));
             form.resetFields();
         }

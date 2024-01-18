@@ -1,25 +1,101 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    List
+    List, Drawer, Tag, Row, Col, Button
 } from 'antd';
-import { fetchDepartmentUser } from '../../services/api';
-const Room = React.lazy(() => import('../Staff/Conversation/Room'));
-import LoadingComponent from '../Loading/loadingComponent';
-import { setRecipient } from '../../redux/conversation/conversationSlice';
+import { fetchDepartmentUser, createConversation } from '../../services/api';
+import { setRecipient, setListConversations, setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
+import Message from '../Conversation/Message';
+import io from "socket.io-client";
+const baseURL = import.meta.env.VITE_BACKEND_URL;
+const socket = io.connect(baseURL);
 
 const Sidebar = () => {
     const dispatch = useDispatch();
     const [itemSidebar, setItemSidebar] = useState([]);
     const [isOpenDrawer, setOpenDrawer] = useState(false);
+    const user = useSelector(state => state.account.user);
+    const recipient = useSelector(state => state.conversation.recipient);
+    const [room, setRoom] = useState("");
+    const [showChat, setShowChat] = useState(false);
 
     useEffect(() => {
         const getAllDepartmentUser = async () => {
-            let res = await fetchDepartmentUser();
+            let res = await fetchDepartmentUser(user._id);
             setItemSidebar(res.data);
         }
         getAllDepartmentUser();
     }, []);
+
+    useEffect(() => {
+        if (itemSidebar.length > 0) {
+            let arrayConversations = []
+            for (let i = 0; i < itemSidebar.length; i++) {
+                if (itemSidebar[i].conversationId) {
+                    socket.emit("join_room", itemSidebar[i].conversationId);
+                    // console.log("check join room", itemSidebar[i].conversationId)
+                    arrayConversations.push(itemSidebar[i]);
+                }
+            }
+            dispatch(setListConversations(arrayConversations))
+        }
+    }, [itemSidebar.length]);
+
+    const joinRoom = async () => {
+        if (!user || !recipient) {
+            return;
+        }
+        let data = {
+            senderId: user._id,
+            recipientId: recipient._id
+        }
+        const res = await createConversation(data);
+        if (res && res.errCode === 0 && res.data) {
+            const roomId = res.data;
+            socket.emit("join_room", roomId);
+            setRoom(roomId);
+            let newRecipient = { ...recipient, conversationId: roomId }
+            dispatch(setRecipient(newRecipient));
+            dispatch(setListConversations((list) => [newRecipient, ...list]))
+            setShowChat(true);
+        }
+    };
+
+    useEffect(() => {
+        if (recipient.conversationId) {
+            socket.emit("join_room", recipient.conversationId);
+            setRoom(recipient.conversationId);
+            setShowChat(true);
+        }
+    }, [recipient]);
+
+    useEffect(() => {
+        socket.on("receive_message", (newMessage) => {
+            console.log("check receive_message", newMessage);
+            let isReadMessage = false;
+            if (showChat && room === newMessage.conversation) {
+                isReadMessage = true;
+            }
+            dispatch(setLastMessageToConversations({ ...newMessage, isRead: isReadMessage }));
+        })
+        return () => {
+            socket.off("receive_message");
+        }
+    }, [socket]);
+
+    useEffect(() => {
+        socket.on("receive_file", (newMessage) => {
+            console.log("check receive_file", newMessage);
+            let isReadMessage = false;
+            if (showChat && room === newMessage.conversation) {
+                isReadMessage = true;
+            }
+            dispatch(setLastMessageToConversations({ ...newMessage, isRead: isReadMessage }));
+        })
+        return () => {
+            socket.off("receive_file");
+        }
+    }, [socket]);
 
     return (
         <div>
@@ -45,25 +121,49 @@ const Sidebar = () => {
                                     <span className='title-status'>
                                         <span style={{ color: '#1677ff' }}>{item.name}</span>
                                     </span>
-                                    {/* <p>
-                                        {item._id}
-                                        horizontalhorizontalhorizontaalhorizontaalhorizontaalhorizonta
-                                        {item.email}
-                                        {item.image}
-                                    </p> */}
                                 </a>
                             }
                         />
                     </List.Item>
                 )}
             />
-
-            <Suspense fallback={<LoadingComponent />}>
-                <Room
-                    isOpenDrawer={isOpenDrawer}
-                    setOpenDrawer={setOpenDrawer}
-                />
-            </Suspense>
+            <Drawer
+                className='box-chat'
+                title={
+                    <>
+                        <Tag color="#108ee9" style={{ marginRight: 0 }}>{recipient.name}</Tag> <Tag color="#108ee9">{recipient.email}</Tag>
+                    </>
+                }
+                placement="right"
+                onClose={() => {
+                    setOpenDrawer(false)
+                    setShowChat(false);
+                    dispatch(setRecipient({}))
+                }}
+                open={isOpenDrawer}
+                width={'50vw'}
+            >
+                {!showChat ?
+                    <Row>
+                        <Col span={24}>
+                            <div className='chat-window'>
+                                <div className='chat-body'>
+                                    <div className='room-container'>
+                                        <Button type="primary" onClick={joinRoom}>
+                                            Connect
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                    :
+                    <Message
+                        socket={socket}
+                        room={room}
+                    />
+                }
+            </Drawer>
         </div>
     )
 }

@@ -10,7 +10,8 @@ const initialState = {
         image: "",
         conversationId: "",
     },
-    conversations: []
+    conversations: [],
+    notification: 0,
 };
 
 export const fetchListConversationReduxThunk = createAsyncThunk(
@@ -30,6 +31,9 @@ export const conversationSlice = createSlice({
         setRecipient: (state, action) => {
             state.recipient = action.payload;
         },
+        setListConversations: (state, action) => {
+            state.conversations = action.payload;
+        },
         setLastMessageToConversations: (state, action) => {
             let newMessage = action.payload;
             console.log("check new Message redux", newMessage);
@@ -37,6 +41,7 @@ export const conversationSlice = createSlice({
             for (let i = 0; i < conversations.length; i++) {
                 if (conversations[i].conversationId === newMessage.conversation) {
                     conversations[i].lastMessage = newMessage;
+                    state.notification++;
                 }
             }
         },
@@ -47,9 +52,13 @@ export const conversationSlice = createSlice({
                 if (conversations[i].conversationId === conversationId) {
                     if (conversations[i].lastMessage) {
                         conversations[i].lastMessage.isRead = true;
+                        state.notification = state.notification - 1;
                     }
                 }
             }
+        },
+        setNotification: (state, action) => {
+            state.notification = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -59,6 +68,7 @@ export const conversationSlice = createSlice({
             })
             .addCase(fetchListConversationReduxThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
+                console.log("check action.payload", action.payload);
                 state.conversations = action.payload;
             })
             .addCase(fetchListConversationReduxThunk.rejected, (state, action) => {
@@ -69,6 +79,13 @@ export const conversationSlice = createSlice({
     },
 });
 
-export const { setRecipient, fetchListConversation, setLastMessageToConversations, setIsRead } = conversationSlice.actions;
+export const {
+    setRecipient,
+    fetchListConversation,
+    setLastMessageToConversations,
+    setListConversations,
+    setIsRead,
+    setNotification
+} = conversationSlice.actions;
 
 export default conversationSlice.reducer;

@@ -1,9 +1,10 @@
+.dropdown-custom-style {
+    top: 50px !important;
+}
+
 .wrapper-layout-student {
     // max-height: 100vh;
                 // overflow: hidden;
-    .dropdown-custom-style {
-        top: 50px !important;
-    }
     .header-container{
         border-bottom: 1px solid #e4e3e3;
         background-color: #fff;
@@ -32,14 +33,15 @@
                     .logo {
                         cursor: pointer;
                         display: flex;
-                        justify-content: space-around;
+                        // justify-content: space-around;
                         align-items: center;
-                        width: 80%;
+                        // width: 80%;
                         .logo_img{
                             width: 58px;
                             height: auto;
                             background-color: white;
                             object-fit: contain;
+                            margin-right: 20px;
                         }
                         .name {
                             color: #ea2329;
@@ -200,20 +202,6 @@
                     display: flex;
                     justify-content: space-between;
                     margin-bottom: 10px;
-                }
-                .text-overflow{
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    margin: 0;
-                    font-weight: 400;
-                    color: #6d6969e0;
-                    font-size: 14px;
-                    line-height: 1.5714285714285714;
-                }
-                .message-pending {
-                    font-weight: 600;
-                    color: #454444;
                 }
             }
         }

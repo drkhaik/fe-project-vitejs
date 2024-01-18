@@ -5,7 +5,13 @@ import {
 } from 'antd';
 import { FaCircle } from "react-icons/fa";
 import './Conversation.scss';
-import { setRecipient, fetchListConversationReduxThunk, setIsRead, setLastMessageToConversations } from '../../../redux/conversation/conversationSlice';
+import {
+    setRecipient,
+    fetchListConversationReduxThunk,
+    setIsRead,
+    setLastMessageToConversations
+}
+    from '../../redux/conversation/conversationSlice';
 import Message from './message';
 import BeatLoader from "react-spinners/BeatLoader"
 import io from "socket.io-client";
@@ -18,8 +24,6 @@ const Conversation = () => {
     const recipient = useSelector(state => state.conversation.recipient);
     const conversations = useSelector(state => state.conversation.conversations);
     const [isOpenDrawer, setOpenDrawer] = useState(false);
-
-    console.log("check conversations conversation", conversations);
     const [room, setRoom] = useState("");
     const [showChat, setShowChat] = useState(false);
 
@@ -33,7 +37,7 @@ const Conversation = () => {
         if (conversations.length > 0) {
             for (let i = 0; i < conversations.length; i++) {
                 socket.emit("join_room", conversations[i].conversationId);
-                console.log("check conversations[i].conversationId", conversations[i].conversationId)
+                // console.log("check conversations[i].conversationId", conversations[i].conversationId)
                 setShowChat(true);
             }
         }
@@ -44,7 +48,7 @@ const Conversation = () => {
             setRoom(recipient.conversationId);
             setShowChat(true);
         }
-    }, [recipient, user, socket]);
+    }, [recipient]);
 
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
@@ -59,7 +63,22 @@ const Conversation = () => {
         return () => {
             socket.off("receive_message");
         }
-    }, [])
+    }, [socket]);
+
+
+    useEffect(() => {
+        socket.on("receive_file", (newMessage) => {
+            console.log("check receive_file", newMessage);
+            let isReadMessage = false;
+            if (showChat && room === newMessage.conversation) {
+                isReadMessage = true;
+            }
+            dispatch(setLastMessageToConversations({ ...newMessage, isRead: isReadMessage }));
+        })
+        return () => {
+            socket.off("receive_file");
+        }
+    }, [socket]);
 
     return (
         <>

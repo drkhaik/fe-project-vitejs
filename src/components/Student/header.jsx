@@ -7,27 +7,23 @@ import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
 import { VscSearchFuzzy } from 'react-icons/vsc';
 import logo from '../../assets/logo-uef-home.jpg'
 import LoadingComponent from '../Loading/loadingComponent';
-const Conversation = React.lazy(() => import('./Conversation/Conversation'));
+const Conversation = React.lazy(() => import('../Conversation/Conversation'));
 
-const Header = (props) => {
+const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { searchQuery, setSearchQuery } = props;
     const [openDrawer, setOpenDrawer] = useState(false);
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
+    const notification = useSelector(state => state.conversation.notification);
     const [isModalAccountOpen, setIsModalAccountOpen] = useState(false);
-    // const srcAvt = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`;
+    const [isOpenPopover, setOpenPopover] = useState(false);
 
     const handleLogoutAction = () => {
         dispatch(handleLogoutReduxThunk());
         message.success("Log out successfully!");
         navigate("/");
-    }
-
-    const handleClickOrder = () => {
-        setIsModalAccountOpen(true);
     }
 
     let items = [
@@ -37,11 +33,10 @@ const Header = (props) => {
         },
     ];
 
-
     if (user.role === 'Student') {
         items.unshift({
-            label: <p onClick={() => navigate('/history')} style={{ margin: 0, cursor: 'pointer' }}>Xem lịch sử</p>,
-            key: 'history'
+            label: <p onClick={() => navigate('/account')} style={{ margin: 0, cursor: 'pointer' }}>Thông tin tài khoản</p>,
+            key: 'account'
         })
     }
 
@@ -88,39 +83,33 @@ const Header = (props) => {
                             <span className='logo' onClick={() => redirectHome()}>
                                 <img className='logo_img' src={logo} alt="Logo UEF" />
                                 <p className='name'> Students UEF </p>
-
                             </span>
-                            {/* <input
-                                className="input-search" type={'text'}
-                                placeholder="Bạn tìm gì hôm nay"
-                            // onChange={(e) => onChangeInputSearch(e.target.value)}
-                            /> */}
                         </div>
                     </div>
-                    <div className='page-header__middle'>
+                    {/* <div className='page-header__middle'>
                         <VscSearchFuzzy className='icon-search' />
                         <input
                             className="input-search" type={'text'}
                             placeholder="Bạn tìm gì hôm nay"
                         // onChange={(e) => onChangeInputSearch(e.target.value)}
                         />
-                    </div>
+                    </div> */}
                     <div className='page-header__right'>
                         <ul id="navigation" className="navigation">
                             <li className="navigation__item">
                                 <Popover
-                                    // title="Thông báo"
                                     content={renderChatbox}
                                     className='popover-cart'
                                     rootClassName='popover-cart'
                                     placement={'bottom'}
                                     trigger="click"
+                                    zIndex={0}
+                                // open={isOpenPopover}
                                 >
                                     <Badge
-                                        // count={cart?.length ?? 0}
                                         showZero
                                         size={"default"}
-                                        count={5}
+                                        count={notification > 0 ? notification : null}
                                     >
                                         <MessageOutlined style={{ fontSize: '18px' }} />
                                     </Badge>

@@ -121,6 +121,10 @@ const Post = () => {
                                                 // width: 300,
                                                 marginTop: 16,
                                             }}
+                                            onClick={() => {
+                                                setOpenEditModal(true);
+                                                setPostInfo(item);
+                                            }}
                                             hoverable={true}
                                             actions={[
                                                 <EditOutlined onClick={() => onClickPost(item)} key="edit" />,
@@ -140,12 +144,8 @@ const Post = () => {
                                             ]}
                                         >
                                             <Meta
-                                                onClick={() => {
-                                                    setOpenEditModal(true);
-                                                    setPostInfo(item);
-                                                }}
                                                 avatar={<Avatar size={'large'} src={item.author ? item.author.image : imgUEF} />}
-                                                title={postInfo.author ? postInfo.author.name : 'Anonymous'}
+                                                title={postInfo.author ? postInfo.author.name : 'UEF Department'}
                                                 description={
                                                     <Typography>
                                                         <Title level={4}>{item.title}</Title>
