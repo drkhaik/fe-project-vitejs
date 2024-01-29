@@ -6,16 +6,18 @@ import {
 import { fetchDepartmentUser, createConversation } from '../../services/api';
 import { setRecipient, setListConversations, setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
 import Message from '../Conversation/Message';
+import ModalChooseFaculty from './ModalChooseFaculty';
 import io from "socket.io-client";
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 const socket = io.connect(baseURL);
 
 const Sidebar = () => {
     const dispatch = useDispatch();
-    const [itemSidebar, setItemSidebar] = useState([]);
-    const [isOpenDrawer, setOpenDrawer] = useState(false);
     const user = useSelector(state => state.account.user);
     const recipient = useSelector(state => state.conversation.recipient);
+    const [itemSidebar, setItemSidebar] = useState([]);
+    const [isOpenDrawer, setOpenDrawer] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
     const [room, setRoom] = useState("");
     const [showChat, setShowChat] = useState(false);
 
@@ -56,7 +58,7 @@ const Sidebar = () => {
             setRoom(roomId);
             let newRecipient = { ...recipient, conversationId: roomId }
             dispatch(setRecipient(newRecipient));
-            dispatch(setListConversations((list) => [newRecipient, ...list]))
+            // dispatch(setListConversations(newRecipient));
             setShowChat(true);
         }
     };
@@ -97,6 +99,20 @@ const Sidebar = () => {
         }
     }, [socket]);
 
+    const handleOnClickDepartment = (item) => {
+        if (user.role === 'Student') {
+            if (user.student_id && user.faculty) {
+                setOpenDrawer(true);
+                dispatch(setRecipient(item))
+            } else {
+                setModalOpen(true);
+            }
+        } else {
+            setOpenDrawer(true);
+            dispatch(setRecipient(item));
+        }
+    }
+
     return (
         <div>
             <div className='title'>
@@ -114,10 +130,7 @@ const Sidebar = () => {
                             title={
                                 <a
                                     key={index}
-                                    onClick={() => {
-                                        setOpenDrawer(true)
-                                        dispatch(setRecipient(item))
-                                    }}>
+                                    onClick={() => handleOnClickDepartment(item)}>
                                     <span className='title-status'>
                                         <span style={{ color: '#1677ff' }}>{item.name}</span>
                                     </span>
@@ -164,6 +177,11 @@ const Sidebar = () => {
                     />
                 }
             </Drawer>
+            <ModalChooseFaculty
+                isModalOpen={isModalOpen}
+                setModalOpen={setModalOpen}
+                userId={user._id}
+            />
         </div>
     )
 }

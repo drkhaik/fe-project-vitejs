@@ -81,7 +81,7 @@ const Message = (props) => {
 
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            // console.log("check message text", newMessage);
+            console.log("check message text", newMessage);
             if (recipient.conversationId === newMessage.conversation) {
                 setMessageList((list) => [newMessage, ...list]);
             }

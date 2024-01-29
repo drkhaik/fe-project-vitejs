@@ -6,19 +6,20 @@ import {
   Outlet,
   Navigate
 } from "react-router-dom";
-import LoginPage from './pages/login';
+import LoginStudent from './pages/login/Login';
+import LoginStaff from './pages/login/LoginStaff';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotFound from './components/NotFound';
 import Home from './components/Student';
 import Loading from './components/Loading';
 import './App.scss';
 import { fetchUserAccountReduxThunk } from './redux/account/accountSlice';
-import DepartmentPage from './pages/department';
 import LayoutAdmin from './components/Admin';
 import Dashboard from './components/Admin/Dashboard';
 import HomeStaff from './components/Staff';
 import Post from './components/Staff/Post';
-import TableUser from './components/Admin/User';
+import UserTable from './components/Admin/User';
+import FacultyTable from './components/Admin/Faculty';
 
 const Layout = () => {
   return (
@@ -34,16 +35,47 @@ const LayoutStaff = () => {
 
 export default function App() {
   const dispatch = useDispatch();
-  const isLoading = useSelector(state => state.account.isLoading)
+  const isLoading = useSelector(state => state.account.isLoading);
+  const isAuthenticated = useSelector(state => state.account.isAuthenticated);
+
   useEffect(() => {
     if (window.location.pathname === '/login'
-      // || window.location.pathname === '/'
+      || window.location.pathname === '/staff/login'
+      || window.location.pathname === '/login/success'
+      || window.location.pathname === '/login/error'
     ) return;
+
     dispatch(fetchUserAccountReduxThunk());
 
-  }, [])
-  const isAuthenticated = useSelector(state => state.account.isAuthenticated);
-  // console.log("check authenticated app", isAuthenticated);
+  }, []);
+
+
+  useEffect(() => {
+    console.log("check isAuthenticated", isAuthenticated)
+    if (isAuthenticated) {
+      if (window.location.pathname === '/login') {
+        window.location.replace('/');
+      }
+      if (window.location.pathname.includes('/staff/login')) {
+        window.location.replace('/staff');
+      }
+    }
+    else {
+      dispatch(fetchUserAccountReduxThunk());
+    }
+
+  }, [window.location.pathname, isAuthenticated]);
+
+  const LoginSuccess = () => {
+    useEffect(() => {
+      setTimeout(() => {
+        window.close();
+      }, 1000);
+    }, []);
+
+    return <div>Thanks for logging in!</div>;
+  }
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -51,10 +83,6 @@ export default function App() {
       errorElement: <NotFound />,
       children: [,
         { index: true, element: <Home /> },
-        {
-          path: "/department",
-          element: <DepartmentPage />,
-        },
         {
           path: "history/",
           element: <History />,
@@ -82,21 +110,42 @@ export default function App() {
           index: true, element: <Dashboard />
         },
         {
-          path: "user/", element: <TableUser />
+          path: "user/", element: <UserTable />
+        },
+        {
+          path: "faculty/", element: <FacultyTable />
         },
       ],
     },
     {
-      path: "login/",
-      element: isAuthenticated ? <Navigate to="/" /> : <LoginPage />,
+      path: "/login",
+      element: !isAuthenticated ? <LoginStudent /> : <Navigate to="/" />,
     },
+    {
+      path: "/staff/login",
+      element: !isAuthenticated ? <LoginStaff /> : <Navigate to="/staff" />,
+    },
+    {
+      path: "/login/success",
+      element: <LoginSuccess />
+    },
+    {
+      path: "/login/error",
+      element: <p>Error logging in. Please try again later!</p>
+    },
+    {
+      path: "/*",
+      element: <NotFound />
+    }
   ]);
 
   return (
     <>
       {isLoading === false
         || window.location.pathname === '/login'
-        // || window.location.pathname === '/'
+        || window.location.pathname === '/staff/login'
+        || window.location.pathname === '/login/success'
+        || window.location.pathname === '/login/error'
         ?
         <RouterProvider router={router} />
         :

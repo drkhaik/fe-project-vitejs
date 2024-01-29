@@ -12,6 +12,7 @@ import './LayoutAdmin.scss';
 import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, useNavigate, Link, useLocation, useMatch } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
+import { FaPollH } from "react-icons/fa";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -25,6 +26,11 @@ const itemsSidebar = [
         label: <Link to='/admin/user'>User</Link>,
         key: 'user',
         icon: <UserOutlined />
+    },
+    {
+        label: <Link to='/admin/faculty'>Faculty</Link>,
+        key: 'faculty',
+        icon: <FaPollH />
     },
 ];
 
@@ -40,18 +46,15 @@ const LayoutAdmin = () => {
         navigate("/");
     }
     const [collapsed, setCollapsed] = useState(false);
-    // const srcAvt = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`;
     let newStr = location.pathname.replace("/admin/", "");
     useEffect(() => {
         let keyActiveByPath = location.pathname.replace("/admin/", "");
-        // console.log("check keyActive Path", keyActiveByPath)
         if (keyActiveByPath === '/admin') {
             setActiveMenu('dashboard');
         } else {
             setActiveMenu(keyActiveByPath);
         }
     }, [])
-    // console.log("check new str", newStr);
     const itemsDropdown = [
         {
             label: <p onClick={() => navigate('/')} style={{ margin: 0, cursor: 'pointer' }}>Trang Chủ</p>,
@@ -69,10 +72,6 @@ const LayoutAdmin = () => {
 
     return (
         <div style={{ minHeight: '100vh' }} className="layout-admin">
-            {/* <Layout
-                style={{ minHeight: '100vh' }}
-                className="layout-admin"
-            > */}
             <Sider
                 className='sidebar'
                 theme="light"
@@ -113,7 +112,6 @@ const LayoutAdmin = () => {
                 </div>
                 <Outlet />
             </Content>
-            {/* </Layout> */}
         </div>
     );
 };

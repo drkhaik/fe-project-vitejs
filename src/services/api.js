@@ -1,14 +1,24 @@
 import axios from "../utilizes/axiosCustomize";
 
+// ======= ACCOUNT =============
+
 const handleLogin = (email, password) => {
     return axios.post("/api/v1/login", { email, password });
+}
+
+const handleStudentLogin = () => {
+    return axios.get("/api/v1/auth/student");
+}
+
+const handleDepartmentLogin = () => {
+    return axios.get("/api/v1/auth/department");
 }
 
 const handleLogout = () => {
     return axios.post("/api/v1/logout");
 }
 
-// ======= USER ======
+// ======= USER =============
 
 const fetchAllUserAPI = () => {
     return axios.get("/api/v1/users");
@@ -34,6 +44,10 @@ const changeUserPassword = (data) => {
     return axios.put(`/api/v1/user/change-password`, data);
 }
 
+const changeUserFaculty = (data) => {
+    return axios.put(`/api/v1/user/change-faculty`, data);
+}
+
 const deleteUser = (_id) => {
     return axios.delete(`/api/v1/user/${_id}`);
 }
@@ -41,6 +55,26 @@ const deleteUser = (_id) => {
 const fetchDepartmentUser = (_id) => {
     return axios.get(`/api/v1/users/department/${_id}`);
 }
+
+// ================ FACULTY ============
+
+
+const createFaculty = (data) => {
+    return axios.post(`/api/v1/faculty`, data);
+}
+
+const fetchAllFaculties = () => {
+    return axios.get(`/api/v1/faculty`);
+}
+
+const updateFaculty = (data) => {
+    return axios.put(`/api/v1/faculty`, data);
+}
+
+const deleteFaculty = (_id) => {
+    return axios.delete(`/api/v1/faculty/${_id}`);
+}
+
 
 // ================ CONVERSATION ============
 
@@ -121,6 +155,8 @@ const callUploadMessageFileAPI = (file) => {
 
 export {
     handleLogin,
+    handleStudentLogin,
+    handleDepartmentLogin,
     fetchAllUserAPI,
     createUser,
     fetchUserAccountAPI,
@@ -128,6 +164,7 @@ export {
     fetchAllRole,
     updateUserAPI,
     changeUserPassword,
+    changeUserFaculty,
     deleteUser,
     callUploadUserImgAPI,
     callUploadMessageFileAPI,
@@ -141,4 +178,8 @@ export {
     deletePost,
     fetchMorePostAPI,
     fetchDepartmentUser,
+    createFaculty,
+    fetchAllFaculties,
+    updateFaculty,
+    deleteFaculty
 }

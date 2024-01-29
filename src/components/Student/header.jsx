@@ -4,7 +4,6 @@ import { DownOutlined, MessageOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
-import { VscSearchFuzzy } from 'react-icons/vsc';
 import logo from '../../assets/logo-uef-home.jpg'
 import LoadingComponent from '../Loading/loadingComponent';
 const Conversation = React.lazy(() => import('../Conversation/Conversation'));

@@ -31,13 +31,13 @@ const Conversation = () => {
         if (user && user._id) {
             dispatch(fetchListConversationReduxThunk(user._id));
         }
-    }, []);
+    }, [socket]);
 
     useEffect(() => {
         if (conversations.length > 0) {
             for (let i = 0; i < conversations.length; i++) {
                 socket.emit("join_room", conversations[i].conversationId);
-                // console.log("check conversations[i].conversationId", conversations[i].conversationId)
+                console.log("check conversations[i].conversationId", conversations[i].conversationId)
                 setShowChat(true);
             }
         }
@@ -58,13 +58,11 @@ const Conversation = () => {
                 isReadMessage = true;
             }
             dispatch(setLastMessageToConversations({ ...newMessage, isRead: isReadMessage }));
-
         })
         return () => {
             socket.off("receive_message");
         }
     }, [socket]);
-
 
     useEffect(() => {
         socket.on("receive_file", (newMessage) => {
