@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
 import logo from '../../assets/logo-uef-home.jpg'
 import LoadingComponent from '../Loading/loadingComponent';
+import Account from '../Account';
 const Conversation = React.lazy(() => import('../Conversation/Conversation'));
 
 const Header = () => {
@@ -16,7 +17,7 @@ const Header = () => {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
     const notification = useSelector(state => state.conversation.notification);
-    const [isModalAccountOpen, setIsModalAccountOpen] = useState(false);
+    const [isModalAccountOpen, setModalAccountOpen] = useState(false);
     const [isOpenPopover, setOpenPopover] = useState(false);
 
     const handleLogoutAction = () => {
@@ -27,17 +28,21 @@ const Header = () => {
 
     let items = [
         {
+            label: <p onClick={() => setModalAccountOpen(true)} style={{ margin: 0, cursor: 'pointer' }}>Thông tin tài khoản</p>,
+            key: 'account'
+        },
+        {
             label: <p onClick={() => handleLogoutAction()} style={{ margin: 0, cursor: 'pointer' }}>Đăng xuất</p>,
             key: 'logout',
         },
     ];
 
-    if (user.role === 'Student') {
-        items.unshift({
-            label: <p onClick={() => navigate('/account')} style={{ margin: 0, cursor: 'pointer' }}>Thông tin tài khoản</p>,
-            key: 'account'
-        })
-    }
+    // if (user.role === 'Student') {
+    //     items.unshift({
+    //         label: <p onClick={() => setModalAccountOpen(true)} style={{ margin: 0, cursor: 'pointer' }}>Thông tin tài khoản</p>,
+    //         key: 'account'
+    //     })
+    // }
 
     if (user.role === 'Admin') {
         items.unshift(
@@ -159,10 +164,10 @@ const Header = () => {
                 <Divider />
 
             </Drawer>
-            {/* <Account
+            <Account
                 isModalAccountOpen={isModalAccountOpen}
-                setIsModalAccountOpen={setIsModalAccountOpen}
-            /> */}
+                setModalAccountOpen={setModalAccountOpen}
+            />
         </>
     )
 }

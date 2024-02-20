@@ -101,7 +101,7 @@ const Sidebar = () => {
 
     const handleOnClickDepartment = (item) => {
         if (user.role === 'Student') {
-            if (user.student_id && user.faculty) {
+            if (user.studentId && user.faculty) {
                 setOpenDrawer(true);
                 dispatch(setRecipient(item))
             } else {

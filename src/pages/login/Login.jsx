@@ -120,7 +120,10 @@ const LoginPage = () => {
                                             message: 'Please input your Email!',
                                         },]}
                                     >
-                                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+                                        <Input
+                                            prefix={<UserOutlined className="site-form-item-icon" />}
+                                            placeholder="Email or StudentId"
+                                        />
                                     </Form.Item>
                                     <Form.Item
                                         name="password"
@@ -129,7 +132,10 @@ const LoginPage = () => {
                                             message: 'Please input your Password!',
                                         },]}
                                     >
-                                        <Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
+                                        <Input
+                                            prefix={<LockOutlined className="site-form-item-icon" />}
+                                            type="password" placeholder="Password"
+                                        />
                                     </Form.Item>
 
                                     <Button type="primary" htmlType="submit" className="login-form-button" loading={isSubmit}>

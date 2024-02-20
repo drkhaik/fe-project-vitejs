@@ -31,7 +31,6 @@ instance.interceptors.response.use(function (response) {
     switch (status) {
         // authentication (token related issues)
         case 401: {
-            message.error("Unauthorized!");
             // console.log("check log", error.response.data);
             // return error.response.data;
             return Promise.reject(error);

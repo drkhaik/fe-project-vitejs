@@ -37,13 +37,13 @@ const ModalChooseFaculty = (props) => {
     }, []);
 
     const onFinish = async (values) => {
-        console.log("check value", values);
-        const { faculty, student_id } = values;
+        // console.log("check value", values);
+        const { faculty, studentId } = values;
         setSubmit(true);
         const res = await changeUserFaculty({
             _id: userId,
             faculty: faculty,
-            student_id: student_id
+            studentId: studentId
         });
         if (res && res.errCode === 0) {
             message.success("Successful!");
@@ -97,7 +97,7 @@ const ModalChooseFaculty = (props) => {
                         <Form.Item
                             labelCol={{ span: 24 }}
                             label="Mã số sinh viên"
-                            name="student_id"
+                            name="studentId"
                             rules={[
                                 { required: true, message: 'MSSV không được để trống' },
                                 { pattern: /^[0-9]*$/, message: 'Mã số sinh viên chỉ được nhập số' },

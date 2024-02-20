@@ -51,7 +51,6 @@ export default function App() {
 
 
   useEffect(() => {
-    console.log("check isAuthenticated", isAuthenticated)
     if (isAuthenticated) {
       if (window.location.pathname === '/login') {
         window.location.replace('/');

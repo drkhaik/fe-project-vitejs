@@ -11,7 +11,7 @@ const ChangePassword = (props) => {
         const { password } = values;
         setIsSubmit(true);
         let data = {
-            "id": userInfo.id,
+            "id": userInfo._id,
             "password": password,
         };
         let res = await changeUserPassword(data);
@@ -21,16 +21,13 @@ const ChangePassword = (props) => {
             form.resetFields();
             setOpenUpdateModal(false);
         } else {
-            notification.error({
-                message: "Đã có lỗi xảy ra...",
-                description: res.message,
-            })
+            message.error("Đã có lỗi xảy ra...");
         }
         setIsSubmit(false);
     };
 
     return (
-        <div style={{ minHeight: 350, marginTop: '2rem' }}>
+        <div style={{ minHeight: 200, marginTop: '2rem' }}>
             <Form
                 name="change_password"
                 form={form}
