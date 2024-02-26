@@ -1,53 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
-    Row, Col, Form, Button, Tag, Input, Avatar, Upload, message, Empty
+    Row, Col, Form, Divider, Button, Tag, Input, Drawer, Upload, message, Empty
 } from 'antd';
-import { ClipLoader } from "react-spinners";
-import { useSelector, useDispatch } from 'react-redux';
-import { setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
-import { UploadOutlined, FileOutlined } from '@ant-design/icons';
-import {
-    fetchMessageHistoryById,
-    callUploadMessageFileAPI,
-    fetchMoreMessageHistory
-}
-    from '../../services/api';
+import { useSelector } from 'react-redux';
+import { UploadOutlined } from '@ant-design/icons';
+import ScrollToBottom, { useScrollToTop } from 'react-scroll-to-bottom';
+import { fetchMessageHistoryById, callUploadMessageFileAPI } from '../../services/api';
 import InfiniteScroll from 'react-infinite-scroll-component';
 const { Dragger } = Upload;
 const { TextArea } = Input;
 
 const Message = (props) => {
-    const dispatch = useDispatch();
     const { socket, room } = props;
     const user = useSelector(state => state.account.user);
     const recipient = useSelector(state => state.conversation.recipient);
     const [loading, setLoading] = useState(false);
     const [isSubmit, setIsSubmit] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
     const [messageList, setMessageList] = useState([]);
 
     const [form] = Form.useForm();
 
-    const fetchMoreMessage = async () => {
+    const loadMoreData = async () => {
         if (loading) {
             return;
         }
         setLoading(true);
         if (user && recipient) {
             let conversationId = recipient.conversationId;
-            let lastMessageId = messageList[messageList.length - 1]._id;
-            let res = await fetchMoreMessageHistory({ conversationId, lastMessageId });
+            let lastMessageId = messageList[0]._id; // ?
+            let res = await fetchMessageHistoryById(conversationId);
             if (res && res.errCode === 0 && res.data) {
-                setTimeout(() => {
-                    console.log('This message will be logged after 3 seconds');
-                    if (res.data.length !== 0) {
-                        setMessageList((list) => [...list, ...res.data]);
-                    } else {
-                        setHasMore(false);
-                    }
-                    setLoading(false);
-                }, 3000);
+                console.log("check message list", res.data);
+                setMessageList(res.data); // setData([...data, ...body.results]);
+                setLoading(false);
             } else {
+                message.error("Failed to load list message!");
                 setLoading(false);
             }
         }
@@ -61,6 +48,10 @@ const Message = (props) => {
         //         setLoading(false);
         //     });
     };
+
+    // useEffect(() => {
+    //     loadMoreData();
+    // }, []);
 
     const fetchMessageHistory = async () => {
         if (user && recipient) {
@@ -79,56 +70,42 @@ const Message = (props) => {
         fetchMessageHistory();
     }, [recipient]);
 
+
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            console.log("check message text", newMessage);
-            if (recipient.conversationId === newMessage.conversation) {
-                setMessageList((list) => [newMessage, ...list]);
-            }
+            console.log("check data", newMessage);
+            setMessageList((list) => [...list, newMessage]);
         })
-
-        return () => {
-            socket.off("receive_message");
-        }
-
-    }, [socket]);
-
-    useEffect(() => {
-        socket.on("receive_file", (newMessage) => {
-            // console.log("check data file", newMessage);
-            if (recipient.conversationId === newMessage.conversation) {
-                setMessageList((list) => [newMessage, ...list]);
-            }
-        })
-
-        return () => {
-            socket.off("receive_file");
-        }
-
     }, [socket]);
 
     const onFinish = async (values) => {
         setIsSubmit(true);
+        // console.log("check", values);
         const { file, text } = values;
         if (text) {
             const messageData = {
                 room: room,
                 body: text,
-                type: 'text',
                 author: user._id,
             };
             await socket.emit("send_message", messageData);
-            setMessageList((list) => [messageData, ...list]);
-            dispatch(setLastMessageToConversations({
-                conversation: room,
-                body: text,
-                type: 'text',
-                author: user._id,
-                isRead: true
-            }));
+            setMessageList((list) => [...list, messageData]);
             form.resetFields();
         }
         setIsSubmit(false);
+        // let res = await createUser(fullname, email, password);
+        // setIsSubmit(false);
+        // if (res) {
+        //     // localStorage.setItem('access_token', res.data.access_token)
+        //     // dispatch(doLoginAction(res.data.user))
+        //     message.success("Successfully!");
+        // } else {
+        //     notification.error({
+        //         message: "Something went wrong...",
+        //         description: res.message ? res.message : "ok",
+        //         duration: 3
+        //     })
+        // }
     };
 
     const beforeUpload = async (file) => {
@@ -138,11 +115,7 @@ const Message = (props) => {
                 message.error('Ảnh phải nhỏ hơn 2MB!');
             }
             return isLt2M;
-        } else if (
-            file.type === 'image/jpeg' ||
-            file.type === 'image/png' ||
-            file.type === 'image/jpg' ||
-            file.type === 'application/pdf' ||
+        } else if (file.type === 'application/pdf' ||
             file.type === 'application/msword' ||
             file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
             file.type === 'application/vnd.ms-excel' ||
@@ -170,133 +143,110 @@ const Message = (props) => {
         }
     }
 
-    const getFileType = (file) => {
-        let fileType = file.type;
-        let type = "";
-        if (fileType === 'image/jpeg' || fileType === 'image/png' || fileType === 'image/jpg') {
-            type = "image";
-        } else if (fileType === 'application/pdf') {
-            type = "pdf";
-        } else if (fileType === 'application/zip') {
-            type = "zip";
-        } else if (fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            type = "word";
-        } else if (fileType === 'application/vnd.ms-excel' || fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            type = "excel";
-        }
-        return type;
-    }
-
     const handleUploadFile = async ({ file, onSuccess, onError }) => {
-        // console.log("check file", file);
+        console.log("check file", file);
         const res = await callUploadMessageFileAPI(file);
         if (res && res.data && res.errCode === 0) {
-            const public_id = res.data.public_id;
-            const url = res.data.url;
-            const fileName = file.name;
-            const fileSize = file.size;
-            const fileType = getFileType(file);
-            const messageFile = {
-                room: room,
-                body: fileName,
-                author: user._id,
-                type: 'file',
-                fileUrl: url,
-                public_id: public_id,
-                fileName: fileName,
-                fileType: fileType,
-                fileSize: fileSize,
-            };
-            await socket.emit("send_file", messageFile);
-            setMessageList((list) => [messageFile, ...list]);
-            dispatch(setLastMessageToConversations({
-                conversation: room,
-                body: fileName,
-                author: user._id,
-                type: 'file',
-                fileUrl: url,
-                public_id: public_id,
-                fileName: fileName,
-                fileType: fileType,
-                fileSize: fileSize,
-            }));
+            let public_id = res.data.public_id;
+            let url = res.data.url;
+            let fileName = res.data.fileName;
+            // console.log("check res", res);
             onSuccess('ok');
         } else {
             onError('Upload file failed!');
         }
     };
 
+    const scrollRef = useRef(null);
+
+    const scrollToBottom = () => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messageList]);
+
     return (
         <Row>
             <Col span={24}>
                 <div className='chat-window'>
                     <div className='chat-body'>
-                        <div className='message-container'>
-                            {messageList && messageList.length > 0 ?
-                                <div
-                                    id="scrollableDiv"
-                                    style={{
-                                        height: 'inherit',
-                                        overflow: 'auto',
-                                        display: 'flex',
-                                        flexDirection: 'column-reverse',
-                                    }}
-                                >
-                                    <InfiniteScroll
-                                        dataLength={messageList.length}
-                                        next={fetchMoreMessage}
-                                        style={{ display: 'flex', flexDirection: 'column-reverse' }}
-                                        inverse={true}
-                                        hasMore={hasMore}
-                                        loader={<div style={{
-                                            marginTop: '10px',
+                        <div
+                            id="scrollableDiv"
+                            style={{
+                                height: 'inherit',
+                                overflow: 'auto',
+                                display: 'flex',
+                                flexDirection: 'column-reverse',
+                            }}
+                        >
+                            {/*Put the scroll bar always on the bottom*/}
+                            <InfiniteScroll
+                                className='message-container'
+                                dataLength={messageList.length}
+                                // next={fetchMoreData}
+                                style={{ display: 'flex', flexDirection: 'column-reverse' }}
+                                inverse={true}
+                                hasMore={true}
+                                loader={<h4>Loading...</h4>}
+                                scrollableTarget="scrollableDiv"
+                            >
+                                {messageList && messageList.length > 0 ?
+                                    messageList.map((item, index) => {
+                                        return (
+                                            <div key={index} className='message' id={user._id === item.author ? 'you' : 'other'}>
+                                                <div>
+                                                    <div className="message-content">
+                                                        <p>{item.body}</p>
+                                                    </div>
+                                                    <div className="message-meta">
+                                                        <p id="time"></p>
+                                                        <p id="author">{user._id === item.author ? user.name : recipient.name}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                    :
+                                    <Empty
+                                        style={{
+                                            height: 'inherit',
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                        }}>
-                                            <ClipLoader size={20} color="#36d7b7" loading={true} />
-                                        </div>}
-                                        endMessage={
-                                            <p style={{ textAlign: 'center', padding: '10px 0' }}>
-                                                <b>Yay! You have seen it all</b>
-                                            </p>
-                                        }
-                                        scrollableTarget="scrollableDiv"
-                                    >
-                                        {messageList.map((item, index) => {
-                                            const isAuthor = user._id === item.author;
-                                            return (
-                                                <div key={index} className='message' id={isAuthor ? 'you' : 'other'}>
-                                                    {item.type === 'text'
-                                                        ?
-                                                        <div className="message-content">
-                                                            <p>{item.body}</p>
-                                                        </div>
-                                                        :
-                                                        <div className='message-content file'>
-                                                            <a className='click-download' href={item.fileUrl} target="_blank" download>
-                                                                <div className='icon'>
-                                                                    <FileOutlined />
-                                                                </div>
-                                                                <div className='info'>
-                                                                    <p>File: <span className="file-name">{item.body}</span></p>
-                                                                    <div className='download-info'>
-                                                                        <span className='file-size'>Size: {(item.fileSize / (1024 * 1024)).toFixed(2)} MB</span>
-                                                                    </div>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    }
-                                                    <div className="message-avt">
-                                                        <Avatar src={isAuthor ? user.image : recipient.image} />
-                                                    </div>
+                                            flexDirection: 'column'
+                                        }}
+                                        description='Send a message!'
+                                    />
+                                }
+                                {/* <div ref={scrollRef} /> */}
+                            </InfiniteScroll>
+                        </div>
+                        {/* <ScrollToBottom
+                            className='message-container'
+                            mode='bottom'
+                        >
+                            {messageList && messageList.length > 0 ?
+                                messageList.map((item, index) => {
+                                    return (
+                                        <div key={index} className='message' id={user._id === item.author ? 'you' : 'other'}>
+                                            <button onClick={scrollToTop}> sd</button>
+                                            <div>
+                                                <div className="message-content">
+                                                    <p>{item.body}</p>
                                                 </div>
-                                            )
-                                        })}
-                                    </InfiniteScroll>
-                                </div>
+                                                <div className="message-meta">
+                                                    <p id="time"></p>
+                                                    <p id="author">{user._id === item.author ? user.name : recipient.name}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
                                 :
-
                                 <Empty
                                     style={{
                                         height: 'inherit',
@@ -308,7 +258,7 @@ const Message = (props) => {
                                     description='Send a message!'
                                 />
                             }
-                        </div>
+                        </ScrollToBottom> */}
                     </div>
                 </div>
             </Col>
@@ -329,9 +279,8 @@ const Message = (props) => {
                             accept=".zip,.pdf,.docx,.xls,.xlsx,image/*"
                             maxCount={1}
                             multiple={true}
-                            showUploadList={false}
                         >
-                            <Button icon={<UploadOutlined />} block >Đính kèm file</Button>
+                            <Button icon={<UploadOutlined />}>Đính kèm file</Button>
                         </Upload>
                     </Form.Item>
                     <Form.Item

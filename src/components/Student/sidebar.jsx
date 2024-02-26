@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import { fetchDepartmentUser, createConversation } from '../../services/api';
 import { setRecipient, setListConversations, setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
-import Message from '../Conversation/message';
+import Message from '../Conversation/Message';
 import ModalChooseFaculty from './ModalChooseFaculty';
 import io from "socket.io-client";
 const baseURL = import.meta.env.VITE_BACKEND_URL;
