@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 const Account = (props) => {
     const { isModalAccountOpen, setModalAccountOpen } = props;
     const userInfo = useSelector(state => state.account.user);
-    console.log("check userInfo", userInfo);
     const [formUpdateInfo] = Form.useForm();
     const [formChangePassword] = Form.useForm();
 
