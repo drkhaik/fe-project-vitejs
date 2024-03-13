@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Divider, Form, Input, message } from 'antd';
 import "./login.scss";
-import { handleLogin, handleGoogleLogin } from '../../services/api';
+import { handleLogin, handleStudentLogin } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { doLoginAction } from '../../redux/account/accountSlice';
@@ -16,7 +16,7 @@ const LoginPage = () => {
 
     const fetchAuthUser = async () => {
         try {
-            const res = await handleGoogleLogin({ "type": "Student" });
+            const res = await handleStudentLogin();
             if (res && res.errCode === 0) {
                 dispatch(doLoginAction(res.data));
                 let role = res?.data ? res.data.user.role : null;

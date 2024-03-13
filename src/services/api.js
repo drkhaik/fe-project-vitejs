@@ -6,8 +6,12 @@ const handleLogin = (email, password) => {
     return axios.post("/api/v1/login", { email, password });
 }
 
-const handleGoogleLogin = (data) => {
-    return axios.post("/api/v1/google-login", data);
+const handleStudentLogin = () => {
+    return axios.get("/api/v1/auth/student");
+}
+
+const handleDepartmentLogin = () => {
+    return axios.get("/api/v1/auth/department");
 }
 
 const handleLogout = () => {
@@ -151,7 +155,8 @@ const callUploadMessageFileAPI = (file) => {
 
 export {
     handleLogin,
-    handleGoogleLogin,
+    handleStudentLogin,
+    handleDepartmentLogin,
     fetchAllUserAPI,
     createUser,
     fetchUserAccountAPI,

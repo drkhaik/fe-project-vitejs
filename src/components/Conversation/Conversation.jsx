@@ -12,7 +12,7 @@ import {
     setLastMessageToConversations
 }
     from '../../redux/conversation/conversationSlice';
-import Message from './Message';
+import Message from './message';
 import BeatLoader from "react-spinners/BeatLoader"
 import io from "socket.io-client";
 const baseURL = import.meta.env.VITE_BACKEND_URL;

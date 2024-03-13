@@ -3,16 +3,10 @@ import { Button, Table, Popconfirm, Tabs, Modal, Form, message } from 'antd';
 import { ReloadOutlined, UserAddOutlined, EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import moment from 'moment';
 import { fetchAllUserAPI, fetchAllRole, deleteUser } from '../../../services/api';
-// import AddNew from './AddNew';
-// import ShowDetail from './ShowDetail';
-// import UpdateInfoDepartment from './UpdateInfo';
-// import ChangePassword from './ChangePassword';
-import LoadingComponent from '../../Loading/loadingComponent';
-const AddNew = React.lazy(() => import('./AddNew'));
-const ShowDetail = React.lazy(() => import('./ShowDetail'));
-const UpdateInfoDepartment = React.lazy(() => import('./UpdateInfo'));
-const ChangePassword = React.lazy(() => import('./ChangePassword'));
-
+import AddNew from './AddNew';
+import ShowDetail from './ShowDetail';
+import UpdateInfoDepartment from './UpdateInfo';
+import ChangePassword from './ChangePassword';
 
 const User = () => {
     const [dataUsers, setAllDataUser] = useState([]);
@@ -165,29 +159,24 @@ const User = () => {
             key: 'update_info',
             label: `Cập nhật thông tin`,
             children:
-                <Suspense fallback={<LoadingComponent />}>
-                    <UpdateInfoDepartment
-                        openUpdateModal={openUpdateModal}
-                        setOpenUpdateModal={setOpenUpdateModal}
-                        form={formUpdateInfo}
-                        listRole={listRole}
-                        userInfo={userInfo}
-                        fetchDataUser={fetchDataUser}
-                    />
-                </Suspense>
-            ,
+                <UpdateInfoDepartment
+                    openUpdateModal={openUpdateModal}
+                    setOpenUpdateModal={setOpenUpdateModal}
+                    form={formUpdateInfo}
+                    listRole={listRole}
+                    userInfo={userInfo}
+                    fetchDataUser={fetchDataUser}
+                />,
         },
         {
             key: 'change_password',
             label: `Đổi mật khẩu`,
             children:
-                <Suspense fallback={<LoadingComponent />}>
-                    <ChangePassword
-                        setOpenUpdateModal={setOpenUpdateModal}
-                        form={formChangePassword}
-                        userInfo={userInfo}
-                    />
-                </Suspense>,
+                <ChangePassword
+                    setOpenUpdateModal={setOpenUpdateModal}
+                    form={formChangePassword}
+                    userInfo={userInfo}
+                />,
         },
     ];
 
@@ -208,23 +197,18 @@ const User = () => {
                 // }
                 />
             </div>
+            <AddNew
+                openAddNewModal={openAddNewModal}
+                setOpenAddModal={setOpenAddModal}
+                listRole={listRole}
+                fetchDataUser={fetchDataUser}
+            />
 
-            <Suspense fallback={<LoadingComponent />}>
-                <AddNew
-                    openAddNewModal={openAddNewModal}
-                    setOpenAddModal={setOpenAddModal}
-                    listRole={listRole}
-                    fetchDataUser={fetchDataUser}
-                />
-            </Suspense>
-
-            <Suspense fallback={<LoadingComponent />}>
-                <ShowDetail
-                    userInfo={userInfo}
-                    openDetailDrawer={openDetailDrawer}
-                    setOpenDetailDrawer={setOpenDetailDrawer}
-                />
-            </Suspense>
+            <ShowDetail
+                userInfo={userInfo}
+                openDetailDrawer={openDetailDrawer}
+                setOpenDetailDrawer={setOpenDetailDrawer}
+            />
 
             <Modal
                 title="Cập nhật thông tin"
