@@ -48,6 +48,10 @@ const changeUserFaculty = (data) => {
     return axios.put(`/api/v1/user/change-faculty`, data);
 }
 
+const changeDepartmentFaculty = (data) => {
+    return axios.put(`/api/v1/user/department/change-faculty`, data);
+}
+
 const deleteUser = (_id) => {
     return axios.delete(`/api/v1/user/${_id}`);
 }
@@ -165,6 +169,7 @@ export {
     updateUserAPI,
     changeUserPassword,
     changeUserFaculty,
+    changeDepartmentFaculty,
     deleteUser,
     callUploadUserImgAPI,
     callUploadMessageFileAPI,

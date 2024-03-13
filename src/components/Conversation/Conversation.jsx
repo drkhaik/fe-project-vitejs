@@ -37,7 +37,7 @@ const Conversation = () => {
         if (conversations.length > 0) {
             for (let i = 0; i < conversations.length; i++) {
                 socket.emit("join_room", conversations[i].conversationId);
-                console.log("check conversations[i].conversationId", conversations[i].conversationId)
+                // console.log("check conversations[i].conversationId", conversations[i].conversationId)
                 setShowChat(true);
             }
         }
