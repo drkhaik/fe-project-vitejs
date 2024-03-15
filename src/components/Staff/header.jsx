@@ -18,7 +18,7 @@ const Header = () => {
     const handleLogoutAction = () => {
         dispatch(handleLogoutReduxThunk());
         message.success("Log out successfully!");
-        navigate("/");
+        navigate("/staff");
     }
     const itemsDropdown = [
         {

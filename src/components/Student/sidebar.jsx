@@ -6,7 +6,6 @@ import {
 import { fetchDepartmentUser, createConversation } from '../../services/api';
 import { setRecipient, setListConversations, setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
 import Message from '../Conversation/message';
-import ModalChooseFaculty from './ModalChooseFaculty';
 import io from "socket.io-client";
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 const socket = io.connect(baseURL);
@@ -17,7 +16,6 @@ const Sidebar = () => {
     const recipient = useSelector(state => state.conversation.recipient);
     const [itemSidebar, setItemSidebar] = useState([]);
     const [isOpenDrawer, setOpenDrawer] = useState(false);
-    const [isModalOpen, setModalOpen] = useState(false);
     const [room, setRoom] = useState("");
     const [showChat, setShowChat] = useState(false);
 
@@ -100,17 +98,8 @@ const Sidebar = () => {
     }, [socket]);
 
     const handleOnClickDepartment = (item) => {
-        if (user.role === 'Student') {
-            if (user.studentId && user.faculty) {
-                setOpenDrawer(true);
-                dispatch(setRecipient(item))
-            } else {
-                setModalOpen(true);
-            }
-        } else {
-            setOpenDrawer(true);
-            dispatch(setRecipient(item));
-        }
+        setOpenDrawer(true);
+        dispatch(setRecipient(item));
     }
 
     return (
@@ -177,11 +166,6 @@ const Sidebar = () => {
                     />
                 }
             </Drawer>
-            <ModalChooseFaculty
-                isModalOpen={isModalOpen}
-                setModalOpen={setModalOpen}
-                userId={user._id}
-            />
         </div>
     )
 }

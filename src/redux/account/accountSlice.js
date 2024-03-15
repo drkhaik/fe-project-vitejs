@@ -98,7 +98,6 @@ export const accountSlice = createSlice({
       })
       .addCase(handleLogoutReduxThunk.fulfilled, (state, action) => {
         state.isLoading = false;
-        // localStorage.removeItem('access_token');
         state.isAuthenticated = false;
         state.token = "";
         state.user = {

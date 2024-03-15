@@ -118,11 +118,11 @@ export default function App() {
     },
     {
       path: "/login",
-      element: !isAuthenticated ? <LoginStudent /> : <Navigate to="/" />,
+      element: !isAuthenticated ? <LoginStudent /> : <Navigate to="/" replace />,
     },
     {
       path: "/staff/login",
-      element: !isAuthenticated ? <LoginStaff /> : <Navigate to="/staff" />,
+      element: !isAuthenticated ? <LoginStaff /> : <Navigate to="/staff" replace />,
     },
     {
       path: "/login/success",

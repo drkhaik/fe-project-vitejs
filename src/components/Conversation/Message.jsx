@@ -75,13 +75,37 @@ const Message = (props) => {
         }
     }
 
+    //
+
+
+    // if(user.faculty !== recipient.faculty){
+    //      call API for department has faculty same as faculty of student
+    // getDepartmentByFacultyId(user.faculty);
+    // const role = await Role.findOne({ name: 'Department' });
+    //     if (!role) {
+    //         return;
+    //     }
+    //  let user = await User.findOne({
+    //          raw: true,
+    //          faculty: faculty,
+    //          role: role
+    //    });
+    // }
+
+
+    // how to send message to both department and recipient at the same time
+    // messageList[0] === null;
+
     useEffect(() => {
         fetchMessageHistory();
+        if (user.role === 'Student') {
+
+        }
     }, [recipient]);
 
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            console.log("check message text", newMessage);
+            // console.log("check message text", newMessage);
             if (recipient.conversationId === newMessage.conversation) {
                 setMessageList((list) => [newMessage, ...list]);
             }

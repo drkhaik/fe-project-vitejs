@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Divider, Form, Input, message } from 'antd';
 import "./login.scss";
-import { handleLogin, handleStudentLogin } from '../../services/api';
+import { handleLogin, handleGoogleLogin } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { doLoginAction } from '../../redux/account/accountSlice';
+import { doLoginAction, handleLogoutReduxThunk } from '../../redux/account/accountSlice';
 
 
 const LoginPage = () => {
@@ -14,9 +14,22 @@ const LoginPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
-    const fetchAuthUser = async () => {
+    const checkRole = (role) => {
+        if (role === null) {
+            return;
+        }
+        if (role === 'Student' || role === 'Admin') {
+            navigate('/');
+            message.success("Login successfully!");
+        } else {
+            dispatch(handleLogoutReduxThunk());
+            message.error("Incorrect email or password!");
+        }
+    }
+
+    const handleGoogleLoginFunction = async () => {
         try {
-            const res = await handleStudentLogin();
+            const res = await handleGoogleLogin("Student");
             if (res && res.errCode === 0) {
                 dispatch(doLoginAction(res.data));
                 let role = res?.data ? res.data.user.role : null;
@@ -43,7 +56,7 @@ const LoginPage = () => {
         if (newWindow) {
             timer = setInterval(() => {
                 if (newWindow.closed) {
-                    fetchAuthUser();
+                    handleGoogleLoginFunction();
                     if (timer) clearInterval(timer);
                 }
             }, 500);
@@ -54,24 +67,20 @@ const LoginPage = () => {
         try {
             const { email, password } = values;
             setIsSubmit(true);
-            let res = await handleLogin(email, password);
+            const res = await handleLogin(email, password);
             setIsSubmit(false);
             if (res && res.errCode === 0) {
                 dispatch(doLoginAction(res.data));
                 let role = res?.data ? res.data.user.role : null;
-                message.success("Login successfully!");
-                if (role === null) {
-                    return;
-                }
-                role === 'Department' ? navigate('/staff') : navigate("/");
+                checkRole(role);
             } else {
                 message.error("Incorrect email or password!");
             }
         } catch (e) {
             console.log("Something went wrong...", err);
         }
-
     };
+
     return (
         <div className='login-page'>
             <main className="main">

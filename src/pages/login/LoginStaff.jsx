@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Divider, Form, Input, message } from 'antd';
 import "./login.scss";
-import { handleLogin, handleDepartmentLogin } from '../../services/api';
+import { handleLogin, handleGoogleLogin } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { doLoginAction } from '../../redux/account/accountSlice';
+import { doLoginAction, handleLogoutReduxThunk } from '../../redux/account/accountSlice';
 
 
 const LoginStaff = () => {
@@ -14,9 +14,22 @@ const LoginStaff = () => {
     const [isSubmit, setIsSubmit] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
-    const fetchAuthUser = async () => {
+    const checkRole = (role) => {
+        if (role === null) {
+            return;
+        }
+        if (role === 'Department' || role === 'Admin') {
+            navigate('/staff');
+            message.success("Login successfully!");
+        } else {
+            dispatch(handleLogoutReduxThunk());
+            message.error("Incorrect email or password!");
+        }
+    }
+
+    const handleGoogleLoginFunction = async () => {
         try {
-            const res = await handleDepartmentLogin();
+            const res = await handleGoogleLogin("Department");
             if (res && res.errCode === 0) {
                 dispatch(doLoginAction(res.data));
                 let role = res?.data ? res.data.user.role : null;
@@ -24,7 +37,7 @@ const LoginStaff = () => {
                 if (role === null) {
                     return;
                 }
-                navigate('/staff');
+                navigate('/staff/login');
             }
         } catch (err) {
             console.log("Not properly authenticated", err);
@@ -43,7 +56,7 @@ const LoginStaff = () => {
         if (newWindow) {
             timer = setInterval(() => {
                 if (newWindow.closed) {
-                    fetchAuthUser();
+                    handleGoogleLoginFunction();
                     if (timer) clearInterval(timer);
                 }
             }, 500);
@@ -51,20 +64,20 @@ const LoginStaff = () => {
     };
 
     const onFinish = async (values) => {
-        const { email, password } = values;
-        setIsSubmit(true);
-        let res = await handleLogin(email, password);
-        setIsSubmit(false);
-        if (res && res.errCode === 0) {
-            dispatch(doLoginAction(res.data));
-            let role = res?.data ? res.data.user.role : null;
-            message.success("Login successfully!");
-            if (role === null) {
-                return;
+        try {
+            const { email, password } = values;
+            setIsSubmit(true);
+            const res = await handleLogin(email, password);
+            setIsSubmit(false);
+            if (res && res.errCode === 0) {
+                dispatch(doLoginAction(res.data));
+                let role = res?.data ? res.data.user.role : null;
+                checkRole(role);
+            } else {
+                message.error("Incorrect email or password!");
             }
-            role === 'Department' ? navigate('/staff') : navigate("/");
-        } else {
-            message.error("Incorrect email or password!");
+        } catch (e) {
+            console.log("Something went wrong...", err);
         }
 
     };
