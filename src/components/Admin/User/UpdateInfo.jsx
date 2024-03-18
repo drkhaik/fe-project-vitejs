@@ -47,7 +47,7 @@ const UpdateInfoDepartment = (props) => {
                 name: userInfo.name,
                 email: userInfo.email,
                 description: userInfo.description,
-                roleID: userInfo.roleID._id,
+                roleID: userInfo.roleID,
                 image: { fileList: arrImage },
             }
             setInitForm(init);

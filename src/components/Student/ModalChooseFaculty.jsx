@@ -53,12 +53,12 @@ const ModalChooseFaculty = (props) => {
             if (res && res.errCode === 0) {
                 message.success("Successful!");
                 form.resetFields();
-                dispatch(fetchUserAccountReduxThunk());
             } else {
                 message.error("Oops...something went wrong!");
             }
             setSubmit(false);
             setModalOpen(false);
+            dispatch(fetchUserAccountReduxThunk());
         } catch (e) {
             console.log(e);
         }

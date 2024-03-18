@@ -37,6 +37,7 @@ const createUser = (data) => {
 }
 
 const updateUserAPI = (data) => {
+    console.log("check data", data);
     return axios.put("/api/v1/user", data);
 }
 

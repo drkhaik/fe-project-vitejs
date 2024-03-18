@@ -41,7 +41,6 @@ const PostPage = () => {
         try {
             const res = await fetchUser(_id);
             if (res && res.data && res.errCode === 0) {
-                console.log("check user", res.data);
                 setDepartmentInfo(res.data);
             }
         } catch (e) {
@@ -58,7 +57,6 @@ const PostPage = () => {
             let lastPostId = postList[postList.length - 1]._id;
             const res = await fetchMorePostsByFaculty({ 'lastPostId': lastPostId, 'authorId': _id });
             if (res && res.errCode === 0 && res.data) {
-                console.log("check res.data", res.data);
                 setTimeout(() => {
                     if (res.data.length !== 0) {
                         setPostList((list) => [...list, ...res.data]);

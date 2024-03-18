@@ -3,65 +3,100 @@ import {
     Upload, Modal, Form, Input, Divider, message, notification,
     Avatar, InputNumber, Row, Col, Button
 } from 'antd';
-import { UploadOutlined, UserOutlined } from '@ant-design/icons';
+import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import imgUEF from '../../../assets/team_UEF.png';
+import useImageHandling from '../../../hooks/useImageHandling';
+import { v4 as uuidv4 } from 'uuid';
+import { callUploadUserImgAPI, updateUserAPI } from '../../../services/api';
+import { useDispatch } from 'react-redux';
+import { fetchUserAccountReduxThunk } from '../../../redux/account/accountSlice';
 
 const { TextArea } = Input;
 
 const UpdateInfo = (props) => {
-    // console.log("check render")
-    const { openModalUpdate, setOpenModalUpdate } = props;
-    const [isSubmit, setIsSubmit] = useState(false);
+    const { openModalUpdate, setOpenModalUpdate, departmentInfo } = props;
+    const dispatch = useDispatch();
     const [form] = Form.useForm();
+    const [isSubmit, setSubmit] = useState(false);
+    const [public_id, setPublic_id] = useState(null);
+    const [initForm, setInitForm] = useState(null);
 
-    const handleUploadAvatar = async ({ file, onSuccess, onError }) => {
-        try {
-            const res = await handleCallAPIUploadAvatar(file);
-            if (res && res.data) {
-                const newAvatar = res.data.fileUploaded;
-                // dispatch(doUploadAvatarAction({ avatar: newAvatar }));
-                setUserAvatar(newAvatar);
-                onSuccess('Ok');
-            } else {
-                onError('Upload file failed!');
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    const { loading,
+        previewOpen,
+        previewImage,
+        previewTitle,
+        file,
+        setFile,
+        handlePreview,
+        beforeUpload,
+        handleChange,
+        handleUploadFile,
+        setPreviewOpen,
+    } = useImageHandling();
 
-    const beforeUpload = (file) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            message.error('Image must smaller than 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    };
-
-    const propsUpload = {
-        name: 'avatar',
-        maxCount: 1,
-        multiple: false,
-        customRequest: handleUploadAvatar,
-        beforeUpload: beforeUpload,
-        onChange(info) {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
+    useEffect(() => {
+        if (departmentInfo && departmentInfo._id) {
+            const arrImage = [
+                {
+                    uid: uuidv4(),
+                    name: departmentInfo.name,
+                    status: 'done',
+                    url: `${departmentInfo.image}`,
+                }
+            ]
+            const init = {
+                _id: departmentInfo._id,
+                name: departmentInfo.name,
+                email: departmentInfo.email,
+                description: departmentInfo.description,
+                roleID: departmentInfo.roleID,
+                image: { fileList: arrImage },
             }
-            if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-            } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
+            setInitForm(init);
+            setPublic_id(departmentInfo.public_id);
+            form.setFieldsValue(init);
         }
-    }
+        return () => {
+            form.resetFields();
+        }
+    }, [departmentInfo, openModalUpdate]);
 
     const onFinish = async (values) => {
+        try {
+            setSubmit(true);
+            const { _id, description } = values;
+            let data = {
+                "_id": _id,
+                "description": description,
+            };
+            // console.log("check file", file);
+            if (file && file.size > 0) {
+                const uploadRes = await callUploadUserImgAPI(file, public_id);
+                if (!uploadRes || !uploadRes.data || uploadRes.errCode !== 0) {
+                    throw new Error("Upload file failed");
+                }
+                data.image = uploadRes.data.url;
+                data.public_id = uploadRes.data.public_id;
+            }
+            const res = await updateUserAPI(data);
+            if (res && res.errCode === 0) {
+                message.success("Successful!");
+                form.resetFields();
+                setPublic_id(null);
+                setFile({});
+            } else {
+                message.error("Oops...something went wrong!");
+            }
+            setSubmit(false);
+            setOpenModalUpdate(false);
+            dispatch(fetchUserAccountReduxThunk());
 
+        } catch (error) {
+            console.error("An error occurred: ", error);
+        } finally {
+            setPublic_id(null);
+            setFile({});
+        }
     };
 
     return (
@@ -83,90 +118,96 @@ const UpdateInfo = (props) => {
                 forceRender={true}
             >
                 <Divider />
-                <Row>
-                    <Col sm={24} md={8}>
-                        <Row gutter={[30, 30]} style={{ justifyContent: 'center' }}>
-                            <Col span={24}>
-                                <Avatar
-                                    size={{ xs: 32, sm: 64, md: 80, lg: 128, xl: 160 }}
-                                    icon={<UserOutlined />}
-                                    shape='square'
-                                    src={imgUEF}
-                                />
-                            </Col>
-                            <Col span={24}>
-                                <Upload {...propsUpload}>
-                                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                                </Upload>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col sm={24} md={16}>
-                        <Form
-                            name="basic"
-                            style={{ maxWidth: "100%", margin: '0 auto' }}
-                            onFinish={onFinish}
-                            form={form}
-                            // onFinishFailed={onFinishFailed}
-                            autoComplete="off"
-                        >
-                            <Row>
-                                <Form.Item
-                                    hidden
-                                    labelCol={{ span: 24 }}
-                                    label="Id"
-                                    name="_id"
+                <Form
+                    name="basic"
+                    style={{ maxWidth: "100%", margin: '0 auto' }}
+                    onFinish={onFinish}
+                    form={form}
+                    // onFinishFailed={onFinishFailed}
+                    autoComplete="off"
+                >
+                    <Row>
+                        <Col sm={24} md={8}>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Image"
+                                name="image"
+                            >
+                                <Upload
+                                    name="image"
+                                    listType="picture-card"
+                                    className="image-uploader"
+                                    maxCount={1}
+                                    multiple={false}
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    // fileList={dataThumbnail}
+                                    // showUploadList={false}
+                                    customRequest={handleUploadFile}
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}
+                                    onPreview={handlePreview}
+                                    defaultFileList={initForm?.image?.fileList ?? []}
                                 >
-                                    <Input />
-                                </Form.Item>
-                                <Col span={24}>
-                                    <Form.Item
-                                        labelCol={{ span: 24 }}
-                                        label="Department Name"
-                                        name="departmentName"
-                                    >
-                                        <Input disabled />
-                                    </Form.Item>
-                                </Col>
+                                    <div>
+                                        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                                        <div style={{ marginTop: 8, }} >Upload </div>
+                                    </div>
+                                </Upload>
+                            </Form.Item>
+                        </Col>
+                        <Col sm={24} md={16}>
+                            <Form.Item
+                                hidden
+                                labelCol={{ span: 24 }}
+                                label="Id"
+                                name="_id"
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Name"
+                                name="name"
+                                rules={[
+                                    { required: true, message: 'Tên phòng ban không được để trống' },
+                                ]}
+                            >
+                                <Input disabled />
+                            </Form.Item>
 
-                                <Col span={24}>
-                                    <Form.Item
-                                        labelCol={{ span: 24 }}
-                                        label="Description"
-                                        name="description"
-                                        rules={[{ required: true }]}
-                                        initialValue={"abc123"}
-                                    >
-                                        <TextArea
-                                            showCount
-                                            maxLength={200}
-                                            // onChange={onChangeQuestion}
-                                            style={{
-                                                height: 120,
-                                                resize: 'none',
-                                            }}
-                                        />
-                                    </Form.Item>
-                                </Col>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Email"
+                                name="email"
+                            >
+                                <Input disabled />
+                            </Form.Item>
 
-                                <Col span={24}>
-                                    <Form.Item
-                                        labelCol={{ span: 24 }}
-                                        label="Note"
-                                        name="note"
-                                        rules={[{ required: true }]}
-                                    >
-                                        <Input />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </Col>
-                </Row>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Description"
+                                name="description"
+                                rules={[
+                                    { required: true, message: 'Chi tiết phòng ban không được để trống' },
+                                ]}
+                            >
+                                <TextArea
+                                    showCount
+                                    maxLength={500}
+                                    // onChange={onChangeQuestion}
+                                    style={{
+                                        height: 120,
+                                        resize: 'none',
+                                    }}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
             </Modal>
-            {/* <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+            <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
                 <img alt="example" style={{ width: '100%' }} src={previewImage} />
-            </Modal> */}
+            </Modal>
         </>
     );
 }

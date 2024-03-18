@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Dropdown, Space, Avatar, Button, Row, Col, message
 } from 'antd';
@@ -6,20 +6,37 @@ import { DownOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
+import { fetchUser } from '../../services/api';
 import UpdateInfo from './Department/UpdateInfo';
 
 const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
-    // console.log("check user header", user);
+    const [departmentInfo, setDepartmentInfo] = useState({});
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
+
+    useEffect(() => {
+        getDepartmentInfo(user._id);
+    }, [user._id]);
+
+    const getDepartmentInfo = async (_id) => {
+        try {
+            const res = await fetchUser(_id);
+            if (res && res.data && res.errCode === 0) {
+                setDepartmentInfo(res.data);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const handleLogoutAction = () => {
         dispatch(handleLogoutReduxThunk());
         message.success("Log out successfully!");
         navigate("/staff");
     }
+
     const itemsDropdown = [
         {
             label: <p onClick={() => setOpenModalUpdate(true)} style={{ margin: 0 }}>Chỉnh sửa thông tin</p>,
@@ -61,6 +78,7 @@ const Header = () => {
             <UpdateInfo
                 openModalUpdate={openModalUpdate}
                 setOpenModalUpdate={setOpenModalUpdate}
+                departmentInfo={departmentInfo}
             />
         </>
 
