@@ -77,7 +77,7 @@ const Header = () => {
 
     return (
         <>
-            <div className='header-container'>
+            <div className='header-container-student-side'>
                 <header className='page-header'>
                     <div className='page-header__left'>
                         <div className="page-header__toggle" onClick={() => {

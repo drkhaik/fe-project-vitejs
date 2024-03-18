@@ -14,17 +14,13 @@ const LoginPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
-    const checkRole = (role) => {
+    const checkRoleStudent = (role) => {
         if (role === null) {
             return;
         }
-        if (role === 'Student' || role === 'Admin') {
-            navigate('/');
-            message.success("Login successfully!");
-        } else {
-            dispatch(handleLogoutReduxThunk());
-            message.error("Incorrect email or password!");
-        }
+        if (role === 'Student' || role === 'Admin')
+            return true
+        return false;
     }
 
     const handleGoogleLoginFunction = async () => {
@@ -72,7 +68,13 @@ const LoginPage = () => {
             if (res && res.errCode === 0) {
                 dispatch(doLoginAction(res.data));
                 let role = res?.data ? res.data.user.role : null;
-                checkRole(role);
+                if (checkRoleStudent(role)) {
+                    navigate('/');
+                    message.success("Login successfully!");
+                } else {
+                    dispatch(handleLogoutReduxThunk());
+                    message.error("Incorrect email or password!");
+                }
             } else {
                 message.error("Incorrect email or password!");
             }

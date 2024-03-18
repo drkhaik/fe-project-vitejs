@@ -13,13 +13,12 @@ const PermitAccess = ({ allowedRoles, children }) => {
 
 const ProtectedRoute = (props) => {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
-    const user = useSelector(state => state.account.user);
     const isAdminRoute = window.location.pathname.startsWith('/admin');
     const isStaffRoute = window.location.pathname.startsWith('/staff');
 
     const renderPermissions = () => {
         if (!isAuthenticated) {
-            return <Navigate to={user.role === 'Student' ? '/login' : '/staff/login'} replace />;
+            return <Navigate to={'/login'} replace />;
         }
         if (isAdminRoute) {
             return <PermitAccess allowedRoles={['Admin']}>{props.children}</PermitAccess>;

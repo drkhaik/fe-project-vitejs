@@ -10,19 +10,23 @@ const FacultyTable = () => {
     const [isSubmit, setSubmit] = useState(false);
 
     const fetchDataFaculties = async () => {
-        const res = await fetchAllFaculties();
-        if (res && res.errCode === 0 && res.data) {
-            let data = res.data;
-            let dataFaculties = []
-            for (let index = 0; index < data.length; index++) {
-                const item = data[index];
-                const newItem = {
-                    ...item,
-                    key: index + 1,
-                };
-                dataFaculties.push(newItem);
+        try {
+            const res = await fetchAllFaculties();
+            if (res && res.errCode === 0 && res.data) {
+                let data = res.data;
+                let dataFaculties = []
+                for (let index = 0; index < data.length; index++) {
+                    const item = data[index];
+                    const newItem = {
+                        ...item,
+                        key: index + 1,
+                    };
+                    dataFaculties.push(newItem);
+                }
+                setAllDataFaculty(dataFaculties);
             }
-            setAllDataFaculty(dataFaculties);
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -31,27 +35,35 @@ const FacultyTable = () => {
     }, []);
 
     const onClickDeleteFaculty = async (_id) => {
-        const res = await deleteFaculty(_id);
-        if (res && res.errCode === 0) {
-            message.success("Success!");
-            await fetchDataFaculties();
-        } else {
-            message.error("Oops...something went wrong...");
+        try {
+            const res = await deleteFaculty(_id);
+            if (res && res.errCode === 0) {
+                message.success("Success!");
+                await fetchDataFaculties();
+            } else {
+                message.error("Oops...something went wrong...");
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
     const onFinish = async (values) => {
-        const { name } = values;
-        setSubmit(true);
-        const res = await createFaculty({ name: name });
-        if (res && res.errCode === 0) {
-            message.success("Successful!");
-            form.resetFields();
-            await fetchDataFaculties();
-        } else {
-            message.error("Oops...something went wrong!");
+        try {
+            const { name } = values;
+            setSubmit(true);
+            const res = await createFaculty({ name: name });
+            if (res && res.errCode === 0) {
+                message.success("Successful!");
+                form.resetFields();
+                await fetchDataFaculties();
+            } else {
+                message.error("Oops...something went wrong!");
+            }
+            setSubmit(false);
+        } catch (e) {
+            console.log(e);
         }
-        setSubmit(false);
     }
 
     const [valueInput, setValueInput] = useState("");
@@ -67,18 +79,22 @@ const FacultyTable = () => {
     };
 
     const handleEditingName = async (_id) => {
-        const res = await updateFaculty({
-            _id: _id,
-            name: valueInput
-        });
-        if (res && res.errCode === 0) {
-            message.success("Successful!");
-            form.resetFields();
-            await fetchDataFaculties();
-        } else {
-            message.error("Oops...something went wrong!");
+        try {
+            const res = await updateFaculty({
+                _id: _id,
+                name: valueInput
+            });
+            if (res && res.errCode === 0) {
+                message.success("Successful!");
+                form.resetFields();
+                await fetchDataFaculties();
+            } else {
+                message.error("Oops...something went wrong!");
+            }
+            setKeySetting("");
+        } catch (e) {
+            console.log(e);
         }
-        setKeySetting("");
     }
 
     const columns = [

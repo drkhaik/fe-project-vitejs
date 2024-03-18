@@ -6,7 +6,7 @@ import {
 import './home.scss';
 // import Sidebar from './sidebar';
 import Content from './content';
-import Header from './header';
+// import Header from './header';
 const Sidebar = React.lazy(() => import('./sidebar'));
 import LoadingComponent from '../Loading/loadingComponent';
 import ModalChooseFaculty from './ModalChooseFaculty';
@@ -26,9 +26,9 @@ const Home = () => {
     return (
         <div className='wrapper-layout-student'>
             <Row>
-                <Col span={24}>
+                {/* <Col span={24}>
                     <Header />
-                </Col>
+                </Col> */}
                 <Col span={24}>
                     <Row justify={'space-between'} className="homepage-container">
                         <Col span={5} className='sidebar'>

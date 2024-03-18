@@ -26,11 +26,15 @@ const Post = () => {
     const [hasMore, setHasMore] = useState(true);
 
     const fetchPosts = async () => {
-        const res = await fetchAllPost();
-        if (res && res.data) {
-            setPostList(res.data);
-        } else {
-            message.error("Failed to load list post")
+        try {
+            const res = await fetchAllPost();
+            if (res && res.data) {
+                setPostList(res.data);
+            } else {
+                message.error("Failed to load list post")
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -48,7 +52,6 @@ const Post = () => {
             let res = await fetchMorePostAPI({ 'lastPostId': lastPostId });
             if (res && res.errCode === 0 && res.data) {
                 setTimeout(() => {
-                    console.log('This message will be logged after 3 seconds');
                     if (res.data.length !== 0) {
                         setPostList((list) => [...list, ...res.data]);
                     } else {
@@ -68,12 +71,16 @@ const Post = () => {
     }
 
     const onClickDeletePost = async (_id) => {
-        const res = await deletePost(_id);
-        if (res && res.errCode === 0) {
-            message.success("Success!");
-            await fetchPosts();
-        } else {
-            message.error("Oops...something went wrong...");
+        try {
+            const res = await deletePost(_id);
+            if (res && res.errCode === 0) {
+                message.success("Success!");
+                await fetchPosts();
+            } else {
+                message.error("Oops...something went wrong...");
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -85,7 +92,7 @@ const Post = () => {
                         <Card
                             className='add-new-post'
                             hoverable={true}
-                            onClick={() => onClickPost(item)}
+                            onClick={() => setOpenAddModal(true)}
                         >
                             <Meta
                                 avatar={<Avatar size={'large'} src={user.image ? user.image : imgUEF} />}

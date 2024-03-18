@@ -213,40 +213,44 @@ const Message = (props) => {
 
     const handleUploadFile = async ({ file, onSuccess, onError }) => {
         // console.log("check file", file);
-        const res = await callUploadMessageFileAPI(file);
-        if (res && res.data && res.errCode === 0) {
-            const public_id = res.data.public_id;
-            const url = res.data.url;
-            const fileName = file.name;
-            const fileSize = file.size;
-            const fileType = getFileType(file);
-            const messageFile = {
-                room: room,
-                body: fileName,
-                author: user._id,
-                type: 'file',
-                fileUrl: url,
-                public_id: public_id,
-                fileName: fileName,
-                fileType: fileType,
-                fileSize: fileSize,
-            };
-            await socket.emit("send_file", messageFile);
-            setMessageList((list) => [messageFile, ...list]);
-            dispatch(setLastMessageToConversations({
-                conversation: room,
-                body: fileName,
-                author: user._id,
-                type: 'file',
-                fileUrl: url,
-                public_id: public_id,
-                fileName: fileName,
-                fileType: fileType,
-                fileSize: fileSize,
-            }));
-            onSuccess('ok');
-        } else {
-            onError('Upload file failed!');
+        try {
+            const res = await callUploadMessageFileAPI(file);
+            if (res && res.data && res.errCode === 0) {
+                const public_id = res.data.public_id;
+                const url = res.data.url;
+                const fileName = file.name;
+                const fileSize = file.size;
+                const fileType = getFileType(file);
+                const messageFile = {
+                    room: room,
+                    body: fileName,
+                    author: user._id,
+                    type: 'file',
+                    fileUrl: url,
+                    public_id: public_id,
+                    fileName: fileName,
+                    fileType: fileType,
+                    fileSize: fileSize,
+                };
+                await socket.emit("send_file", messageFile);
+                setMessageList((list) => [messageFile, ...list]);
+                dispatch(setLastMessageToConversations({
+                    conversation: room,
+                    body: fileName,
+                    author: user._id,
+                    type: 'file',
+                    fileUrl: url,
+                    public_id: public_id,
+                    fileName: fileName,
+                    fileType: fileType,
+                    fileSize: fileSize,
+                }));
+                onSuccess('ok');
+            } else {
+                onError('Upload file failed!');
+            }
+        } catch (e) {
+            console.log(e);
         }
     };
 

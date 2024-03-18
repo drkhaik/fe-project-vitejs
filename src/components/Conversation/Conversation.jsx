@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    List, Tag, Badge, Avatar, Row, Col, Drawer
+    List, Tag, Badge, Avatar, Row, Col, Drawer, Divider
 } from 'antd';
 import { FaCircle } from "react-icons/fa";
 import './Conversation.scss';
@@ -135,7 +135,9 @@ const Conversation = () => {
                 className='box-chat'
                 title={
                     <>
-                        <Tag color="#108ee9" style={{ marginRight: 0 }}>{recipient.name}</Tag> <Tag color="#108ee9">{recipient.email}</Tag>
+                        <Tag color="#108ee9" style={{ marginRight: 0 }}>{recipient.name}</Tag>
+                        <Divider type='vertical' />
+                        <Tag color="#108ee9">{recipient.email}</Tag>
                     </>
                 }
                 placement="right"

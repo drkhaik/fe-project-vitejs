@@ -20,7 +20,11 @@ const fetchAllUserAPI = () => {
     return axios.get("/api/v1/users");
 }
 
-const fetchUserAccountAPI = () => {
+const fetchUser = (id) => {
+    return axios.get(`/api/v1/user/${id}`);
+}
+
+const fetchAccountAPI = () => {
     return axios.get("/api/v1/fetch-account");
 }
 
@@ -109,6 +113,14 @@ const fetchAllPost = () => {
     return axios.get(`/api/v1/post`);
 }
 
+const fetchPostsByFaculty = (_id) => {
+    return axios.get(`/api/v1/post/${_id}`);
+}
+
+const fetchMorePostsByFaculty = (data) => {
+    return axios.post(`/api/v1/post/department/history`, data);
+}
+
 const updatePost = (data) => {
     return axios.put(`/api/v1/post`, data);
 }
@@ -157,8 +169,9 @@ export {
     handleLogin,
     handleGoogleLogin,
     fetchAllUserAPI,
+    fetchUser,
     createUser,
-    fetchUserAccountAPI,
+    fetchAccountAPI,
     handleLogout,
     fetchAllRole,
     updateUserAPI,
@@ -174,6 +187,8 @@ export {
     fetchMoreMessageHistory,
     createPost,
     fetchAllPost,
+    fetchPostsByFaculty,
+    fetchMorePostsByFaculty,
     updatePost,
     deletePost,
     fetchMorePostAPI,

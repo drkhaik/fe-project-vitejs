@@ -20,10 +20,15 @@ import HomeStaff from './components/Staff';
 import Post from './components/Staff/Post';
 import UserTable from './components/Admin/User';
 import FacultyTable from './components/Admin/Faculty';
+import Header from './components/Student/header';
+import PostPage from './pages/post';
 
 const Layout = () => {
   return (
-    <Outlet />
+    <div>
+      <Header />
+      <Outlet />
+    </div>
   )
 }
 
@@ -83,8 +88,8 @@ export default function App() {
       children: [,
         { index: true, element: <Home /> },
         {
-          path: "history/",
-          element: <History />,
+          path: "post/:slug",
+          element: <PostPage />,
         },
       ],
     },

@@ -15,14 +15,18 @@ const UpdateInfo = (props) => {
     const [form] = Form.useForm();
 
     const handleUploadAvatar = async ({ file, onSuccess, onError }) => {
-        const res = await handleCallAPIUploadAvatar(file);
-        if (res && res.data) {
-            const newAvatar = res.data.fileUploaded;
-            // dispatch(doUploadAvatarAction({ avatar: newAvatar }));
-            setUserAvatar(newAvatar);
-            onSuccess('Ok');
-        } else {
-            onError('Upload file failed!');
+        try {
+            const res = await handleCallAPIUploadAvatar(file);
+            if (res && res.data) {
+                const newAvatar = res.data.fileUploaded;
+                // dispatch(doUploadAvatarAction({ avatar: newAvatar }));
+                setUserAvatar(newAvatar);
+                onSuccess('Ok');
+            } else {
+                onError('Upload file failed!');
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -155,70 +159,6 @@ const UpdateInfo = (props) => {
                                         <Input />
                                     </Form.Item>
                                 </Col>
-
-                                {/* <Col span={12}>
-
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Thumbnail"
-                                name="thumbnail"
-                                // valuePropName="fileList"
-                                rules={[{ required: true, message: 'Please upload the thumbnail!' }]}
-                            >
-                                <Upload
-                                    name="thumbnail"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    maxCount={1}
-                                    multiple={false}
-                                    // fileList={dataThumbnail}
-                                    // showUploadList={false}
-                                    customRequest={handleUploadFile}
-                                    beforeUpload={beforeUpload}
-                                    onPreview={handlePreview}
-                                    onChange={handleChange}
-                                    onRemove={(file) => handleRemoveFile(file, "thumbnail")}
-                                    // fileList gan co dinh file, con defaultFileList co the chinh sua dc file
-                                    defaultFileList={initForm?.thumbnail?.fileList ?? []}
-                                // fileList={dataThumbnail ?? []}
-                                >
-                                    <div>
-                                        {loading ? <LoadingOutlined /> : <PlusOutlined />}
-                                        <div style={{ marginTop: 8, }} > Upload </div>
-                                    </div>
-                                </Upload>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Upload Slider"
-                                name="slider"
-                            // valuePropName="fileList"
-                            >
-                                <Upload
-                                    name="slider"
-                                    multiple
-                                    listType="picture-card"
-                                    // fileList={dataSlider}
-                                    customRequest={handleUploadFileSlider}
-                                    beforeUpload={beforeUpload}
-                                    onPreview={handlePreview}
-                                    onChange={(info) => handleChange(info, "slider")}
-                                    onRemove={(file) => handleRemoveFile(file, "slider")}
-                                    // fileList gan co dinh file, con defaultFileList co the chinh sua dc file
-                                    defaultFileList={initForm?.slider?.fileList ?? []}
-                                // fileList={dataSlider ?? []}
-                                >
-                                    <div>
-                                        {loadingSlider ? <LoadingOutlined /> : <PlusOutlined />}
-                                        <div style={{ marginTop: 8, }} >Upload </div>
-                                    </div>
-                                </Upload>
-
-                            </Form.Item>
-                        </Col> */}
                             </Row>
                         </Form>
                     </Col>

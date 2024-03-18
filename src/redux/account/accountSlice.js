@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchUserAccountAPI, handleLogout } from '../../services/api';
+import { fetchAccountAPI, handleLogout } from '../../services/api';
 
 const initialState = {
   isAuthenticated: false,
@@ -33,7 +33,7 @@ export const handleLogoutReduxThunk = createAsyncThunk(
 export const fetchUserAccountReduxThunk = createAsyncThunk(
   'account/fetchUserAccount',
   async () => {
-    const response = await fetchUserAccountAPI();
+    const response = await fetchAccountAPI();
     // The value we return becomes the `fulfilled` action payload
     // console.log("check response fetchUserAccount", response.data);
     return response.data;

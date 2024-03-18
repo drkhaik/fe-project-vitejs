@@ -15,11 +15,15 @@ const Content = (props) => {
     const [postInfo, setPostInfo] = useState({});
 
     const fetchPosts = async () => {
-        const res = await fetchAllPost();
-        if (res && res.data) {
-            setPostList(res.data);
-        } else {
-            message.error("Failed to load list post")
+        try {
+            const res = await fetchAllPost();
+            if (res && res.data) {
+                setPostList(res.data);
+            } else {
+                message.error("Failed to load list post")
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -49,9 +53,10 @@ const Content = (props) => {
                                     style={{
                                         marginTop: 16,
                                         height: 300,
+                                        cursor: 'pointer'
                                         // maxHeight: '100vh', overflow: 'auto'
                                     }}
-                                    // hoverable={true}
+                                    hoverable={true}
                                     onDoubleClick={() => onClickPost(item)}
                                 >
                                     <Meta

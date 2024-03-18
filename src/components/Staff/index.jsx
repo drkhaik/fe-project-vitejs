@@ -14,8 +14,10 @@ const HomeStaff = () => {
     const [isModalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
-        if (!user.faculty) {
-            setModalOpen(true);
+        if (user.role === 'Department') {
+            if (!user.faculty) {
+                setModalOpen(true);
+            }
         }
     }, [user])
 

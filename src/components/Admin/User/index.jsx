@@ -57,12 +57,16 @@ const User = () => {
     }, []);
 
     const onClickDeleteDepartment = async (_id) => {
-        const res = await deleteUser(_id);
-        if (res && res.errCode === 0) {
-            message.success("Success!");
-            fetchDataUser();
-        } else {
-            message.error("Oops...something went wrong...");
+        try {
+            const res = await deleteUser(_id);
+            if (res && res.errCode === 0) {
+                message.success("Success!");
+                fetchDataUser();
+            } else {
+                message.error("Oops...something went wrong...");
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 

@@ -16,19 +16,23 @@ const ModalChooseFaculty = (props) => {
     const filterOption = (input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const fetchDataFaculties = async () => {
-        const res = await fetchAllFaculties();
-        if (res && res.errCode === 0 && res.data) {
-            let data = res.data;
-            let dataFaculties = []
-            for (let index = 0; index < data.length; index++) {
-                const item = data[index];
-                const newItem = {
-                    label: item.name,
-                    value: item._id,
-                };
-                dataFaculties.push(newItem);
+        try {
+            const res = await fetchAllFaculties();
+            if (res && res.errCode === 0 && res.data) {
+                let data = res.data;
+                let dataFaculties = []
+                for (let index = 0; index < data.length; index++) {
+                    const item = data[index];
+                    const newItem = {
+                        label: item.name,
+                        value: item._id,
+                    };
+                    dataFaculties.push(newItem);
+                }
+                setOptionSelect(dataFaculties);
             }
-            setOptionSelect(dataFaculties);
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -37,21 +41,25 @@ const ModalChooseFaculty = (props) => {
     }, []);
 
     const onFinish = async (values) => {
-        const { faculty } = values;
         setSubmit(true);
-        const res = await changeDepartmentFaculty({
-            _id: userId,
-            faculty: faculty,
-        });
-        if (res && res.errCode === 0) {
-            message.success("Successful!");
-            form.resetFields();
-            dispatch(fetchUserAccountReduxThunk());
-        } else {
-            message.error("Oops...something went wrong!");
+        try {
+            const { faculty } = values;
+            const res = await changeDepartmentFaculty({
+                _id: userId,
+                faculty: faculty,
+            });
+            if (res && res.errCode === 0) {
+                message.success("Successful!");
+                form.resetFields();
+                dispatch(fetchUserAccountReduxThunk());
+            } else {
+                message.error("Oops...something went wrong!");
+            }
+            setModalOpen(false);
+        } catch (e) {
+            console.log(e);
         }
         setSubmit(false);
-        setModalOpen(false);
     }
 
     return (

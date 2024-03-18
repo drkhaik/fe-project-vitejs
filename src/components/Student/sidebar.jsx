@@ -1,19 +1,23 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    List, Drawer, Tag, Row, Col, Button
+    List, Drawer, Tag, Row, Col, Button,
 } from 'antd';
 import { fetchDepartmentUser, createConversation } from '../../services/api';
 import { setRecipient, setListConversations, setLastMessageToConversations } from '../../redux/conversation/conversationSlice';
 import Message from '../Conversation/message';
 import io from "socket.io-client";
+import { useNavigate } from 'react-router-dom';
+import convertSlugFunction from '../../utilizes/convertSlug';
 const baseURL = import.meta.env.VITE_BACKEND_URL;
 const socket = io.connect(baseURL);
 
 const Sidebar = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const user = useSelector(state => state.account.user);
     const recipient = useSelector(state => state.conversation.recipient);
+    const { convertSlug } = convertSlugFunction();
     const [itemSidebar, setItemSidebar] = useState([]);
     const [isOpenDrawer, setOpenDrawer] = useState(false);
     const [room, setRoom] = useState("");
@@ -42,22 +46,26 @@ const Sidebar = () => {
     }, [itemSidebar.length]);
 
     const joinRoom = async () => {
-        if (!user || !recipient) {
-            return;
-        }
-        let data = {
-            senderId: user._id,
-            recipientId: recipient._id
-        }
-        const res = await createConversation(data);
-        if (res && res.errCode === 0 && res.data) {
-            const roomId = res.data;
-            socket.emit("join_room", roomId);
-            setRoom(roomId);
-            let newRecipient = { ...recipient, conversationId: roomId }
-            dispatch(setRecipient(newRecipient));
-            // dispatch(setListConversations(newRecipient));
-            setShowChat(true);
+        try {
+            if (!user || !recipient) {
+                return;
+            }
+            let data = {
+                senderId: user._id,
+                recipientId: recipient._id
+            }
+            const res = await createConversation(data);
+            if (res && res.errCode === 0 && res.data) {
+                const roomId = res.data;
+                socket.emit("join_room", roomId);
+                setRoom(roomId);
+                let newRecipient = { ...recipient, conversationId: roomId }
+                dispatch(setRecipient(newRecipient));
+                // dispatch(setListConversations(newRecipient));
+                setShowChat(true);
+            }
+        } catch (e) {
+            console.log(e);
         }
     };
 
@@ -102,6 +110,12 @@ const Sidebar = () => {
         dispatch(setRecipient(item));
     }
 
+    const handleRedirectViewFacultyPost = (recipient) => {
+        const slug = convertSlug(recipient.name);
+        let encodedDepartmentId = btoa(recipient._id);
+        navigate(`/post/${slug}?id=${encodedDepartmentId}`);
+    }
+
     return (
         <div>
             <div className='title'>
@@ -133,7 +147,14 @@ const Sidebar = () => {
                 className='box-chat'
                 title={
                     <>
-                        <Tag color="#108ee9" style={{ marginRight: 0 }}>{recipient.name}</Tag> <Tag color="#108ee9">{recipient.email}</Tag>
+                        <Tag
+                            color="#108ee9"
+                            style={{ marginRight: 0, cursor: 'pointer' }}
+                            onClick={() => handleRedirectViewFacultyPost(recipient)}
+                            title={`Posts of ${recipient.name}`}
+                        >
+                            {recipient.name}
+                        </Tag>
                     </>
                 }
                 placement="right"

@@ -10,12 +10,13 @@ const ModalDetailPost = (props) => {
     const { isModalOpen, setModalOpen, postInfo } = props;
     return (
         <Modal
-            title="Detail Post"
+            // title="Detail Post"
             open={isModalOpen}
             onCancel={() => setModalOpen(false)}
             footer={false}
-            width="70vw"
+            width="60vw"
             centered={true}
+            closable={false}
         >
             <Card
                 style={{
