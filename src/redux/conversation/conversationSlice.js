@@ -68,7 +68,7 @@ export const conversationSlice = createSlice({
             })
             .addCase(fetchListConversationReduxThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
-                console.log("check action.payload", action.payload);
+                // console.log("check action.payload", action.payload);
                 state.conversations = action.payload;
             })
             .addCase(fetchListConversationReduxThunk.rejected, (state, action) => {

@@ -22,6 +22,7 @@ import UserTable from './components/Admin/User';
 import FacultyTable from './components/Admin/Faculty';
 import Header from './components/Student/header';
 import PostPage from './pages/post';
+import PostTable from './components/Admin/Post';
 
 const Layout = () => {
   return (
@@ -118,6 +119,9 @@ export default function App() {
         },
         {
           path: "faculty/", element: <FacultyTable />
+        },
+        {
+          path: "post/", element: <PostTable />
         },
       ],
     },

@@ -20,6 +20,10 @@ const fetchAllUserAPI = () => {
     return axios.get("/api/v1/users");
 }
 
+const fetchDataUserForStat = () => {
+    return axios.get(`/api/v1/user/stat`);
+}
+
 const fetchUser = (id) => {
     return axios.get(`/api/v1/user/${id}`);
 }
@@ -118,6 +122,10 @@ const fetchPostsByFaculty = (_id) => {
     return axios.get(`/api/v1/post/${_id}`);
 }
 
+const fetchAllPostForStat = () => {
+    return axios.get(`/api/v1/post/stat`);
+}
+
 const fetchMorePostsByFaculty = (data) => {
     return axios.post(`/api/v1/post/department/history`, data);
 }
@@ -197,5 +205,7 @@ export {
     createFaculty,
     fetchAllFaculties,
     updateFaculty,
-    deleteFaculty
+    deleteFaculty,
+    fetchAllPostForStat,
+    fetchDataUserForStat,
 }

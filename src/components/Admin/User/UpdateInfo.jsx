@@ -47,7 +47,7 @@ const UpdateInfoDepartment = (props) => {
                 name: userInfo.name,
                 email: userInfo.email,
                 description: userInfo.description,
-                roleID: userInfo.roleID,
+                roleID: userInfo.roleID._id,
                 image: { fileList: arrImage },
             }
             setInitForm(init);
@@ -169,6 +169,14 @@ const UpdateInfoDepartment = (props) => {
                                 placeholder="Select role"
                                 value={null}
                                 allowClear
+                                defaultValue={
+                                    listRole.map(item => {
+                                        if (item.value === initForm?.roleID) {
+                                            return item.label;
+                                        }
+                                    })
+                                }
+                                // defaultValue={initForm ? initForm.roleID : 'abc'}
                                 // onChange={onChange}
                                 // onSearch={onSearch}
                                 // filterOption={(input, option) =>

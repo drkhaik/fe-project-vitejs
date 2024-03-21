@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table, Popconfirm, Tabs, Modal, Form, Row, Col, message, Input, Divider } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone, EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import { fetchAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '../../../services/api';
-import { debounce } from 'lodash';
 
 const FacultyTable = () => {
     const [dataFaculties, setAllDataFaculty] = useState([]);

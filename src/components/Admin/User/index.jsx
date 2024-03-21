@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Popconfirm, Tabs, Modal, Form, message } from 'antd';
 import { ReloadOutlined, UserAddOutlined, EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
-import moment from 'moment';
 import { fetchAllUserAPI, fetchAllRole, deleteUser } from '../../../services/api';
-import AddNew from './AddNew';
-import ShowDetail from './ShowDetail';
-import UpdateInfoDepartment from './UpdateInfo';
-import ChangePassword from './ChangePassword';
+const AddNew = React.lazy(() => import('./AddNew'));
+const ShowDetail = React.lazy(() => import('./ShowDetail'));
+const UpdateInfoDepartment = React.lazy(() => import('./UpdateInfo'));
+const ChangePassword = React.lazy(() => import('./ChangePassword'));
+import LoadingComponent from '../../Loading/loadingComponent';
+
 
 const User = () => {
     const [dataUsers, setAllDataUser] = useState([]);
@@ -21,20 +22,23 @@ const User = () => {
     const [formChangePassword] = Form.useForm();
 
     const fetchDataUser = async () => {
-        let res = await fetchAllUserAPI();
-
-        if (res && res.errCode === 0 && res.data) {
-            let data = res.data;
-            let dataUsers = []
-            for (let index = 0; index < data.length; index++) {
-                const item = data[index];
-                const newItem = {
-                    ...item,
-                    key: index + 1,
-                };
-                dataUsers.push(newItem);
+        try {
+            const res = await fetchAllUserAPI();
+            if (res && res.errCode === 0 && res.data) {
+                let data = res.data;
+                let dataUsers = []
+                for (let index = 0; index < data.length; index++) {
+                    const item = data[index];
+                    const newItem = {
+                        ...item,
+                        key: index + 1,
+                    };
+                    dataUsers.push(newItem);
+                }
+                setAllDataUser(dataUsers);
             }
-            setAllDataUser(dataUsers);
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -163,24 +167,28 @@ const User = () => {
             key: 'update_info',
             label: `Cập nhật thông tin`,
             children:
-                <UpdateInfoDepartment
-                    openUpdateModal={openUpdateModal}
-                    setOpenUpdateModal={setOpenUpdateModal}
-                    form={formUpdateInfo}
-                    listRole={listRole}
-                    userInfo={userInfo}
-                    fetchDataUser={fetchDataUser}
-                />,
+                <Suspense fallback={<LoadingComponent />}>
+                    <UpdateInfoDepartment
+                        openUpdateModal={openUpdateModal}
+                        setOpenUpdateModal={setOpenUpdateModal}
+                        form={formUpdateInfo}
+                        listRole={listRole}
+                        userInfo={userInfo}
+                        fetchDataUser={fetchDataUser}
+                    />
+                </Suspense>,
         },
         {
             key: 'change_password',
             label: `Đổi mật khẩu`,
             children:
-                <ChangePassword
-                    setOpenUpdateModal={setOpenUpdateModal}
-                    form={formChangePassword}
-                    userInfo={userInfo}
-                />,
+                <Suspense fallback={<LoadingComponent />}>
+                    <ChangePassword
+                        setOpenUpdateModal={setOpenUpdateModal}
+                        form={formChangePassword}
+                        userInfo={userInfo}
+                    />
+                </Suspense>,
         },
     ];
 
@@ -201,18 +209,24 @@ const User = () => {
                 // }
                 />
             </div>
-            <AddNew
-                openAddNewModal={openAddNewModal}
-                setOpenAddModal={setOpenAddModal}
-                listRole={listRole}
-                fetchDataUser={fetchDataUser}
-            />
 
-            <ShowDetail
-                userInfo={userInfo}
-                openDetailDrawer={openDetailDrawer}
-                setOpenDetailDrawer={setOpenDetailDrawer}
-            />
+
+            <Suspense fallback={<LoadingComponent />}>
+                <AddNew
+                    openAddNewModal={openAddNewModal}
+                    setOpenAddModal={setOpenAddModal}
+                    listRole={listRole}
+                    fetchDataUser={fetchDataUser}
+                />
+            </Suspense>
+
+            <Suspense fallback={<LoadingComponent />}>
+                <ShowDetail
+                    userInfo={userInfo}
+                    openDetailDrawer={openDetailDrawer}
+                    setOpenDetailDrawer={setOpenDetailDrawer}
+                />
+            </Suspense>
 
             <Modal
                 title="Cập nhật thông tin"

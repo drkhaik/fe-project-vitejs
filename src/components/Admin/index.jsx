@@ -12,7 +12,7 @@ import './LayoutAdmin.scss';
 import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, useNavigate, Link, useLocation, useMatch } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
-import { FaPollH } from "react-icons/fa";
+import { FaNewspaper, FaPollH } from "react-icons/fa";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -31,6 +31,11 @@ const itemsSidebar = [
         label: <Link to='/admin/faculty'>Faculty</Link>,
         key: 'faculty',
         icon: <FaPollH />
+    },
+    {
+        label: <Link to='/admin/post'>Post</Link>,
+        key: 'post',
+        icon: <FaNewspaper />
     },
 ];
 

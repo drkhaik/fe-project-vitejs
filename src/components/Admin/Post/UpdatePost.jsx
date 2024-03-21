@@ -7,7 +7,7 @@ import { updatePost } from '../../../services/api';
 const { TextArea } = Input;
 
 const UpdatePost = (props) => {
-    const { isOpenEditModal, setOpenEditModal, postInfo, fetchPosts } = props;
+    const { isOpenEditModal, setOpenEditModal, postInfo, fetchDataPost } = props;
     const [form] = Form.useForm();
     const [isSubmit, setIsSubmit] = useState(false);
 
@@ -62,11 +62,13 @@ const UpdatePost = (props) => {
             "description": description,
         };
         let res = await updatePost(data);
+        console.log("cehck res", res);
+        // return;
         if (res && res.errCode === 0) {
             message.success("Successful!");
             form.resetFields();
             setOpenEditModal(false);
-            await fetchPosts();
+            await fetchDataPost();
         } else {
             message.error("Something went wrong...");
         }
@@ -135,7 +137,8 @@ const UpdatePost = (props) => {
 }
 
 const areEqual = (prevProps, nextProps) => {
-    return prevProps.isOpenEditModal === nextProps.isOpenEditModal;
+    return prevProps.isOpenEditModal === nextProps.isOpenEditModal
+        && prevProps.postInfo === nextProps.postInfo;
 
 }
 

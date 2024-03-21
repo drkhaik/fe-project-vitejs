@@ -61,7 +61,7 @@ const Content = (props) => {
                                 >
                                     <Meta
                                         avatar={<Avatar size={'large'} src={item.author ? item.author.image : imgUEF} />}
-                                        title={item.author.name}
+                                        title={item.author ? item.author.name : 'UEF Department'}
                                         description={
                                             <Typography>
                                                 <Title level={4}>{item.title}</Title>

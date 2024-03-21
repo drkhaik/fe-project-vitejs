@@ -29,6 +29,7 @@ const Post = () => {
         try {
             const res = await fetchAllPost();
             if (res && res.data) {
+                console.log("check res.data", res.data)
                 setPostList(res.data);
             } else {
                 message.error("Failed to load list post")
@@ -152,7 +153,7 @@ const Post = () => {
                                         >
                                             <Meta
                                                 avatar={<Avatar size={'large'} src={item.author ? item.author.image : imgUEF} />}
-                                                title={postInfo.author ? postInfo.author.name : 'UEF Department'}
+                                                title={item.author ? item.author.name : 'UEF Department'}
                                                 description={
                                                     <Typography>
                                                         <Title level={4}>{item.title}</Title>
