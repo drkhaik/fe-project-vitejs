@@ -14,11 +14,9 @@ const Header = () => {
     const dispatch = useDispatch();
 
     const [openDrawer, setOpenDrawer] = useState(false);
-    const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
     const notification = useSelector(state => state.conversation.notification);
     const [isModalAccountOpen, setModalAccountOpen] = useState(false);
-    const [isOpenPopover, setOpenPopover] = useState(false);
 
     const handleLogoutAction = () => {
         dispatch(handleLogoutReduxThunk());
@@ -26,7 +24,7 @@ const Header = () => {
         navigate("/");
     }
 
-    let items = [
+    const itemsDropdown = [
         {
             label: <p onClick={() => setModalAccountOpen(true)} style={{ margin: 0, cursor: 'pointer' }}>Thông tin tài khoản</p>,
             key: 'account'
@@ -37,15 +35,8 @@ const Header = () => {
         },
     ];
 
-    // if (user.role === 'Student') {
-    //     items.unshift({
-    //         label: <p onClick={() => setModalAccountOpen(true)} style={{ margin: 0, cursor: 'pointer' }}>Thông tin tài khoản</p>,
-    //         key: 'account'
-    //     })
-    // }
-
     if (user.role === 'Admin') {
-        items.unshift(
+        itemsDropdown.unshift(
             {
                 label: <p onClick={() => navigate('/admin')} style={{ margin: 0, cursor: 'pointer' }}>Trang Admin</p>,
                 key: 'admin'
@@ -58,8 +49,7 @@ const Header = () => {
     }
 
     const redirectHome = () => {
-        const userRole = user.role;
-        navigate(userRole === 'Department' ? '/staff' : '/');
+        navigate('/');
     }
 
     const onChangeInputSearch = (value) => {
@@ -77,7 +67,7 @@ const Header = () => {
 
     return (
         <>
-            <div className='header-container-student-side'>
+            <div className='header-section'>
                 <header className='page-header'>
                     <div className='page-header__left'>
                         <div className="page-header__toggle" onClick={() => {
@@ -108,7 +98,6 @@ const Header = () => {
                                     placement={'bottom'}
                                     trigger="click"
                                     zIndex={0}
-                                // open={isOpenPopover}
                                 >
                                     <Badge
                                         showZero
@@ -121,19 +110,25 @@ const Header = () => {
                             </li>
                             <li className="navigation__item mobile"><Divider type='vertical' /></li>
                             <li className="navigation__item mobile">
-                                {!isAuthenticated ?
-                                    <span onClick={() => navigate('/login')}> Tài Khoản</span>
-                                    :
-                                    <Dropdown rootClassName='dropdown-custom-style' menu={{ items }} trigger={['click']}>
-                                        <a onClick={(e) => e.preventDefault()}>
-                                            <Space>
-                                                <Avatar className='avt' src={user.image} />
-                                                {user?.name}
-                                                <DownOutlined />
-                                            </Space>
-                                        </a>
-                                    </Dropdown>
-                                }
+                                {/* <Dropdown rootClassName='dropdown-custom-style' menu={{ item: itemsDropdown }} trigger={['click']}>
+                                    <a onClick={(e) => e.preventDefault()}>
+                                        <Space>
+                                            <Avatar className='avt' src={user.image} />
+                                            <Space />
+                                            {user?.name}
+                                            <DownOutlined />
+                                        </Space>
+                                    </a>
+                                </Dropdown> */}
+                                <Dropdown rootClassName='dropdown-custom-style' menu={{ items: itemsDropdown }} trigger={['click']}>
+                                    <a onClick={(e) => e.preventDefault()}>
+                                        <Space>
+                                            <Avatar className='avt' src={user.image} /> {user?.name} <Space />
+                                            <DownOutlined />
+                                        </Space>
+                                    </a>
+                                </Dropdown>
+
                             </li>
                         </ul>
                     </div>

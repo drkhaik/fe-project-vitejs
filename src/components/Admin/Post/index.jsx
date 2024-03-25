@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { Table, Popconfirm, message } from 'antd';
-import { UserAddOutlined, CloseCircleTwoTone, EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
+import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import { fetchAllPost, deletePost } from '../../../services/api';
 const UpdatePost = React.lazy(() => import('./UpdatePost'));
 import LoadingComponent from '../../Loading/loadingComponent';

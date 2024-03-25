@@ -7,13 +7,19 @@ body, html{
 .ant-card-meta-detail{
     .ant-typography {
         img {
-            width: 100%;
-            height: 450px
+            // width: 100%;
+            // height: 400px;
+            width: 35rem;
+            display: block;
+            margin: 0 auto;
+        }
+        p {
+            margin: 0;
         }
     }
 }
 
-.header-container-student-side{
+.header-section{
     border-bottom: 1px solid #e4e3e3;
     background-color: #fff;
     .page-header {

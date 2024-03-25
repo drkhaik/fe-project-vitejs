@@ -44,6 +44,7 @@ export default function App() {
   const isLoading = useSelector(state => state.account.isLoading);
   const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
+
   useEffect(() => {
     if (window.location.pathname === '/login'
       || window.location.pathname === '/staff/login'
@@ -51,25 +52,27 @@ export default function App() {
       || window.location.pathname === '/login/error'
     ) return;
 
+    console.log('%cStop!', 'color: #ff0000; font-size: 48px; font-weight: bold; padding: 5px;');
+    console.log('%cThis is a browser feature intended for developers! Unauthorized access and damage to the system will result in legal prosecution!', 'background: ##dcdcdc; color: #fff; font-size: 18px; font-weight: bold; padding: 5px;');
     dispatch(fetchUserAccountReduxThunk());
 
   }, []);
 
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (window.location.pathname === '/login') {
-        window.location.replace('/');
-      }
-      if (window.location.pathname.includes('/staff/login')) {
-        window.location.replace('/staff');
-      }
-    }
-    else {
-      dispatch(fetchUserAccountReduxThunk());
-    }
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     if (window.location.pathname === '/login') {
+  //       window.location.replace('/');
+  //     }
+  //     if (window.location.pathname.includes('/staff/login')) {
+  //       window.location.replace('/staff');
+  //     }
+  //   }
+  //   else {
+  //     dispatch(fetchUserAccountReduxThunk());
+  //   }
 
-  }, [window.location.pathname, isAuthenticated]);
+  // }, [window.location.pathname, isAuthenticated]);
 
   const LoginSuccess = () => {
     useEffect(() => {

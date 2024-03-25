@@ -14,7 +14,6 @@ import { Outlet, useNavigate, Link, useLocation, useMatch } from 'react-router-d
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
 import { FaNewspaper, FaPollH } from "react-icons/fa";
 
-
 const { Header, Content, Footer, Sider } = Layout;
 const itemsSidebar = [
     {

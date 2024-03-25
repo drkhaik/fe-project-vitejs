@@ -6,7 +6,7 @@ import { handleLogin, handleGoogleLogin } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { doLoginAction, handleLogoutReduxThunk } from '../../redux/account/accountSlice';
-
+import logoLoginUEF from '../../assets/uef-logo-login.png';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ const LoginPage = () => {
 
     const handleGoogleLoginFunction = async () => {
         try {
-            const res = await handleGoogleLogin("Student");
+            const res = await handleGoogleLogin({ type: "Student" });
             if (res && res.errCode === 0) {
                 dispatch(doLoginAction(res.data));
                 let role = res?.data ? res.data.user.role : null;
@@ -89,7 +89,8 @@ const LoginPage = () => {
                 <div className="container">
                     <section className="wrapper">
                         <div className='heading'>
-                            <p className="text text-large">Students Support Website</p>
+                            {/* <p className="text text-large">Students Support Website</p> */}
+                            <img src={logoLoginUEF} />
                         </div>
                         <div className='wrapper-login'>
                             <Divider style={{ marginTop: 0 }} />
@@ -107,7 +108,7 @@ const LoginPage = () => {
                             </div>
                             <Divider orientation="right" style={{ fontSize: 13, paddingTop: 20 }}>
                                 <span>Hoặc dùng </span>
-                                <a href="" style={{ color: '#4285F4', paddingBottom: 10 }}
+                                <a href="" className='other-login-option'
                                     onClick={(event) => {
                                         setShowForm(true)
                                         event.preventDefault()
@@ -128,24 +129,24 @@ const LoginPage = () => {
                                         name="email"
                                         rules={[{
                                             required: true,
-                                            message: 'Please input your Email!',
+                                            message: 'Nhập Email hoặc MSSV của bạn!',
                                         },]}
                                     >
                                         <Input
                                             prefix={<UserOutlined className="site-form-item-icon" />}
-                                            placeholder="Email or StudentId"
+                                            placeholder="Email hoặc MSSV"
                                         />
                                     </Form.Item>
                                     <Form.Item
                                         name="password"
                                         rules={[{
                                             required: true,
-                                            message: 'Please input your Password!',
+                                            message: 'Nhập mật khẩu của bạn!',
                                         },]}
                                     >
                                         <Input
                                             prefix={<LockOutlined className="site-form-item-icon" />}
-                                            type="password" placeholder="Password"
+                                            type="password" placeholder="Mật khẩu"
                                         />
                                     </Form.Item>
 

@@ -29,7 +29,6 @@ const Post = () => {
         try {
             const res = await fetchAllPost();
             if (res && res.data) {
-                console.log("check res.data", res.data)
                 setPostList(res.data);
             } else {
                 message.error("Failed to load list post")

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BarChart from "./BarChart";
 import DoughnutChart from "./DoughnutChart";
+import LineChart from "./LineChart";
 import { fetchAllPostForStat, fetchDataUserForStat } from "../../../services/api";
 import { message, Row, Col } from "antd";
 
@@ -31,7 +32,6 @@ const Dashboard = () => {
             try {
                 const res = await fetchDataUserForStat();
                 if (res && res.data && res.errCode === 0) {
-                    console.log("check res", res.data);
                     setDataUser(res.data);
                 } else {
                     message.error("Failed to load list user")
@@ -50,14 +50,12 @@ const Dashboard = () => {
         'justifyContent': 'center'
     }
 
-
     return (
         <>
             <Row style={{ marginTop: 20 }}>
                 <Col span={12} style={style}>
-                    <div style={{ width: 500 }}>
+                    <div style={{ width: 500, paddingTop: 50 }}>
                         <BarChart chartData={dataPost} />
-
                     </div>
                 </Col>
                 <Col span={12} style={style}>
@@ -65,6 +63,11 @@ const Dashboard = () => {
                         <DoughnutChart chartData={dataUser} />
                     </div>
                 </Col>
+                {/* <Col span={12} style={style}>
+                    <div style={{ width: 500 }}>
+                        <LineChart chartData={dataUser} />
+                    </div>
+                </Col> */}
             </Row>
         </>
     )

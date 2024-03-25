@@ -19,7 +19,9 @@
 
 .login-page {
     color: var(--color-black);
-    background: var(--color-light);
+    background: #1e4363 url(../../assets/login-background.jpeg)  no-repeat center center fixed;
+    background-size: cover;
+    background-color: #ffffffbf;
 
 
     // Components
@@ -70,13 +72,25 @@
             max-width: 22rem;
             width: 100%;
             margin: 2rem auto;
-            padding: 2rem 2.5rem;
+            padding: 0.2rem 2rem;
             border: none;
             outline: none;
             border-radius: 0.5rem;
             color: var(--color-black);
             background: var(--color-white);
             box-shadow: var(--shadow-large);
+            background-color: #ffffffbf ;
+            position: absolute;
+            top: 8%;
+
+            .heading{
+                img {
+                    display: block;
+                    margin: 0 auto;
+                    width: 7.5rem;
+
+                }
+            }
 
             .wrapper-login {
                 margin: 10px 0;
@@ -125,6 +139,12 @@
                         background-color: #267fec;
                         border-color: #03a9f4;
                     }
+                }
+
+                .other-login-option {
+                    font-size: 14px;
+                    color: #4285F4;
+                    padding-bottom: 10px;
                 }
 
                 .login-form{

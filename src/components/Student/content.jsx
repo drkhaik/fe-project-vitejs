@@ -7,12 +7,16 @@ const { Meta } = Card;
 const { Title, Paragraph, Text, Link } = Typography;
 import imgUEF from '../../assets/team_UEF.png';
 import LoadingComponent from '../Loading/loadingComponent';
+import convertSlugFunction from '../../utilizes/convertSlug';
+import { useNavigate } from 'react-router-dom';
 const ModalDetailPost = React.lazy(() => import('./ModalDetailPost'));
 
-const Content = (props) => {
+const Content = () => {
+    const navigate = useNavigate();
     const [postList, setPostList] = useState([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [postInfo, setPostInfo] = useState({});
+    const { convertSlug } = convertSlugFunction();
 
     const fetchPosts = async () => {
         try {
@@ -36,9 +40,16 @@ const Content = (props) => {
         setPostInfo(item);
     }
 
+
+    const handleRedirectViewFacultyPost = (author) => {
+        const slug = convertSlug(author.name);
+        let encodedDepartmentId = btoa(author._id);
+        navigate(`/post/${slug}?id=${encodedDepartmentId}`);
+    }
+
     return (
         <Row style={{ padding: 15 }}>
-            <Col span={18}>
+            <Col span={16}>
                 {postList && postList.length > 0
                     ?
                     <Carousel
@@ -57,13 +68,22 @@ const Content = (props) => {
                                         // maxHeight: '100vh', overflow: 'auto'
                                     }}
                                     hoverable={true}
-                                    onDoubleClick={() => onClickPost(item)}
                                 >
                                     <Meta
-                                        avatar={<Avatar size={'large'} src={item.author ? item.author.image : imgUEF} />}
-                                        title={item.author ? item.author.name : 'UEF Department'}
+                                        avatar={<Avatar
+                                            size={'large'}
+                                            src={item.author ? item.author.image : imgUEF}
+                                            onClick={() => handleRedirectViewFacultyPost(item.author)}
+                                        />}
+                                        title={<Title
+                                            style={{ margin: 0 }}
+                                            level={5}
+                                            onClick={() => handleRedirectViewFacultyPost(item.author)}
+                                        >
+                                            {item.author ? item.author.name : 'UEF Department'}
+                                        </Title>}
                                         description={
-                                            <Typography>
+                                            <Typography onDoubleClick={() => onClickPost(item)}>
                                                 <Title level={4}>{item.title}</Title>
                                                 <Paragraph>
                                                     <div dangerouslySetInnerHTML={{ __html: item.description }}></div>

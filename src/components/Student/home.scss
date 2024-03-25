@@ -209,13 +209,16 @@
         .content{
             // border: 1px solid #e4e3e3;
             padding: 8px 0;
-            background-color: #fff;
+            background-color: #dcdcdc;
+            // min-height: 50rem;
             .carousel-post {
                 max-height: 100vh;
                 overflow: auto;
-
-                .ant-card-meta-description {
-                    font-size: 13px;
+                .ant-card-body {
+                    min-height: 50rem;
+                    .ant-card-meta-description {
+                        font-size: 13px;
+                    }
                 }
             }
         }

@@ -27,7 +27,7 @@ const BarChart = (props) => {
                 options={{
                     plugins: {
                         title: {
-                            text: "Revenue Source",
+                            text: "Posts Stat",
                         },
                     },
                 }}

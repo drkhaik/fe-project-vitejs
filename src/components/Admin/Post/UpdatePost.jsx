@@ -62,7 +62,6 @@ const UpdatePost = (props) => {
             "description": description,
         };
         let res = await updatePost(data);
-        console.log("cehck res", res);
         // return;
         if (res && res.errCode === 0) {
             message.success("Successful!");

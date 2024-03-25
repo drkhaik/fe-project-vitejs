@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { Button, Table, Popconfirm, Tabs, Modal, Form, message } from 'antd';
 import { ReloadOutlined, UserAddOutlined, EditTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import { fetchAllUserAPI, fetchAllRole, deleteUser } from '../../../services/api';
@@ -7,7 +7,6 @@ const ShowDetail = React.lazy(() => import('./ShowDetail'));
 const UpdateInfoDepartment = React.lazy(() => import('./UpdateInfo'));
 const ChangePassword = React.lazy(() => import('./ChangePassword'));
 import LoadingComponent from '../../Loading/loadingComponent';
-
 
 const User = () => {
     const [dataUsers, setAllDataUser] = useState([]);
@@ -151,12 +150,6 @@ const User = () => {
                     >
                         Add new
                     </Button>
-                    {/* <Button type='ghost' onClick={() => {
-                        setFilter("")
-                        setSortQuery("")
-                    }}>
-                        <ReloadOutlined />
-                    </Button> */}
                 </span>
             </div>
         )

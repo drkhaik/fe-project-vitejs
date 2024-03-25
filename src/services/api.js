@@ -7,7 +7,7 @@ const handleLogin = (email, password) => {
 }
 
 const handleGoogleLogin = (data) => {
-    return axios.get("/api/v1/google-login", data);
+    return axios.post("/api/v1/google-login", data);
 }
 
 const handleLogout = () => {

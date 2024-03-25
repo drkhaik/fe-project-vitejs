@@ -69,7 +69,7 @@ const FacultyTable = () => {
     const [keySetting, setKeySetting] = useState("");
 
     const handleInputChange = (value) => {
-        console.log("check value", value);
+        // console.log("check value", value);
         setValueInput(value);
     };
 
