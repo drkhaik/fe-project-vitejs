@@ -39,6 +39,9 @@ const LayoutStaff = () => {
   )
 }
 
+console.log('%cStop!', 'color: #ff0000; font-size: 48px; font-weight: bold; padding: 5px;');
+console.log('%cThis is a browser feature intended for developers! Unauthorized access and damage to the system will result in legal prosecution!', 'background: #fff; color: #000; font-size: 18px; font-weight: bold; padding: 5px;');
+
 export default function App() {
   const dispatch = useDispatch();
   const isLoading = useSelector(state => state.account.isLoading);
@@ -52,8 +55,6 @@ export default function App() {
       || window.location.pathname === '/login/error'
     ) return;
 
-    console.log('%cStop!', 'color: #ff0000; font-size: 48px; font-weight: bold; padding: 5px;');
-    console.log('%cThis is a browser feature intended for developers! Unauthorized access and damage to the system will result in legal prosecution!', 'background: ##dcdcdc; color: #fff; font-size: 18px; font-weight: bold; padding: 5px;');
     dispatch(fetchUserAccountReduxThunk());
 
   }, []);
