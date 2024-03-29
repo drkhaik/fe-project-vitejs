@@ -54,8 +54,8 @@ const useImageHandling = () => {
 
     const handleUploadFile = async ({ file, onSuccess, onError }) => {
         // console.log("check file", file);
-        setFile(file);
         if (file) {
+            setFile(file);
             onSuccess('ok');
         } else {
             onError('Upload file failed!');

@@ -75,9 +75,6 @@ const Message = (props) => {
         }
     }
 
-    //
-
-
     // if(user.faculty !== recipient.faculty){
     //      call API for department has faculty same as faculty of student
     // getDepartmentByFacultyId(user.faculty);
@@ -174,7 +171,7 @@ const Message = (props) => {
             file.type === 'application/zip') {
             const isLt5M = file.size / 1024 / 1024 < 5;
             if (!isLt5M) {
-                message.error('Tập tin PDF, Word, Image hoặc Zip phải nhỏ hơn 5MB!');
+                message.error('Tập tin PDF, Word, Excel, Zip hoặc Ảnh phải nhỏ hơn 5MB!');
             }
             return isLt5M;
         } else {

@@ -20,9 +20,12 @@ import HomeStaff from './components/Staff';
 import Post from './components/Staff/Post';
 import UserTable from './components/Admin/User';
 import FacultyTable from './components/Admin/Faculty';
+import SubjectTable from './components/Admin/Subject';
 import Header from './components/Student/header';
+import Document from './components/Student/Document';
 import PostPage from './pages/post';
 import PostTable from './components/Admin/Post';
+import DocumentTable from './components/Admin/Document';
 
 const Layout = () => {
   return (
@@ -96,6 +99,9 @@ export default function App() {
           path: "post/:slug",
           element: <PostPage />,
         },
+        {
+          path: "document/", element: <Document />
+        },
       ],
     },
     {
@@ -125,7 +131,13 @@ export default function App() {
           path: "faculty/", element: <FacultyTable />
         },
         {
+          path: "subject/", element: <SubjectTable />
+        },
+        {
           path: "post/", element: <PostTable />
+        },
+        {
+          path: "document/", element: <DocumentTable />
         },
       ],
     },

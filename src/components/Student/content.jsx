@@ -49,7 +49,7 @@ const Content = () => {
 
     return (
         <Row style={{ padding: 15 }}>
-            <Col span={16}>
+            <Col span={24}>
                 {postList && postList.length > 0
                     ?
                     <Carousel

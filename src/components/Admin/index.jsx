@@ -12,7 +12,7 @@ import './LayoutAdmin.scss';
 import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, useNavigate, Link, useLocation, useMatch } from 'react-router-dom';
 import { handleLogoutReduxThunk } from '../../redux/account/accountSlice';
-import { FaNewspaper, FaPollH } from "react-icons/fa";
+import { FaNewspaper, FaPollH, FaFile, FaFolder } from "react-icons/fa";
 
 const { Header, Content, Footer, Sider } = Layout;
 const itemsSidebar = [
@@ -32,9 +32,19 @@ const itemsSidebar = [
         icon: <FaPollH />
     },
     {
+        label: <Link to='/admin/subject'>Subject</Link>,
+        key: 'subject',
+        icon: <FaFolder />
+    },
+    {
         label: <Link to='/admin/post'>Post</Link>,
         key: 'post',
         icon: <FaNewspaper />
+    },
+    {
+        label: <Link to='/admin/document'>Document</Link>,
+        key: 'document',
+        icon: <FaFile />
     },
 ];
 
@@ -61,7 +71,7 @@ const LayoutAdmin = () => {
     }, [])
     const itemsDropdown = [
         {
-            label: <p onClick={() => navigate('/')} style={{ margin: 0, cursor: 'pointer' }}>Trang Chủ</p>,
+            label: <p onClick={() => navigate('/')} style={{ margin: 0, cursor: 'pointer' }}>Trang Student</p>,
             key: 'home'
         },
         {

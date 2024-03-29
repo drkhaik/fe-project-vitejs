@@ -1,7 +1,6 @@
 import React from 'react';
 import Chart from 'chart.js/auto';
 import { Doughnut } from "react-chartjs-2";
-import { Tag } from "antd";
 
 const DoughnutChart = (props) => {
     const { chartData } = props;

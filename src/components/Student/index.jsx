@@ -8,6 +8,7 @@ import './home.scss';
 import Content from './content';
 // import Header from './header';
 const Sidebar = React.lazy(() => import('./sidebar'));
+import SidebarRight from './SidebarRight';
 import LoadingComponent from '../Loading/loadingComponent';
 import ModalChooseFaculty from './ModalChooseFaculty';
 
@@ -36,8 +37,11 @@ const Home = () => {
                                 <Sidebar />
                             </Suspense>
                         </Col>
-                        <Col span={19} className='content'>
+                        <Col span={14} className='content'>
                             <Content />
+                        </Col>
+                        <Col span={5} className='sidebar-right'>
+                            <SidebarRight />
                         </Col>
                     </Row>
                 </Col>

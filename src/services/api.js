@@ -84,9 +84,45 @@ const deleteFaculty = (_id) => {
     return axios.delete(`/api/v1/faculty/${_id}`);
 }
 
+// ================ SUBJECT ============
+
+
+const createSubject = (data) => {
+    return axios.post(`/api/v1/subject`, data);
+}
+
+const fetchAllSubjects = () => {
+    return axios.get(`/api/v1/subject`);
+}
+
+const updateSubject = (data) => {
+    return axios.put(`/api/v1/subject`, data);
+}
+
+const deleteSubject = (_id) => {
+    return axios.delete(`/api/v1/subject/${_id}`);
+}
+
+
+// ============== DOCUMENT =============
+
+const createDocument = (data) => {
+    return axios.post(`/api/v1/document`, data);
+}
+
+const fetchDocumentBySubjectId = (_id) => {
+    return axios.get(`/api/v1/document/subject/${_id}`);
+}
+
+const deleteDocument = (_id) => {
+    return axios.delete(`/api/v1/document/${_id}`);
+}
+
+const fetchAllDocumentForStat = () => {
+    return axios.get(`/api/v1/document/stat`);
+}
 
 // ================ CONVERSATION ============
-
 
 const createConversation = (data) => {
     return axios.post(`/api/v1/conversation`, data);
@@ -97,7 +133,6 @@ const fetchConversationById = (_id) => {
 }
 
 // ================ MESSAGE ============
-
 
 const fetchMessageHistoryById = (conversationId) => {
     return axios.get(`/api/v1/message/history/${conversationId}`);
@@ -174,6 +209,20 @@ const callUploadMessageFileAPI = (file) => {
     });
 }
 
+const callUploadDocumentSharingAPI = (file) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    return axios({
+        method: 'post',
+        url: '/api/v1/upload/document',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            // "upload-type": "book"
+        },
+    });
+}
+
 export {
     handleLogin,
     handleGoogleLogin,
@@ -188,8 +237,11 @@ export {
     changeUserFaculty,
     changeDepartmentFaculty,
     deleteUser,
+
     callUploadUserImgAPI,
     callUploadMessageFileAPI,
+    callUploadDocumentSharingAPI,
+
     fetchConversationById,
     createConversation,
     fetchMessageHistoryById,
@@ -202,10 +254,22 @@ export {
     deletePost,
     fetchMorePostAPI,
     fetchDepartmentUser,
+
     createFaculty,
     fetchAllFaculties,
     updateFaculty,
     deleteFaculty,
+
+    createSubject,
+    fetchAllSubjects,
+    updateSubject,
+    deleteSubject,
+
+    createDocument,
+    fetchDocumentBySubjectId,
+    deleteDocument,
+
     fetchAllPostForStat,
     fetchDataUserForStat,
+    fetchAllDocumentForStat,
 }

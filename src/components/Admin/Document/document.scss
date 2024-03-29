@@ -1,0 +1,109 @@
+.document-admin-wrapper {
+    .subject-section {
+        .title {
+            font-style: italic;
+        }
+        .list-subject {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            .subject {
+                min-width: 9rem;
+                padding: 0.8rem;
+                margin: 0.2rem;
+                border: 1px solid #990000;
+                background-color: #fff;
+                color: #990000;
+                border-radius: 15px;
+                cursor: pointer;
+                &:hover{
+                    background-color: #990000;
+                    color: #fff;
+                    font-weight: bold;
+                }
+                &.active{
+                    background-color: #990000;
+                    color: #fff;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+    .document-section {
+        .list-document {
+            min-height: 25rem;
+            .ant-card {
+                margin-top: 1rem;
+                .title-card {
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .ant-card-head {
+                    background-color: #990000;
+                    color: #fff;
+                }
+                .ant-card-body {
+                    padding: 0.5rem;
+                    .card-document {
+                        display: flex;
+                        justify-content: space-between;
+                        min-height: fit-content;
+                        margin-bottom: 1rem;
+                        .click-download {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            text-decoration: none;
+                            color: inherit;
+                            background-color: inherit;
+                            border: none;
+                            padding: 0;
+                            margin: 0;
+            
+                            .icon {
+                                min-width: 3rem;
+                                width: 15%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                .anticon {
+                                    font-size: 1.5rem;
+                                }
+                            }
+                            .info {
+                                p {
+                                    margin: 0;
+                                    margin-bottom: 0.5rem;
+                                    font-size: 14px;
+                                }
+                                .file-name {
+                                    font-weight: bold;
+                                    width: 10rem;
+                                    display: block;
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                  }
+                                .download-info {
+                                    // display: flex;
+                                    // justify-content: space-between;
+                                    .file-size {
+                                        font-size: 12px;
+                                        color: #990000;
+                                    }
+                                }
+                            }
+                        }
+                    }
+        
+                    .created-at {
+                        font-size: 12px;
+                        color: #151212;
+                    }
+                }
+            }
+            
+        }
+    }
+}
