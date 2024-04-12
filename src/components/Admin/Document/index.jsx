@@ -10,7 +10,6 @@ const DocumentTable = () => {
     const [dataSubjects, setAllDataSubjects] = useState([]);
     const [subjectId, setSubjectId] = useState(null);
 
-
     const fetchDataSubjects = async () => {
         try {
             const res = await fetchAllSubjects();
@@ -49,7 +48,7 @@ const DocumentTable = () => {
                                     <span
                                         key={index}
                                         onClick={() => setSubjectId(item._id)}
-                                        className='subject'
+                                        className={subjectId === item._id ? 'subject active' : 'subject'}
                                     >
                                         ({item.name})
                                     </span>

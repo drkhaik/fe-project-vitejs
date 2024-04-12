@@ -42,7 +42,7 @@ const LoginPage = () => {
 
     const redirectToGoogleSSO = async () => {
         let timer = null;
-        const googleLoginURL = `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/google`;
+        const googleLoginURL = `${import.meta.env.VITE_APP_BACKEND_NODEJS_URL}/api/v1/auth/google`;
         const newWindow = window.open(
             googleLoginURL,
             "_blank",
@@ -79,7 +79,7 @@ const LoginPage = () => {
                 message.error("Incorrect email or password!");
             }
         } catch (e) {
-            console.log("Something went wrong...", err);
+            console.log("Something went wrong...", e);
         }
     };
 

@@ -367,7 +367,7 @@ const Message = (props) => {
                             showCount
                             // maxLength={100}
                             // onChange={onChangeQuestion}
-                            placeholder="Nhập câu trả lời!"
+                            placeholder="Nhập câu hỏi!"
                             style={{
                                 height: 80,
                                 resize: 'none',
@@ -383,7 +383,7 @@ const Message = (props) => {
                             htmlType="submit"
                             loading={isSubmit}
                         >
-                            Submit
+                            Send
                         </Button>
                     </div>
                 </Form>

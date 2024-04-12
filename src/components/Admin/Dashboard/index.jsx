@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import BarChart from "./BarChart";
-import DoughnutChart from "./DoughnutChart";
-import LineChart from "./LineChart";
 import { fetchAllPostForStat, fetchDataUserForStat, fetchAllDocumentForStat } from "../../../services/api";
 import { message, Row, Col } from "antd";
 import Chart from 'chart.js/auto';
-import { Bar } from "react-chartjs-2";
+import { Bar, Doughnut } from "react-chartjs-2";
 
 const Dashboard = () => {
     const [dataPost, setDataPost] = useState([]);
@@ -77,33 +74,87 @@ const Dashboard = () => {
             <Row style={{ marginTop: 20 }}>
                 <Col span={12} style={style}>
                     <div style={{ width: 500, paddingTop: 50 }}>
-                        <BarChart chartData={dataPost} />
+                        <Bar
+                            data={{
+                                labels: dataPost.map((data) => data.author),
+                                datasets: [
+                                    {
+                                        label: "Posts",
+                                        data: dataPost.map((data) => data.count),
+                                        backgroundColor: [
+                                            "rgba(43, 63, 229, 0.8)",
+                                            "rgba(250, 192, 19, 0.8)",
+                                            "rgba(253, 135, 135, 0.8)",
+                                            "rgba(75,192,192,1)",
+                                        ],
+                                        borderRadius: 5,
+                                    },
+                                ],
+                            }}
+                            options={{
+                                plugins: {
+                                    title: {
+                                        text: "Posts Stat",
+                                    },
+                                },
+                            }}
+                        />
                     </div>
                 </Col>
                 <Col span={12} style={style}>
                     <div style={{ width: 400 }}>
-                        <DoughnutChart chartData={dataUser} />
+                        <Doughnut
+                            data={{
+                                labels: dataUser.map((data) => data.role),
+                                datasets: [
+                                    {
+                                        label: "User Count",
+                                        data: dataUser.map((data) => data.count),
+                                        backgroundColor: [
+                                            "rgba(43, 63, 229, 0.8)",
+                                            "rgba(250, 192, 19, 0.8)",
+                                            "rgba(253, 135, 135, 0.8)",
+                                            "rgba(75,192,192,1)",
+                                            "#ecf0f1",
+                                            "#50AF95",
+                                            "#f3ba2f",
+                                            "#2a71d0",
+                                        ],
+                                        borderRadius: 5,
+                                    },
+                                ],
+                            }}
+                            options={{
+                                plugins: {
+                                    title: {
+                                        text: "Revenue Sources",
+                                    },
+                                },
+                            }}
+                        />
                     </div>
                 </Col>
                 <Col span={12} style={style}>
-                    <Bar
-                        data={{
-                            labels: dataDocument.map((data) => data.author),
-                            datasets: [
-                                {
-                                    label: "Documents",
-                                    data: dataDocument.map((data) => data.count),
-                                    backgroundColor: [
-                                        "rgba(43, 63, 229, 0.8)",
-                                        "rgba(250, 192, 19, 0.8)",
-                                        "rgba(253, 135, 135, 0.8)",
-                                        "rgba(75,192,192,1)",
-                                    ],
-                                    borderRadius: 5,
-                                },
-                            ],
-                        }}
-                    />
+                    <div style={{ width: 400 }}>
+                        <Bar
+                            data={{
+                                labels: dataDocument.map((data) => data.author),
+                                datasets: [
+                                    {
+                                        label: "Documents",
+                                        data: dataDocument.map((data) => data.count),
+                                        backgroundColor: [
+                                            "rgba(43, 63, 229, 0.8)",
+                                            "rgba(250, 192, 19, 0.8)",
+                                            "rgba(253, 135, 135, 0.8)",
+                                            "rgba(75,192,192,1)",
+                                        ],
+                                        borderRadius: 5,
+                                    },
+                                ],
+                            }}
+                        />
+                    </div>
                 </Col>
             </Row>
         </>

@@ -8,7 +8,7 @@ import './home.scss';
 import Content from './content';
 // import Header from './header';
 const Sidebar = React.lazy(() => import('./sidebar'));
-import SidebarRight from './SidebarRight';
+import FloatButtonRedirect from './FloatButtonRedirect';
 import LoadingComponent from '../Loading/loadingComponent';
 import ModalChooseFaculty from './ModalChooseFaculty';
 
@@ -41,7 +41,7 @@ const Home = () => {
                             <Content />
                         </Col>
                         <Col span={5} className='sidebar-right'>
-                            <SidebarRight />
+                            <FloatButtonRedirect />
                         </Col>
                     </Row>
                 </Col>

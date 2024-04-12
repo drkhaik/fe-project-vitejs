@@ -15,7 +15,7 @@ import {
 import Message from './message';
 import BeatLoader from "react-spinners/BeatLoader"
 import io from "socket.io-client";
-const baseURL = import.meta.env.VITE_BACKEND_URL;
+const baseURL = import.meta.env.VITE_APP_BACKEND_NODEJS_URL;
 const socket = io.connect(baseURL);
 
 const Conversation = () => {
@@ -34,14 +34,15 @@ const Conversation = () => {
     }, [socket]);
 
     useEffect(() => {
-        if (conversations.length > 0) {
+        if (conversations && conversations.length > 0) {
             for (let i = 0; i < conversations.length; i++) {
+                console.log("check run")
                 socket.emit("join_room", conversations[i].conversationId);
-                // console.log("check conversations[i].conversationId", conversations[i].conversationId)
+                console.log("check conversations[i].conversationId", conversations[i].conversationId)
                 setShowChat(true);
             }
         }
-    }, [socket, conversations.length]);
+    }, [socket]);
 
     useEffect(() => {
         if (recipient.conversationId) {

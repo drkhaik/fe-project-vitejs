@@ -39,14 +39,14 @@ const LoginStaff = () => {
                 }
                 navigate('/staff/login');
             }
-        } catch (err) {
-            console.log("Not properly authenticated", err);
+        } catch (e) {
+            console.log("Not properly authenticated", e);
         }
     };
 
     const redirectToGoogleSSO = async () => {
         let timer = null;
-        const googleLoginURL = `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/google`;
+        const googleLoginURL = `${import.meta.env.VITE_APP_BACKEND_NODEJS_URL}/api/v1/auth/google`;
         const newWindow = window.open(
             googleLoginURL,
             "_blank",
@@ -82,7 +82,7 @@ const LoginStaff = () => {
 
     };
     return (
-        <div className='login-page'>
+        <div className='login-page department'>
             <main className="main">
                 <div className="container">
                     <section className="wrapper">

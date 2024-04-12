@@ -9,7 +9,7 @@ import Message from '../Conversation/message';
 import io from "socket.io-client";
 import { useNavigate } from 'react-router-dom';
 import convertSlugFunction from '../../utilizes/convertSlug';
-const baseURL = import.meta.env.VITE_BACKEND_URL;
+const baseURL = import.meta.env.VITE_APP_BACKEND_NODEJS_URL;
 const socket = io.connect(baseURL);
 
 const Sidebar = () => {
