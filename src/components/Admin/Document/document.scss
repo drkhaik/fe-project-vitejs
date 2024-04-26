@@ -38,6 +38,13 @@
                 .title-card {
                     display: flex;
                     justify-content: space-between;
+                    .title {
+                        display: inline-block;
+                        flex: 1;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
                 }
                 .ant-card-head {
                     background-color: #990000;

@@ -2,6 +2,53 @@
     top: 50px !important;
 }
 
+@media screen and (max-width: 1200px){
+        .filter-price {
+            text-align: center;
+            display: block;
+            margin-bottom: 10px !important;
+        }  
+    }
+@media screen and (max-width: 600px) {
+            .column {
+                flex: unset;
+                width: calc(50% - 8px);
+                flex-wrap: wrap;
+            
+                    .info{
+                        .rating {
+                            font-size: 10px;
+                        }
+                        .price {
+                            font-size: 14px;
+                        }
+                    }
+                
+            }
+        }
+
+        @media screen and (max-width: 800px) and (min-width: 601px) {
+                .column {
+                    flex: unset;
+                    width: calc(25% - 8px);
+                    flex-wrap: wrap;
+                   
+                        .info{
+                            .rating {
+                                font-size: 11px;
+                                
+                            }
+                            .price {
+                                font-size: 16px;
+                            }
+                        }
+                   
+                }
+            
+        }
+        
+    
+
 .wrapper-layout-student {
     background-color: #ECF0F7;
     // .header-container{
@@ -172,13 +219,15 @@
     .homepage-container {
         margin: 0 auto;
         display: flex;
-        height: 100%;
+        height: 100vh;
+
         .sidebar{
             border-right: 1px solid #e4e3e3;
-            // width: 23%;
             padding: 8px 0;
             background-color: #fff;
-            min-height: 50rem;
+            // min-height: 50rem;
+            overflow-y: auto; // Enable vertical scrolling
+            height: 100%;
 
             .title {
                 margin: 5px;
@@ -207,20 +256,28 @@
     
         .content{
             padding: 8px 0;
-            // background-color: #ECF0F7;
-            // min-height: 50rem;
+            flex-grow: 1; // Make the content area take up the remaining space
+            // overflow: hidden; // Enable vertical scrolling
+            // height: 100vh;
+            overflow-y: auto; // Enable vertical scrolling
+            height: 100%; 
             .carousel-post {
-                max-height: 100vh;
+                // max-height: 100vh;
                 overflow: auto;
                 .ant-card-body {
-                    min-height: 50rem;
+                    height: inherit;
                     .ant-card-meta-description {
                         font-size: 13px;
                     }
                 }
             }
         }
-    
+
+        .sidebar-right {
+            overflow-y: auto; // Enable vertical scrolling
+            height: 100%;
+        }
+
     }
 }
 

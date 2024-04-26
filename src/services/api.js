@@ -41,7 +41,6 @@ const createUser = (data) => {
 }
 
 const updateUserAPI = (data) => {
-    console.log("check data", data);
     return axios.put("/api/v1/user", data);
 }
 
@@ -120,6 +119,14 @@ const deleteDocument = (_id) => {
 
 const fetchAllDocumentForStat = () => {
     return axios.get(`/api/v1/document/stat`);
+}
+
+const ratingDocument = (data) => {
+    return axios.post(`/api/v1/document/rating`, data);
+}
+
+const fetchDocumentMostRating = (data) => {
+    return axios.get(`/api/v1/document/most-rating`, data);
 }
 
 // ================ CONVERSATION ============
@@ -268,6 +275,8 @@ export {
     createDocument,
     fetchDocumentBySubjectId,
     deleteDocument,
+    ratingDocument,
+    fetchDocumentMostRating,
 
     fetchAllPostForStat,
     fetchDataUserForStat,

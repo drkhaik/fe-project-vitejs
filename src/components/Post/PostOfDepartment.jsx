@@ -9,6 +9,9 @@ import { useSelector } from 'react-redux';
 import './post.scss';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ClipLoader } from "react-spinners";
+const MostRating = React.lazy(() => import('../Document/MostRating'));
+import LoadingComponent from '../Loading/loadingComponent';
+
 
 
 const PostOfDepartment = (props) => {
@@ -41,7 +44,7 @@ const PostOfDepartment = (props) => {
                         />
                     </Card>
                 </Col>
-                <Col span={12}>
+                <Col span={13}>
                     <div>
                         <InfiniteScroll
                             dataLength={postList.length}
@@ -107,8 +110,10 @@ const PostOfDepartment = (props) => {
                         </InfiniteScroll>
                     </div>
                 </Col>
-                <Col span={6}>
-                    dont know what to do with it
+                <Col span={5}>
+                    <Suspense fallback={<LoadingComponent />}>
+                        <MostRating />
+                    </Suspense>
                 </Col>
             </Row >
         </ >

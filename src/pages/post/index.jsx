@@ -25,7 +25,6 @@ const PostPage = () => {
                 // setTimeout(() => {
                 //     setPostList(raw);
                 // }, 1000);
-                console.log("check posts", res.data);
                 setPostList(res.data);
             }
         } catch (e) {

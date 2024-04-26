@@ -1,0 +1,99 @@
+.document-most-rating {
+                .title {
+                    color: #990000;
+                    text-align: center;
+                }
+                .document-wrapper {
+                    margin-top: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0 0.3rem;
+                    .no-data {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .ant-card {
+                        // margin-top: 1rem;
+                        .ant-card-head {
+                            // background-color: #990000;
+                            background-color: #fff;
+                            .title-card {
+                                display: flex;
+                                justify-content: space-between;
+                                .title {
+                                    display: inline-block;
+                                    flex: 1;
+                                    overflow: hidden;
+                                    white-space: nowrap;
+                                    text-overflow: ellipsis;
+                                    color: #990000;
+                                    margin-top: 0.3rem;
+                                    margin-right: 0.5rem;
+                                    font-size: 0.8rem;
+                                }
+                            }
+                        
+                        }
+                        .ant-card-body {
+                            padding: 12px;
+                        }
+                        .card-document {
+                            display: flex;
+                            justify-content: space-between;
+                            min-height: fit-content;
+                            .click-download {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                text-decoration: none;
+                                color: inherit;
+                                background-color: inherit;
+                                border: none;
+                                padding: 0;
+                                margin: 0;
+                
+                                .icon {
+                                    min-width: 3rem;
+                                    width: 15%;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    .anticon {
+                                        font-size: 1.5rem;
+                                    }
+                                }
+                                .info {
+                                    p {
+                                        margin: 0;
+                                        margin-bottom: 0.5rem;
+                                        font-size: 14px;
+                                    }
+                                    .file-name {
+                                        font-weight: bold;
+                                        width: 10rem;
+                                        display: block;
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        font-size: 0.8rem;
+                                    }
+                                    .download-info {
+                                        // display: flex;
+                                        // justify-content: space-between;
+                                        .file-size {
+                                            font-size: 0.7rem;
+                                            color: #990000;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+            
+                        .created-at {
+                            font-size: 12px;
+                            color: #151212;
+                        }
+                    }
+                }
+            }

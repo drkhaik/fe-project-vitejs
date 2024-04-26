@@ -50,7 +50,7 @@ const ListDocument = (props) => {
                                 <Card
                                     title={
                                         <div className='title-card'>
-                                            <span> {item.name}</span>
+                                            <span className='title'> {item.name}</span>
                                             <Popconfirm
                                                 placement="topLeft"
                                                 title="Are you sure?"

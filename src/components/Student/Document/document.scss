@@ -63,8 +63,26 @@
             .ant-card {
                 // margin-top: 1rem;
                 .ant-card-head {
-                    background-color: #990000;
-                    color: #fff;
+                    // background-color: #990000;
+                    background-color: #fff;
+                    .title-card {
+                        display: flex;
+                        justify-content: space-between;
+                        .title {
+                            display: inline-block;
+                            flex: 1;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            color: #990000;
+                            margin-top: 0.3rem;
+                            margin-right: 0.5rem;
+                        }
+                    }
+                  
+                }
+                .ant-card-body {
+                    padding: 12px;
                 }
                 .card-document {
                     display: flex;

@@ -4,10 +4,9 @@ import {
     Row, Col, message, notification
 } from 'antd';
 import './home.scss';
-// import Sidebar from './sidebar';
 import Content from './content';
-// import Header from './header';
 const Sidebar = React.lazy(() => import('./sidebar'));
+const MostRating = React.lazy(() => import('../Document/MostRating'));
 import FloatButtonRedirect from './FloatButtonRedirect';
 import LoadingComponent from '../Loading/loadingComponent';
 import ModalChooseFaculty from './ModalChooseFaculty';
@@ -32,17 +31,20 @@ const Home = () => {
                 </Col> */}
                 <Col span={24}>
                     <Row justify={'space-between'} className="homepage-container">
-                        <Col span={5} className='sidebar'>
+                        <Col xs={0} sm={0} md={8} lg={8} xl={5} className='sidebar'>
                             <Suspense fallback={<LoadingComponent />}>
                                 <Sidebar />
                             </Suspense>
                         </Col>
-                        <Col span={14} className='content'>
+                        <Col xs={24} sm={24} md={16} lg={15} xl={14} className='content'>
                             <Content />
                         </Col>
-                        <Col span={5} className='sidebar-right'>
-                            <FloatButtonRedirect />
+                        <Col xs={24} sm={24} md={24} lg={24} xl={5} className='sidebar-right'>
+                            <Suspense fallback={<LoadingComponent />}>
+                                <MostRating />
+                            </Suspense>
                         </Col>
+                        <FloatButtonRedirect />
                     </Row>
                 </Col>
             </Row>

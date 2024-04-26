@@ -39,7 +39,6 @@ const Message = (props) => {
             let res = await fetchMoreMessageHistory({ conversationId, lastMessageId });
             if (res && res.errCode === 0 && res.data) {
                 setTimeout(() => {
-                    console.log('This message will be logged after 3 seconds');
                     if (res.data.length !== 0) {
                         setMessageList((list) => [...list, ...res.data]);
                     } else {

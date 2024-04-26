@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { fetchAllPost } from '../../services/api';
 import {
-    Row, Col, Carousel, Empty, Card, Typography, Avatar
+    Row, Col, Carousel, Empty, Card, Typography, Avatar, Button
 } from 'antd';
 const { Meta } = Card;
 const { Title, Paragraph, Text, Link } = Typography;
@@ -40,12 +40,13 @@ const Content = () => {
         setPostInfo(item);
     }
 
-
     const handleRedirectViewFacultyPost = (author) => {
         const slug = convertSlug(author.name);
         let encodedDepartmentId = btoa(author._id);
         navigate(`/post/${slug}?id=${encodedDepartmentId}`);
     }
+
+    const [isExpanded, setIsExpanded] = useState(false);
 
     return (
         <Row style={{ padding: 15 }}>
@@ -88,6 +89,10 @@ const Content = () => {
                                                 <Paragraph>
                                                     <div dangerouslySetInnerHTML={{ __html: item.description }}></div>
                                                 </Paragraph>
+                                                {/* <Paragraph>
+                                                    <div dangerouslySetInnerHTML={{ __html: `${item.description.substring(0, 1500)}...` }}></div>
+                                                    {item.description.length > 1500 && <Button type="primary" onClick={() => onClickPost(item)}>See More</Button>}
+                                                </Paragraph> */}
                                             </Typography>
                                         }
                                     />

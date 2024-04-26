@@ -31,18 +31,17 @@ const Conversation = () => {
         if (user && user._id) {
             dispatch(fetchListConversationReduxThunk(user._id));
         }
-    }, [socket]);
+    }, [user]);
 
     useEffect(() => {
         if (conversations && conversations.length > 0) {
             for (let i = 0; i < conversations.length; i++) {
-                console.log("check run")
                 socket.emit("join_room", conversations[i].conversationId);
-                console.log("check conversations[i].conversationId", conversations[i].conversationId)
-                setShowChat(true);
+                // console.log("check conversations[i].conversationId", conversations[i].conversationId)
             }
+            setShowChat(true);
         }
-    }, [socket]);
+    }, [socket, conversations]);
 
     useEffect(() => {
         if (recipient.conversationId) {
@@ -53,7 +52,7 @@ const Conversation = () => {
 
     useEffect(() => {
         socket.on("receive_message", (newMessage) => {
-            console.log("check receive_message", newMessage);
+            // console.log("check receive_message", newMessage);
             let isReadMessage = false;
             if (showChat && room === newMessage.conversation) {
                 isReadMessage = true;
@@ -67,7 +66,7 @@ const Conversation = () => {
 
     useEffect(() => {
         socket.on("receive_file", (newMessage) => {
-            console.log("check receive_file", newMessage);
+            // console.log("check receive_file", newMessage);
             let isReadMessage = false;
             if (showChat && room === newMessage.conversation) {
                 isReadMessage = true;

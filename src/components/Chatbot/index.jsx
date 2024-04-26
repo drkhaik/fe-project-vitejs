@@ -33,7 +33,7 @@ const Chatbot = (props) => {
     const promptQuestions = [
         "Đăng kí song bằng song ngành UEF ở đâu?",
         "Điểm trung bình tích luỹ như nào là bằng giỏi?",
-        "Song bằng song ngành UEF có bao nhiêu ngành đào tạo?",
+        "Chuẩn đầu ra Tin học khoá 2021 gồm những gì?",
         // "Điều kiện để học song bằng song ngành UEF là gì?"
     ];
 

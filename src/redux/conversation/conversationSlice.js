@@ -37,12 +37,15 @@ export const conversationSlice = createSlice({
         setLastMessageToConversations: (state, action) => {
             let newMessage = action.payload;
             console.log("check new Message redux", newMessage);
-            let conversations = state.conversations;
-            for (let i = 0; i < conversations.length; i++) {
-                if (conversations[i].conversationId === newMessage.conversation) {
-                    conversations[i].lastMessage = newMessage;
-                    state.notification++;
+            state.conversations = state.conversations.map(conversation => {
+                if (conversation.conversationId === newMessage.conversation) {
+                    return { ...conversation, lastMessage: newMessage };
                 }
+                return conversation;
+            });
+
+            if (state.conversations.some(conversation => conversation.conversationId === newMessage.conversation)) {
+                state.notification++;
             }
         },
         setIsRead: (state, action) => {

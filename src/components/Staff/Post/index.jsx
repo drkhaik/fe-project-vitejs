@@ -87,7 +87,7 @@ const Post = () => {
     return (
         <>
             <Row className='post-wrapper' style={{ padding: 15 }}>
-                <Col span={16}>
+                <Col span={24}>
                     <div>
                         <Card
                             className='add-new-post'
@@ -179,9 +179,6 @@ const Post = () => {
                             }
                         </InfiniteScroll>
                     </div>
-                </Col>
-                <Col span={8}>
-                    dont know what to do with it
                 </Col>
             </Row>
             <Suspense fallback={<LoadingComponent />}>

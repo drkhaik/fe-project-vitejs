@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import {
-    Dropdown, Space, Avatar, Button, Badge, Divider, message, Popover, notification
+    Dropdown, Space, Avatar, Button, Badge, Divider, message, Popover, notification,
+    Row, Col, Modal
 } from 'antd';
 import { DownOutlined, MessageOutlined } from '@ant-design/icons';
 import logo from '../../assets/logo-uef-home.jpg'
@@ -82,19 +83,31 @@ const Header = () => {
     return (
         <>
             <div className='header-section'>
-                <header className='page-header'>
-                    <div className='page-header__left'>
-                        <div className="page-header__toggle" onClick={() => {
-                            setOpenDrawer(true)
-                        }}>☰</div>
-                        <div className='page-header__logo'>
+                <Row className='page-header'>
+                    <Col xs={2} sm={2} md={0} lg={0} className='left'>
+                        <div className='navbar-mobile-left' onClick={() => setOpenDrawer(open => !open)}>
+                            <div className='toggle'>
+                                ☰
+                            </div>
+                        </div>
+                    </Col>
+                    <Col xs={0} sm={0} md={6} lg={6} className='left'>
+                        <div className='logo-wrapper'>
                             <span className='logo' onClick={() => redirectHome()}>
                                 <img className='logo_img' src={logo} alt="Logo UEF" />
                                 <p className='name'> Students UEF </p>
                             </span>
                         </div>
-                    </div>
-                    <div className='page-header__right'>
+                    </Col>
+                    <Col xs={0} sm={0} md={10} lg={10} className='middle'>
+                    </Col>
+                    <Col xs={10} sm={10} md={0} lg={0} className='middle'>
+                        <span className='logo' onClick={() => redirectHome()}>
+                            <img className='logo_img' src={logo} alt="Logo UEF" />
+                            <p className='name'> Students UEF </p>
+                        </span>
+                    </Col>
+                    <Col xs={12} sm={12} md={8} lg={8} className='right'>
                         <ul id="navigation" className="navigation">
                             <li className="navigation__item">
                                 <Popover
@@ -116,18 +129,19 @@ const Header = () => {
                             </li>
                             <li className="navigation__item mobile"><Divider type='vertical' /></li>
                             <li className="navigation__item mobile">
-                                <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
+                                <Dropdown rootClassName='dropdown-custom-style' menu={{ items: itemsDropdown }} trigger={['click']}>
                                     <a onClick={(e) => e.preventDefault()}>
                                         <Space>
-                                            <Avatar src={user.image} /> {user?.name} <Space />
+                                            <Avatar className='avt' src={user.image} />
+                                            <span className='username'>{user?.name}</span>
                                             <DownOutlined />
                                         </Space>
                                     </a>
                                 </Dropdown>
                             </li>
                         </ul>
-                    </div>
-                </header >
+                    </Col>
+                </Row>
             </div>
             <UpdateInfo
                 openModalUpdate={openModalUpdate}

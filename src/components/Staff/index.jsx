@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSelector } from 'react-redux';
 import {
     Row, Col, Tag
@@ -8,6 +8,9 @@ import Header from './header';
 import Conversation from '../Conversation/Conversation';
 import Post from './Post';
 import ModalChooseFaculty from './ModalChooseFaculty';
+const MostRating = React.lazy(() => import('../Document/MostRating'));
+import LoadingComponent from '../Loading/loadingComponent';
+
 
 const HomeStaff = () => {
     const user = useSelector(state => state.account.user);
@@ -32,8 +35,13 @@ const HomeStaff = () => {
                         <Col className='sidebar' span={6} >
                             <Conversation />
                         </Col>
-                        <Col className='content' span={18} >
+                        <Col className='content' span={13} >
                             <Post />
+                        </Col>
+                        <Col className='sidebar-right' span={5} >
+                            <Suspense fallback={<LoadingComponent />}>
+                                <MostRating />
+                            </Suspense>
                         </Col>
                     </Row>
                 </Col>

@@ -38,7 +38,6 @@ const Document = () => {
 
     return (
         <div className='document-sharing-wrapper'>
-
             <Row>
                 <Col span={24}>
                     <Row justify={'space-between'} className="homepage-container">

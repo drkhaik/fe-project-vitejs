@@ -41,6 +41,7 @@ const Sidebar = () => {
                     arrayConversations.push(itemSidebar[i]);
                 }
             }
+            // console.log("check arrayConversations at sidebar", arrayConversations);
             dispatch(setListConversations(arrayConversations))
         }
     }, [itemSidebar.length]);

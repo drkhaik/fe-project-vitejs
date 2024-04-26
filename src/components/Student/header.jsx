@@ -8,6 +8,7 @@ import logo from '../../assets/logo-uef-home.jpg'
 import LoadingComponent from '../Loading/loadingComponent';
 import Account from '../Account';
 const Conversation = React.lazy(() => import('../Conversation/Conversation'));
+const Sidebar = React.lazy(() => import('./sidebar'));
 
 const Header = () => {
     const navigate = useNavigate();
@@ -68,97 +69,81 @@ const Header = () => {
     return (
         <>
             <div className='header-section'>
-                <header className='page-header'>
-                    <div className='page-header__left'>
-                        <div className="page-header__toggle" onClick={() => {
-                            setOpenDrawer(true)
-                        }}>☰</div>
-                        <div className='page-header__logo'>
+                    <Row className='page-header'>
+                        <Col xs={2} sm={2} md={0} lg={0} className='left'>
+                            <div className='navbar-mobile-left' onClick={() => setOpenDrawer(open => !open)}>
+                                <div className='toggle'> 
+                                    ☰ 
+                                </div>  
+                            </div>
+                        </Col>
+                        <Col xs={0} sm={0} md={6} lg={6} className='left'>
+                            <div className='logo-wrapper'>
+                                <span className='logo' onClick={() => redirectHome()}>
+                                    <img className='logo_img' src={logo} alt="Logo UEF" />
+                                    <p className='name'> Students UEF </p>
+                                </span>
+                            </div>
+                        </Col>
+                        <Col xs={0} sm={0} md={10} lg={10} className='middle'>
+                        </Col>
+                        <Col xs={10} sm={10} md={0} lg={0} className='middle'>
                             <span className='logo' onClick={() => redirectHome()}>
                                 <img className='logo_img' src={logo} alt="Logo UEF" />
                                 <p className='name'> Students UEF </p>
                             </span>
-                        </div>
-                    </div>
-                    {/* <div className='page-header__middle'>
-                        <VscSearchFuzzy className='icon-search' />
-                        <input
-                            className="input-search" type={'text'}
-                            placeholder="Bạn tìm gì hôm nay"
-                        // onChange={(e) => onChangeInputSearch(e.target.value)}
-                        />
-                    </div> */}
-                    <div className='page-header__right'>
-                        <ul id="navigation" className="navigation">
-                            <li className="navigation__item">
-                                <Popover
-                                    content={renderChatbox}
-                                    className='popover-cart'
-                                    rootClassName='popover-cart'
-                                    placement={'bottom'}
-                                    trigger="click"
-                                    zIndex={0}
-                                >
-                                    <Badge
-                                        showZero
-                                        size={"default"}
-                                        count={notification > 0 ? notification : null}
+                        </Col>
+                        <Col xs={12} sm={12} md={8} lg={8} className='right'>
+                            <ul id="navigation" className="navigation">
+                                <li className="navigation__item">
+                                    <Popover
+                                        content={renderChatbox}
+                                        className='popover-cart'
+                                        rootClassName='popover-cart'
+                                        placement={'bottom'}
+                                        trigger="click"
+                                        zIndex={0}
                                     >
-                                        <MessageOutlined style={{ fontSize: '18px' }} />
-                                    </Badge>
-                                </Popover>
-                            </li>
-                            <li className="navigation__item mobile"><Divider type='vertical' /></li>
-                            <li className="navigation__item mobile">
-                                {/* <Dropdown rootClassName='dropdown-custom-style' menu={{ item: itemsDropdown }} trigger={['click']}>
-                                    <a onClick={(e) => e.preventDefault()}>
-                                        <Space>
+                                        <Badge
+                                            showZero
+                                            size={"default"}
+                                            count={notification > 0 ? notification : null}
+                                        >
+                                            <MessageOutlined style={{ fontSize: '18px' }} />
+                                        </Badge>
+                                    </Popover>
+                                </li>
+                                <li className="navigation__item mobile"><Divider type='vertical' /></li>
+                                <li className="navigation__item mobile">
+                                    <Dropdown rootClassName='dropdown-custom-style' menu={{ items: itemsDropdown }} trigger={['click']}>
+                                        <a onClick={(e) => e.preventDefault()}>
+                                            <Space>
                                             <Avatar className='avt' src={user.image} />
-                                            <Space />
-                                            {user?.name}
-                                            <DownOutlined />
-                                        </Space>
-                                    </a>
-                                </Dropdown> */}
-                                <Dropdown rootClassName='dropdown-custom-style' menu={{ items: itemsDropdown }} trigger={['click']}>
-                                    <a onClick={(e) => e.preventDefault()}>
-                                        <Space>
-                                            <Avatar className='avt' src={user.image} /> {user?.name} <Space />
-                                            <DownOutlined />
-                                        </Space>
-                                    </a>
-                                </Dropdown>
-
-                            </li>
-                        </ul>
-                    </div>
-                </header >
-
+                                                <span className='username'>{user?.name}</span>
+                                                <DownOutlined />
+                                            </Space>
+                                        </a>
+                                    </Dropdown>
+                                </li>
+                            </ul>
+                        </Col>
+                    </Row>
             </div >
+            {openDrawer
+                ? <Drawer
+                    placement="left"
+                    width={'100vw'}
+                    closable={true}
+                    onClose={() => setOpenDrawer(false)}
+                    visible={openDrawer}
+                >
+                    <Suspense fallback={<LoadingComponent />}>
+                        <Sidebar />
+                    </Suspense>
+                </Drawer>
+                : null
+            }
 
-            <Drawer
-                title="Welcome"
-                placement={'left'}
-                onClose={() => setOpenDrawer(false)}
-                open={openDrawer}
-                width={"80vw"}
-            >
-                {user.role === 'Admin'
-                    ?
-                    <>
-                        <p>Trang quản trị</p>
-                        <Divider />
-                    </>
-                    :
-                    <>
-                    </>
-                }
-                <p>Xem lịch sử</p>
-                <Divider />
-                <p>Đăng xuất</p>
-                <Divider />
-
-            </Drawer>
             <Account
                 isModalAccountOpen={isModalAccountOpen}
                 setModalAccountOpen={setModalAccountOpen}

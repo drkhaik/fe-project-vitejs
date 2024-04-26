@@ -1,32 +1,26 @@
 import React, { useState, useEffect, Suspense } from 'react'
 import {
-    Row, Col, Card, Avatar, Tooltip, Button, Rate
+    Row, Col, Card, Empty, Tooltip, Rate
 } from 'antd';
-import { fetchDocumentBySubjectId, ratingDocument } from '../../../services/api';
-import imgStudyTogether from '../../../assets/4805841.webp';
+import { fetchDocumentMostRating } from '../../services/api';
 import { UserOutlined, FileOutlined } from '@ant-design/icons';
-const ModalAddDocument = React.lazy(() => import('./ModalAddDocument'));
-import LoadingComponent from '../../Loading/loadingComponent';
-import moment from 'moment';
 import { useSelector } from 'react-redux';
+import './mostRating.scss';
 
 const { Meta } = Card;
 
-const DocumentContent = (props) => {
-    const { subjectId } = props;
+const MostRating = () => {
     const user = useSelector(state => state.account.user);
     const [documents, setDocuments] = useState([]);
-    const [isModalOpen, setModalOpen] = useState(false);
 
-    const fetchDataDocuments = async (subjectId) => {
+    const fetchDocumentMostRatingTest = async () => {
         try {
-            const res = await fetchDocumentBySubjectId(subjectId);
+            const res = await fetchDocumentMostRating();
             if (res && res.errCode === 0 && res.data) {
                 let data = res.data;
                 for (let i = 0; i < data.length; i++) {
                     // define whether user has rated this document
-                    let isRated = data[i].ratings && data[i].ratings.some(userId => userId.toString() === user._id);
-                    if (isRated) {
+                    let isRated = data[i].ratings && data[i].ratings.some(userId => userId.toString() === user._id);                    if (isRated) {
                         data[i].rated = 1;
                     }
                 }
@@ -38,54 +32,32 @@ const DocumentContent = (props) => {
     }
 
     useEffect(() => {
-        fetchDataDocuments(subjectId);
-        
-    }, [subjectId]);
-
-    const handleRateChange = async (value, item) => {
-        try {
-            let data = {
-                userId: user._id,
-                documentId: item._id,
-                rating: value,
-            }
-            const res = await ratingDocument(data);
-            if (res.errCode !== 0) {
-                throw new Error('Network res was not ok');
-            }
-            fetchDataDocuments(subjectId);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+        fetchDocumentMostRatingTest();
+    }, []);
 
     return (
         <>
-            <div>
-                <h3 className='title'>Document Sharing for Students UEF</h3>
-            </div>
-            <div className='button-add'>
-                <Button type='primary' onClick={() => setModalOpen(true)}> Thêm tài liệu </Button>
-            </div>
-            <div className='document-wrapper'>
+            <div className='document-most-rating'>
+                <h4 className='title'>Document has the most ratings</h4>
+           
                 {documents && documents.length > 0
                     ?
-                    <Row gutter={16}>
+                    <Row className='document-wrapper'>
                         {documents.map((item, index) => {
                             return (
-                                <Col span={6} key={index}>
+                                <Col xs={24} sm={24} md={24} lg={24} xl={24} style={{marginBottom: '0.4rem'}} key={index}>
                                     <Card
                                         title={
                                             <div className='title-card'>
                                                 <span className='title'>{item.name}</span>
-                                                <span className='rate-number'> 
-                                                    <Rate 
+                                                <span className='rate-number'>
+                                                    <Rate
                                                         count={1}
-                                                        value={item.rated ? 1 : 0}                                                   
-                                                        onChange={(value) => handleRateChange(value, item)} 
+                                                        value={item.rated ? 1 : 0}
                                                         tooltips={['Useful']}
-                                                        style={{marginRight: '0.3rem'}}
-                                                    /> 
+                                                        style={{ marginRight: '0.3rem' }}
+                                                        disabled
+                                                    />
                                                     <span style={{ color: '#990000' }}>{item.ratings ? item.ratings.length : 0}</span>
                                                 </span>
                                             </div>
@@ -110,48 +82,33 @@ const DocumentContent = (props) => {
                                                 </div>
                                             </a>
                                         </div>
-                                        <Meta
+                                        {/* <Meta
                                             // style={{ borderTop: '1px solid #000' }}
                                             avatar={<Avatar src={item.author ? item.author.image : ''} size="large" icon={<UserOutlined />} />}
                                             title={item.author ? item.author.name : 'Anonymous'}
                                             description={<p className='created-at'> Created: {moment(item.updatedAt).format('DD-MM-YYYY')} </p>}
-                                        />
+                                        /> */}
                                     </Card>
                                 </Col>
                             )
                         })}
                     </Row>
                     :
-                    // <Empty
-                    //     style={{
-                    //         height: 'inherit',
-                    //         display: 'flex',
-                    //         justifyContent: 'center',
-                    //         alignItems: 'center',
-                    //         flexDirection: 'column'
-                    //     }}
-                    //     description='No data'
-                    // />
-                    <div className='no-data'>
-                        <img src={imgStudyTogether} alt="UEF Student" />
-                    </div>
+                    <Empty
+                        style={{
+                            height: 'inherit',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'column'
+                        }}
+                        description='No data'
+                    />
                 }
             </div>
-
-            <Suspense fallback={<LoadingComponent />}>
-                <ModalAddDocument
-                    isModalOpen={isModalOpen}
-                    setModalOpen={setModalOpen}
-                    fetchDataDocuments={fetchDataDocuments}
-                />
-            </Suspense>
 
         </>
     )
 }
 
-const areEqual = (prevProps, nextProps) => {
-    return prevProps.subjectId === nextProps.subjectId
-}
-
-export default React.memo(DocumentContent, areEqual);
+export default MostRating;

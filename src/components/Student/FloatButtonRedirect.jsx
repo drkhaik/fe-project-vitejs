@@ -13,7 +13,6 @@ const FloatButtonRedirect = () => {
 
     return (
         <div>
-            <>
                 <FloatButton.Group
                     trigger="hover"
                     type="primary"
@@ -26,7 +25,6 @@ const FloatButtonRedirect = () => {
                     <FloatButton tooltip={<div>Document Sharing</div>} onClick={() => navigate('/document')} />
                     <FloatButton tooltip={<div>Chatbot</div>} onClick={() => setOpenDrawer(true)} icon={<RobotOutlined />} />
                 </FloatButton.Group>
-            </>
 
             <Suspense fallback={<LoadingComponent />}>
                 <Chatbot

@@ -50,7 +50,6 @@ const Dashboard = () => {
             try {
                 const res = await fetchAllDocumentForStat();
                 if (res && res.data && res.errCode === 0) {
-                    console.log("check res document", res.data);
                     setDataDocument(res.data);
                 } else {
                     message.error("Failed to load list document")
