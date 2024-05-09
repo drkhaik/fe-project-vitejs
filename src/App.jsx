@@ -161,7 +161,11 @@ export default function App() {
       path: "/*",
       element: <NotFound />
     }
-  ]);
+  ]
+  // ,{
+  //   basename: import.meta.env.VITE_APP_BACKEND_NODEJS_URL
+  // }
+);
 
   return (
     <>

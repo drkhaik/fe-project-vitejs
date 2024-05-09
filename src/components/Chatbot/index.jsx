@@ -54,7 +54,7 @@ const Chatbot = (props) => {
                 };
             } else {
                 botMessage = {
-                    body: response.answer,
+                    body: "Đây là những gì tôi tìm thấy: " + response.answer,
                     author: "chatbot",
                 };
             }
